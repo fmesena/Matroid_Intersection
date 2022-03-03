@@ -1,7 +1,4 @@
-#include <vector>
 #include "utils.h"
-
-
 
 template<typename T>
 void DEBUG_VECTOR(const vector<T> &v) {
@@ -12,7 +9,6 @@ void DEBUG_VECTOR(const vector<T> &v) {
 	cout << "DEBUG END" << endl;
 }
 
-
 template<typename T>
 vector<T> Slice(vector<T> const &v, int m, int n) {
 	auto first = v.cbegin() + m;
@@ -21,12 +17,9 @@ vector<T> Slice(vector<T> const &v, int m, int n) {
 	return vec;
 }
 
-
 void reset(vector<int> &v) { vector<int>().swap(v); }
 
-
 void addEdge(vector<int> graph[], int u, int v) { graph[u].push_back(v); }
-
 
 void printGraph(vector<int> graph[]) {
     for (int v = 0; v < N; ++v)
@@ -35,17 +28,15 @@ void printGraph(vector<int> graph[]) {
              << v << "\n head ";
         for (auto x : graph[v])
            cout << "-> " << x;
-        printf("\n");
+        cout << endl;
     }
 }
-
 
 void PrintIndependentSet() {
 	cout << "INDEPENDENT SET FOUND WITH SIZE " << independent_set.size() << ":" << endl;
 	for (int i = 0; i < independent_set.size(); ++i) cout << independent_set[i] << " ";
 	cout << endl;
 }
-
 
 bool equal_content_same_order(vector<int> &a, vector<int> &b) {
 	if (a.size() != b.size()) return false;
@@ -55,14 +46,13 @@ bool equal_content_same_order(vector<int> &a, vector<int> &b) {
 	return true;
 }
 
-
 // index[i] = -1 if i-th element is not in S, index[i]=j 0<j<N-1 if i-th element is in S
 void UpdateIndependentSet() {
-	int j=0;
 	independent_set.clear();
+	not_independent.clear();
 	index_.clear();
 
-	for (int i = 0; i < N; ++i)
+	for (int i=0, j=0; i < N; ++i)
 	{
 		index_[i] = -1;
 		if (IN_INDEPENDENT(i))
@@ -70,10 +60,10 @@ void UpdateIndependentSet() {
 			independent_set.push_back(i);
 			index_[i] = j++;
 		}
+		else not_independent.push_back(i);
 	}
+	CURRENT_RANK++;
 }
-
-
 
 void PrintCandidates(vector<int> c[]) {
 	for (int i = 0; i < 3; ++i)
@@ -85,7 +75,6 @@ void PrintCandidates(vector<int> c[]) {
 	}
 	cout << endl;
 }
-
 
 // returns V \subseteq S where all elements from A \subseteq S are removed from S
 // does not change the values of "index_" since the altered S is supposed only for a "quick call" to the oracle
@@ -101,3 +90,11 @@ vector<int> RemoveSubset(vector<int> S, vector<int> A) {
 			S_.push_back(i);
 	return S_;
 }
+
+/*
+void Init() {
+	in_independent_set.resize(N,false);
+	distances = new int[N]();
+	//TODO allocate candidates here maybe
+}
+*/

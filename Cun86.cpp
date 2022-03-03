@@ -1,144 +1,47 @@
-#include <iostream>
 #include <algorithm>
-#include <vector>
 #include <queue>
-#include <assert.h>
-#include <chrono>
+#include "utils.h"
 #include "Cun86.h"
 
 using namespace std;
-using namespace std::chrono;
 
-
-#define 	MAX_V					100000
-#define 	min(u, v) 			    (u<v ? u:v)
-#define		even(x)					x%2==0
-#define		odd(x)					x%2==1
-#define		SZ 						independent_set.size()
-#define 	IN_INDEPENDENT(a)		in_independent_set[a]
-
-#define		Oracle_M1(S)			(*M1)(S)
-#define		Oracle_M1_Free(S,a)		(*M1_Free)(S,a)
-#define		Oracle_M1_Exch(S,a,b)	(*M1_Exch)(S,a,b)
-#define		Oracle_M2(S)			(*M2)(S)
-#define		Oracle_M2_Free(S,a)		(*M2_Free)(S,a)
-#define		Oracle_M2_Exch(S,a,b)	(*M2_Exch)(S,a,b)
-
-int N;
-int DISTANCE_TARGET;
 size_t hack;
 
-vector<int> independent_set;
-vector<int> not_independent;
-vector<bool> in_independent_set;
+vector<int> graph[MAX_V];
 vector<bool> X1;
 vector<bool> X2;
-vector<int> graph[MAX_V];
-int *distances;
 
-bool (*M1)(vector <int>);
-bool (*M1_Free)(vector <int>, int);
-bool (*M1_Exch)(vector <int>, int, int);
+Oracle* O1;
+Oracle* O2;
 
-bool (*M2)(vector <int>);
-bool (*M2_Free)(vector <int>, int);
-bool (*M2_Exch)(vector <int>, int, int);
-
-const int SOURCE = -2;
-const int TARGET = -3;
-
-//ORACLE_CALLS++;
-
-
-/**************************************************/
-/******************* UTILITIES ********************/
-/**************************************************/
-
-
-template<typename T>
-void DEBUG_VECTOR(const vector<T> &v) {
-	cout << "\nDEBUG BEGIN" << endl;
-	cout << "The vector size is " << v.size() << " and its " << "capacity is " << v.capacity() << endl;
-	cout << "Vector content:" << endl;
-	for (size_t i=0; i < v.size(); ++i) cout << v[i] << " ";
-	cout << "\nDEBUG END" << endl;
+void okCun() {
+	cout <<"okCun\n";
+	return;
 }
 
-void reset(vector<int> &v) { vector<int>().swap(v); }
-
-void AddEdge(int u, int v) { graph[u].push_back(v); }
-
-void PrintGraph() {
-    for (int v = 0; v < N; ++v)
-    {
-        cout << "\n Adjacency list of vertex "
-             << v << "\n head ";
-        for (auto x : graph[v])
-           cout << "-> " << x;
-        printf("\n");
-    }
-}
-
-void PrintIndependentSet() {
-	cout << "INDEPENDENT SET FOUND WITH SIZE " << independent_set.size() << ":" << endl;
-	for (size_t i=0; i < independent_set.size(); ++i) cout << independent_set[i] << " ";
-	cout << endl;
-}
-
-void PrintCandidates(vector<int> c[]) {
-	for (size_t i = 0; i < 3; ++i)
-	{
-		cout << "Distance " << i << endl;
-		for (int k : c[i])
-			cout << k << " ";
-		cout << endl;
-	}
-	cout << endl;
-}
-
-
-/**************************************************/
-/****************** ALGORITHMS ********************/
-/**************************************************/
-
-
-void Init() {
+void InitCun() {
 	in_independent_set.resize(N,false);
 	distances = new int[N]();
-	//TODO allocate candidates here maybe?
+	//TODO allocate candidates here maybe
 }
 
-void Independent_Set_Greedy() {   // O (n T_ind) 
+void Independent_Set_Greedy() {   // O (n.T) 
 	for (int i = 0; i < N; ++i)
 	{
-		independent_set.push_back(i);
-		in_independent_set[i]=true;
-		if (!Oracle_M1(independent_set) || !Oracle_M2(independent_set))
+		if (O1->Free(i) && O2->Free(i))
 		{
-			independent_set.pop_back();
-			in_independent_set[i]=false;
+			independent_set.push_back(i);
+			in_independent_set[i]=true;
+			//Update_State(); FIXME
 		}
 	}
 	return;
 }
 
-void UpdateIndependentSet() {
-	independent_set.clear();
-	not_independent.clear();
-
-	for (int i = 0; i < N; ++i)
-	{
-		if (IN_INDEPENDENT(i))
-			independent_set.push_back(i);
-		else
-			not_independent.push_back(i);
-	}
-}
-
-void Build_Exchange_Graph() {   // O (n + nrT_ind) 
+void Build_Exchange_Graph() {   // O (n + n.r.T) 
 
 	for (int i = 0; i < N; ++i) graph[i].clear();	
-	UpdateIndependentSet(); //remove this line and in main call Init() before main cycle of augmentations
+	UpdateIndependentSet(); //needed to initialize not_independent
 
 	// Compute X1 and X2
 	X1 = vector<bool>(not_independent.size(), false);
@@ -146,27 +49,24 @@ void Build_Exchange_Graph() {   // O (n + nrT_ind)
 	for (size_t i = 0; i < not_independent.size(); i++)
 	{
 		int e = not_independent[i];
-
-		independent_set.push_back(e);
-		if (Oracle_M1(independent_set)) X1[i] = true;
-		if (Oracle_M2(independent_set)) X2[i] = true;
-		independent_set.pop_back();
+		if (O1->Free(e)) X1[i] = true;
+		if (O2->Free(e)) X2[i] = true;
     }
 
 	int aux;
+	int a,b;
 	for (size_t i = 0; i < independent_set.size(); ++i)
 	{
-		aux = independent_set[i];
+		a = independent_set[i];
 		for (size_t j = 0; j < not_independent.size(); ++j)
 		{
 			/* if the element not_independent[j] is free either in M1 or M2 it is obviously exchangeable. Unlike SAP, we, can't disregard "exchangeable" arcs
 			   to/from free elements, as they can be used in an augmenting path (not the first) during a stage. You have an example showing this! */
-			independent_set[i] = not_independent[j];
+			b = not_independent[j];
 
-			if (Oracle_M1(independent_set)) AddEdge(aux, not_independent[j]);
-			if (Oracle_M2(independent_set)) AddEdge(not_independent[j], aux);
+			if (O1->Exchangeable(a,b)) addEdge(graph,a,b);
+			if (O2->Exchangeable(a,b)) addEdge(graph,b,a);
 		}
-		independent_set[i] = aux;
 	}
 	return;
 }
@@ -191,8 +91,8 @@ bool BFS() {   // O(nr)
 		distances[i] = numeric_limits<int>::max();
 	}
 
-	DEBUG_VECTOR(X1);
-	DEBUG_VECTOR(X2);
+	//DEBUG_VECTOR(X1);
+	//DEBUG_VECTOR(X2);
 
 	// Compute sources and sinks, i.e., free elements wrt current independent set and M1 and M2
 	for (size_t i = 0; i < not_independent.size(); i++) 
@@ -225,8 +125,8 @@ bool BFS() {   // O(nr)
 		{
 			if (parent[neighb] != NOT_VISITED) continue;
 			q.push(neighb);
-			parent[neighb]    = current;
-			distances[neighb] = distances[current] + 1;
+			parent[neighb]     = current;
+			distances[neighb]  = distances[current] + 1;
 		}
 	}
 
@@ -242,13 +142,13 @@ int FindArc(int a, vector<int> &next) {
 
 	hack = 0;
 
-	if (a == SOURCE)             while (hack < next.size()) if (Oracle_M1_Free(independent_set,next[hack++]))   return next[--hack];
+	if (a == SOURCE)             while (hack < next.size()) if (O1->Free(next[hack++]))   return next[--hack];
 
-	else if (IN_INDEPENDENT(a))  while (hack < next.size()) if (Oracle_M1_Exch(independent_set,a,next[hack++])) return next[--hack];
+	else if (IN_INDEPENDENT(a))  while (hack < next.size()) if (O1->Exchangeable(a,next[hack++])) return next[--hack];
 
-	else if (!IN_INDEPENDENT(a) && Oracle_M2_Free(independent_set,a)) return TARGET;
+	else if (!IN_INDEPENDENT(a) && O2->Free(a)) return TARGET;
 
-	else if (!IN_INDEPENDENT(a)) while (hack < next.size()) if (Oracle_M2_Exch(independent_set,next[hack++],a)) return next[--hack];
+	else if (!IN_INDEPENDENT(a)) while (hack < next.size()) if (O2->Exchangeable(next[hack++],a)) return next[--hack];
 
 	return -1;
 }
@@ -291,7 +191,7 @@ bool Augment() {
 	vector<int> prev_element;
 
 	while (l>=0)
-	{
+	{	
 		if (l<DISTANCE_TARGET)
 		{
 			// i think this condition is useless
@@ -354,25 +254,15 @@ bool Augment() {
 	return true;
 }
 
-void Augment_Recursive(int current) {
-	if (current == TARGET)
-		return;
-}
-
-size_t Cun86(int N_, bool (*a)(vector<int>), bool (*b)(vector<int>, int), bool (*c)(vector<int>, int, int),
-			 bool (*d)(vector<int>), bool (*e)(vector<int>, int), bool (*f)(vector<int>, int, int)) {  // O (nr^1.5T_ind) 
+//size_t SAP(int N_, Oracle* oracle1, Oracle* oracle2)
+size_t Cun86(int N_, Oracle* O1_, Oracle* O2_) {  // O (nr^{1.5}.T) 
 
 	N = N_;
 
-	M1 = a;
-	M1_Free = b;
-	M1_Exch = c;
+	O1 = O1_;
+	O2 = O2_;
 
-	M2 = d;
-	M2_Free = e;
-	M2_Exch = f;	
-
-	Init();
+	InitCun();
 	//for (int i=0; i<N; i++) distances[i]=numeric_limits<int>::max();
 	//Independent_Set_Greedy();
 
@@ -387,7 +277,4 @@ size_t Cun86(int N_, bool (*a)(vector<int>), bool (*b)(vector<int>, int), bool (
 	return SZ;
 }
 
-
-int main3() {
-	return 0;
-}
+//int main() {return 0;}

@@ -7,278 +7,107 @@
 #include <limits>
 #include <chrono>
 #include "Rank.h"
+#include "utils.h"
 
 using namespace std;
 using namespace std::chrono;
 
-#define 	MAX_V				100000
-#define 	min(u, v) 			(u<v ? u:v)
-#define		even(x)				x%2==0
-#define		odd(x)				x%2==1
-#define		SZ 					independent_set.size()
-#define 	IN_INDEPENDENT(a)	in_independent_set[a]
-
-#define		Rank_M1(S)					(*M1_Rank)(S)
-#define		Oracle_M2(S)				(*M2_Indep)(S)
-#define		Oracle_M2_Free(S,b)			(*M2_Free)(S,b)
-
-int N;
-vector<int> AUGMENTATIONS;
-
-vector<int>  independent_set;
-vector<bool> in_independent_set;
-vector<int>  index_;				  // index[i] = -1 if i-th element is not in S, index[i]=j 0<j<N-1 if i-th element is in S
+#define		Rank_M1(X)					(*M1_Rank)(X)
+#define		Oracle_M2(A,b)				(*M2_Exch)(A,b)
+#define		Oracle_M2_Free(b)			(*M2_Free)(b)
 
 int exchangeable; //hack
 int free_;		  //hack
 
-int DISTANCE_TARGET;
-int CURRENT_RANK;
 bool TARGET_IN_B;
 
 vector<int> B_S;
 vector<int> B_not_S;
 
-int *distances;
+vector<int> AUGMENTATIONS;
 
 int  (*M1_Rank)(vector <int>);
-bool (*M2_Indep)(vector <int>);
-bool (*M2_Free)(vector<int> S, int b);
-
-const int SOURCE = -2;
-const int TARGET = -3;
+bool (*M2_Exch)(vector <int>, int);
+bool (*M2_Free)(int);
 
 
-template<typename T>
-void DEBUG_VECTOR(const vector<T> &v) {
-	cout << "\nDEBUG BEGIN" << endl;
-	cout << "The vector size is " << v.size() << " and its " << "capacity is " << v.capacity() << endl;
-	cout << "Vector content:" << endl;
-	for (size_t i=0; i < v.size(); ++i) cout << v[i] << " ";
-	cout << "\nDEBUG END" << endl;
-}
+int FindExchange(int const b, vector<int> const &A) {
 
-template<typename T>
-vector<T> Slice(vector<T> const &v, int m, int n) {
-	auto first = v.cbegin() + m;
-	auto last = v.cbegin() + n;
-	vector<T> vec(first, last);
-	return vec;
-}
+	if (A.empty()) { cerr << "A is empty\n"; return -1; } // if A is empty, then the oracle essentially tests whether b is free or not
+	if (!M2_Exch(A,b)) return -1;
 
-
-// index[i] = -1 if i-th element is not in S, index[i]=j 0<j<N-1 if i-th element is in S
-void UpdateIndependentSet() {
-	independent_set.clear();
-	index_.clear();
-
-	for (int i = 0, j = 0; i < N; ++i)
-	{
-		index_[i] = -1;
-		if (IN_INDEPENDENT(i))
-		{
-			independent_set.push_back(i);
-			index_[i] = j++;
-		}
-	}
-}
-
-void PrintIndependentSet() {
-	cout << "INDEPENDENT SET FOUND WITH SIZE " << independent_set.size() << ":" << endl;
-	for (size_t i = 0; i < independent_set.size(); ++i) cout << independent_set[i] << " ";
-	cout << endl;
-}
-
-void PrintCandidates(vector<int> c[]) {
-	for (size_t i = 0; i < 3; ++i)
-	{
-		cout << "Distance " << i << endl;
-		for (int k : c[i])
-			cout << k << " ";
-		cout << endl;
-	}
-	cout << endl;
-}
-
-// returns V \subseteq S where all elements from A \subseteq S are removed from S
-// does not change the values of "index_" since the altered S is supposed only for a "quick call" to the oracle
-vector<int> RemoveSubset(vector<int> S, vector<int> A) {
-	// index[i] = -1 if i-th element is not in S, index[i]=j 0<j<N-1 if i-th element is in S
-	int j=0;
-	for (size_t i = 0; i < A.size(); i++)
-		if (index_[A[i]] != -1) {
-			S[index_[A[i]]] = -1; j++; }
-	vector<int> S_;
-	for (size_t i = 0; i < S.size(); i++)
-		if (S[i] != -1)
-			S_.push_back(i);
-	return S_;
-}
-
-
-/*
-
-def binary_search(arr, low, high, x):
- 
-    # Check base case
-    if high >= low:
- 
-        mid = (high + low) // 2
- 
-        # If element is present at the middle itself
-        if arr[mid] == x:
-            return mid
- 
-        # If element is smaller than mid, then it can only
-        # be present in left subarray
-        elif arr[mid] > x:
-            return binary_search(arr, low, mid - 1, x)
- 
-        # Else the element can only be present in right subarray
-        else:
-            return binary_search(arr, mid + 1, high, x)
- 
-    else:
-        # Element is not present in the array
-        return -1
- 
-
-arr = [ 2, 3, 4, 10, 40 ]
-x = 10
-
-result = binary_search(arr, 0, len(arr)-1, x)
- 
-if result != -1:
-    print("Element is present at index", str(result))
-else:
-    print("Element is not present in array")
-
-*/
-
-int FindExchange(bool (*Oracle)(vector<int>, int), int const b, vector<int> A) {
-
-	if (A.empty()) return -1;
-
-	int sz = A.size();
-	int l=0;
-	int r=sz-1;
-	int m;
-
-	vector<int> A1;
-	vector<int> S = RemoveSubset(independent_set,A);
-
-	if (!Oracle(S,b)) return -1;
+	int M;
+	int L=0;
+	int R=A.size()-1;
 
 	exchangeable = 0;
+	vector<int> A_;
 
-	while (sz > 1)
+	while (L < R)
 	{	
-		m = l + (r-l)/2;    // (l+r)/2
-		A1 = Slice(A, l, m);  // this takes O(|A|) operations overall. this could be deleted to improve running time, but then we would have to add the information of
-							  // which subset of A we want to consider to remove from S. 
-		S  = RemoveSubset(S, A1); // this takes (|S|+|A|)log|A| operations in total
-
-		if (Oracle(S,b)) // Oracle(S,A1,b)
-			r = exchangeable = m;
-		else
-			l = exchangeable = m;
+		M = L + (R-L)/2;      // (L+R)/2
+		A_ = Slice(A, L, M);  // this takes O(|A|) operations overall
 		
-		sz /= 2;
+		if (M2_Exch(A_,b)) // is S-A+b independent?
+ 			R = exchangeable = M;
+		else
+			L = exchangeable = M+1;
 	}
 	return A[exchangeable];
 }
 
 
-int FindFree(int (*RankOracle)(vector<int>), vector<int> S, vector<int> B) {
+int FindFree(vector<int> const &B) {
 	
-	if (B.empty()) return -1;
+	if (B.empty()) { cerr << "B is empty\n"; return -1; }
 
-	int sz = B.size();
-	int l=0;
-	int r=sz-1;
-	int m;
-	vector<int> B_U_S = S;
+	if (M1_Rank(B) == CURRENT_RANK) return -1;
 
-	for (size_t i=0; i<B.size(); i++) B_U_S.push_back(B[i]);
+	int L=0;
+	int R=B.size()-1;
+	int M;
 
-	if (RankOracle(B_U_S) == RankOracle(S)) return -1;
-
-	//CURRENT_RANK = RankOracle(S) + increment;
-	//if (RankOracle(A) == CURRENT_RANK) return -1;
-
+	vector<int> B_;
 	free_ = 0;
 
-	while (sz > 1)
+	while (L < R)
 	{
-		B_U_S = S;
-		m = l + (r-l)/2;  // (l+r)/2
-		
-		for (int i=l; i<m; i++)      // this takes O(|B|) operations in total
-			B_U_S.push_back(B[i]);
+		M = L + (R-L)/2;
+		B_ = Slice(B,L,M);		// this takes O(|B|) operations in total
 
-		if (RankOracle(B_U_S) > RankOracle(S))
-			r = free_ = m;
+		if (M1_Rank(B_) > CURRENT_RANK)
+			R = free_ = M;
 		else
-			l = free_= m;
-
-		sz /= 2;
-
+			L = free_ = M+1;
 	}
 	return B[free_];
 }
 
 
-/*
-int OutArc_OLD(int const a) {
-	vector<int> S;
-
-	if (a == SOURCE) { return FindFree(M1_Rank, independent_set, B_not_S); }
-
-	S = independent_set; //is this not too bad?
-	if (IN_INDEPENDENT(a))
-	{	
-		assert(S[index_[a]]!=-1);
-		swap(S[index_[a]], S.back());
-		S.pop_back();
-		return FindFree(M1_Rank, S, B_not_S);
-	}
-
-	S.push_back(a);  //i dont like this, maybe change to Oracle_M2_Free(S,a)
-	if (!IN_INDEPENDENT(a) && TARGET_IN_B && Oracle_M2(S)) { return TARGET; }
-	S.pop_back();
-
-	if (!IN_INDEPENDENT(a)) return FindExchange(M2_Exch_Set, a, B_S);
-
-	return -1;
-}*/
-
-
 // DANGER: alterar independent_set sem alterar index_
-int OutArc(int const a, const vector<int> L) {
+// TODO: work with addresses: vector<int> const &B
+int OutArc(int const a, const vector<int> B) {
 	vector<int> S;
 
-	if (a == SOURCE) return FindFree(M1_Rank, independent_set, L);
+	if (a == SOURCE) return FindFree(B); // M1_Rank 
 	
 	S = independent_set;
 	if (IN_INDEPENDENT(a))
-	{
+	{	
+		// need to check this for the BlockFlow routine:
 		// se nao quiseres fazer a cópia da linha S=independent_set e quiseres usar diretamente o independent_set, não te esqueças de atualizar o index_
 		assert(S[index_[a]]!=-1);
 		swap(S[index_[a]], S.back());
 		S.pop_back();
-		return FindFree(M1_Rank, S, L);
+		return FindFree(B); // M1_Rank
 	}
 
-	/* Maybe change the remainder of the routine to
-		if(TARGET_IN_B && Oracle_M2(S)) { TARGET_IN_B=false; return TARGET; }  pois !IN_INDEPENDENT(a) vai ser sempre verdade
-		return FindExchange(M2_Exch_Set, a, L); */
+	if (!IN_INDEPENDENT(a) && TARGET_IN_B && Oracle_M2_Free(a)) { TARGET_IN_B=false; return TARGET; }
 
-	if (!IN_INDEPENDENT(a) && TARGET_IN_B && Oracle_M2_Free(S,a)) { TARGET_IN_B=false; return TARGET; }
+	if (!IN_INDEPENDENT(a)) return FindExchange(a, B); // M2_Exch 
 
-	if (!IN_INDEPENDENT(a)) return FindExchange(M2_Free, a, L);
-
-	cerr << "something went wrong\n";
-	return -1; // signals "FALSE". in theory, the code should never reach here
+	cerr << "Something went wrong.\n"; //throw BadOraclesException(a,B);
+	return -1; // signals "FALSE". in theory, the code should never reach this line
 }
 
 
@@ -307,7 +136,7 @@ void GetDistancesRank() {
 	int b;
 	vector<int> B;
 
-	cout << "Starting BFS..." << endl;
+	cout << "Starting BFS" << endl;
 
 	while(!q.empty())	// Remark: B.pop_back() "funciona como" visited[i] = true numa BFS simples
 	{
@@ -335,6 +164,10 @@ void GetDistancesRank() {
 			
 			distances[b] = a==SOURCE? 1:distances[a]+1;
 			q.push(b);
+
+			/*
+			if (distance[b] > DISTANCE_TARGET) halt
+			*/
 
 			if (a==SOURCE) // || IN_INDEPENDENT(a))  >>> watch out segfault <<<
 			{
@@ -453,7 +286,6 @@ void BlockFlow() {
 			}
 
 			UpdateIndependentSet();
-			//CURRENT_RANK++
 
 			TARGET_IN_B = true;
 
@@ -472,7 +304,7 @@ void BlockFlow() {
 	return;
 }
 
-
+/*
 void FindGreedy() {
 	for (int i = 0; i < N; ++i)
 	{
@@ -485,21 +317,22 @@ void FindGreedy() {
 		}
 	}
 	return;
-}
+}*/
 
 void Init() {
 	in_independent_set.resize(N,false);
 	index_.resize(N,-1);
 	distances = new int[N]();
-	//TODO allocate candidates here maybe?
+	//TODO allocate candidates here: candidates = new int[N][N]?
+	CURRENT_RANK=0;
 }
 
-size_t ExactRank(int N_, int (*a)(vector<int>), bool (*b)(vector<int>), bool (*c)(vector<int>, int)) {
+size_t ExactRank(int N_, int (*a)(vector<int>), bool (*b)(vector<int>, int), bool (*c)(int)) {
 	
 	size_t s;
 	N = N_;
-	M1_Rank = a;
-	M2_Indep = b;
+	M1_Rank  = a;
+	M2_Exch  = b;
 	M2_Free  = c;
 
 	cout << "Init...\n";
@@ -507,7 +340,7 @@ size_t ExactRank(int N_, int (*a)(vector<int>), bool (*b)(vector<int>), bool (*c
 	//FindGreedy();
 	//UpdateIndependentSet();
 	
-	//TODO allocate candidates here maybe?
+	//TODO allocate candidates here
 
 	int x=0;
 	do
@@ -515,7 +348,7 @@ size_t ExactRank(int N_, int (*a)(vector<int>), bool (*b)(vector<int>), bool (*c
 		cout << "x:" << ++x << endl;
 		cout << "SZ, s = " << SZ << ", " << s << endl;
 		s = SZ;
-		BlockFlow();
+		BlockFlow(); //change BlockFlow to return SZ, then 1 liner s=BlockFlow();
 	} while (s != SZ);
 	
 	//UpdateIndependentSet(); //useless
@@ -528,34 +361,40 @@ size_t ExactRank(int N_, int (*a)(vector<int>), bool (*b)(vector<int>), bool (*c
 }
 
 
-size_t ApproxRank(int N_, int (*a)(vector<int>), bool (*b)(vector<int>), bool (*c)(vector<int>, int), double eps=0.1) {
+size_t ApproxRank(int N_, int (*a)(vector<int>), bool (*b)(vector<int>, int), bool (*c)(int), double eps=0.1) {
 
+	size_t s;
 	N = N_;
 
 	M1_Rank = a;
+	M2_Exch = b;
+	M2_Free = c;
 
-	M2_Indep = b;
-	M2_Free  = c;
+	//TODO allocate candidates here
 
 	int i = 0;
 
 	Init();
-	FindGreedy();
-	UpdateIndependentSet();
+	//FindGreedy();
+	//UpdateIndependentSet();
 	
-	while (i++ != (int)(1/eps) ) BlockFlow();  //FIXME 1/eps -_-
+	while (i++ != (int)(1/eps) or s!=SZ) //FIXME 1/eps
+	{
+		s=SZ;
+		BlockFlow(); //change BlockFlow to return SZ, then 1 liner s=BlockFlow();
+	}
 
 	//UpdateIndependentSet(); //useless
 	PrintIndependentSet();
 
 	delete[] distances;
-	//TODO free candidates here maybe?	
+	//TODO free candidates here	
 
 	return SZ;
 }
 
 
-//int main(){}
+int main(){}
 
 /*
 int main() {
