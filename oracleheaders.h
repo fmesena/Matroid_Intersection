@@ -1,0 +1,6 @@
+#include "oracles/Base.h"
+#include "oracles/Uniform.h"
+//#include "Graphic.h"
+#include "oracles/LeftMatching.h"
+#include "oracles/RightMatching.h"
+//#include "?.h"
