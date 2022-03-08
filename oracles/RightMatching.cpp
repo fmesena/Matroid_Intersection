@@ -34,5 +34,5 @@ bool RightMatching::Exchangeable_Set(vector<int> A, int b) {
     return false;
 }
 void RightMatching::show() {
-    std::cout << "Right Matching" << endl;
+    std::cout << "Right Matching: " << N << " edges" << endl;
 }

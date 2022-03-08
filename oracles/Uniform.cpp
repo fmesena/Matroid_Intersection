@@ -24,5 +24,5 @@ void Uniform::Update_State(vector<int> _S) { //TODO
     S=_S;
 }
 void Uniform::show() {
-    std::cout << "Uniform\n";
+    std::cout << "Uniform(" << n << "," << r << ")" << endl;
 }

@@ -9,7 +9,7 @@ using namespace std;
 class Oracle {
 public:
     int ORACLE_CALLS=0;
-    //vector<int> independent_set;
+    //vector<int> independent_set; to be defined in each concrete class
     inline Oracle() { ORACLE_CALLS = 0; }
     virtual int Rank(vector<int> B) = 0;
     virtual bool Exchangeable(int a, int b) = 0;

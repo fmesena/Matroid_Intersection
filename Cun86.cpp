@@ -5,36 +5,19 @@
 
 using namespace std;
 
-size_t hack;
+static Oracle* O1;
+static Oracle* O2;
+
+static size_t hack;
 
 vector<int> graph[MAX_V];
 vector<bool> X1;
 vector<bool> X2;
 
-Oracle* O1;
-Oracle* O2;
-
 void okCun() {
 	cout <<"okCun\n";
-	return;
-}
-
-void InitCun() {
-	in_independent_set.resize(N,false);
-	distances = new int[N]();
-	//TODO allocate candidates here maybe
-}
-
-void Independent_Set_Greedy() {   // O (n.T) 
-	for (int i = 0; i < N; ++i)
-	{
-		if (O1->Free(i) && O2->Free(i))
-		{
-			independent_set.push_back(i);
-			in_independent_set[i]=true;
-			//Update_State(); FIXME
-		}
-	}
+	//DISTANCE_TARGET++;
+	//cout << DISTANCE_TARGET << endl;
 	return;
 }
 
@@ -72,8 +55,6 @@ void Build_Exchange_Graph() {   // O (n + n.r.T)
 }
 
 bool BFS() {   // O(nr)
-
-	cout << "BFS\n";
 
 	const int NOT_VISITED = -1;
 	const int NO_AUGMENTATION = -4;
@@ -258,11 +239,10 @@ bool Augment() {
 size_t Cun86(int N_, Oracle* O1_, Oracle* O2_) {  // O (nr^{1.5}.T) 
 
 	N = N_;
-
 	O1 = O1_;
 	O2 = O2_;
 
-	InitCun();
+	Init(N);
 	//for (int i=0; i<N; i++) distances[i]=numeric_limits<int>::max();
 	//Independent_Set_Greedy();
 
@@ -271,10 +251,10 @@ size_t Cun86(int N_, Oracle* O1_, Oracle* O2_) {  // O (nr^{1.5}.T)
 	}
 	while (Augment());
 
+	independent_set.clear();
+	independent_set.push_back(3);
 	delete[] distances;
-	PrintIndependentSet();
+	//PrintIndependentSet();
 
 	return SZ;
 }
-
-//int main() {return 0;}

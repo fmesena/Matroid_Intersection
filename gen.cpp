@@ -78,7 +78,7 @@ vector<vector<int>> Generate_Arborescence(int V, int root) {
 }
 
 void okGEN() {
-	cout << "gen.cpp OK\n";
+	cout << "okGEN\n";
 }
 
 /* Checkers */

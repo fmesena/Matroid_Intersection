@@ -1,5 +1,15 @@
 #include "utils.h"
 
+void Init(int N_) {
+	not_independent.clear();
+	in_independent_set.clear();
+	in_independent_set.resize(N_, false);
+	distances = new int[N_]();
+	//TODO allocate candidates here maybe
+	index_.resize(N_,-1);
+	CURRENT_RANK=0;
+}
+
 template<typename T>
 void DEBUG_VECTOR(const vector<T> &v) {
 	cout << "DEBUG BEGIN" << endl;
@@ -17,7 +27,7 @@ vector<T> Slice(vector<T> const &v, int m, int n) {
 	return vec;
 }
 
-void reset(vector<int> &v) { vector<int>().swap(v); }
+void clear_swap(vector<int> &v) { vector<int>().swap(v); }
 
 void addEdge(vector<int> graph[], int u, int v) { graph[u].push_back(v); }
 
@@ -32,18 +42,18 @@ void printGraph(vector<int> graph[]) {
     }
 }
 
-void PrintIndependentSet() {
-	cout << "INDEPENDENT SET FOUND WITH SIZE " << independent_set.size() << ":" << endl;
-	for (int i = 0; i < independent_set.size(); ++i) cout << independent_set[i] << " ";
-	cout << endl;
-}
-
 bool equal_content_same_order(vector<int> &a, vector<int> &b) {
 	if (a.size() != b.size()) return false;
 	for (int i = 0; i < a.size(); ++i)
 		if (a[i] != b[i])
 			return false;
 	return true;
+}
+
+void PrintIndependentSet() {
+	cout << "###Solution: ";
+	for (int i = 0; i < independent_set.size(); ++i) cout << independent_set[i] << " ";
+	cout << endl;
 }
 
 // index[i] = -1 if i-th element is not in S, index[i]=j 0<j<N-1 if i-th element is in S
@@ -90,11 +100,3 @@ vector<int> RemoveSubset(vector<int> S, vector<int> A) {
 			S_.push_back(i);
 	return S_;
 }
-
-/*
-void Init() {
-	in_independent_set.resize(N,false);
-	distances = new int[N]();
-	//TODO allocate candidates here maybe
-}
-*/

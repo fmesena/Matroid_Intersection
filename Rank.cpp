@@ -12,23 +12,18 @@
 using namespace std;
 using namespace std::chrono;
 
-#define		Rank_M1(X)					(*M1_Rank)(X)
-#define		Oracle_M2(A,b)				(*M2_Exch)(A,b)
-#define		Oracle_M2_Free(b)			(*M2_Free)(b)
+static Oracle* O1;
+static Oracle* O2;
 
-int exchangeable; //hack
-int free_;		  //hack
+#define		M1_Rank(X)					O1->Rank(X)
+#define		M2_Exch(A,b)				O2->Exchangeable_Set(A,b)
+#define		Oracle_M2_Free(b)			O2->Free(b)
 
+static int exchangeable; //hack
+static int free_;		  //hack
 bool TARGET_IN_B;
-
 vector<int> B_S;
 vector<int> B_not_S;
-
-vector<int> AUGMENTATIONS;
-
-int  (*M1_Rank)(vector <int>);
-bool (*M2_Exch)(vector <int>, int);
-bool (*M2_Free)(int);
 
 
 int FindExchange(int const b, vector<int> const &A) {
@@ -304,43 +299,16 @@ void BlockFlow() {
 	return;
 }
 
-/*
-void FindGreedy() {
-	for (int i = 0; i < N; ++i)
-	{
-		independent_set.push_back(i);
-		in_independent_set[i]=true;
-		if (Rank_M1(independent_set)!=SZ || !Oracle_M2(independent_set))
-		{
-			independent_set.pop_back();
-			in_independent_set[i]=false;
-		}
-	}
-	return;
-}*/
-
-void Init() {
-	in_independent_set.resize(N,false);
-	index_.resize(N,-1);
-	distances = new int[N]();
-	//TODO allocate candidates here: candidates = new int[N][N]?
-	CURRENT_RANK=0;
-}
-
-size_t ExactRank(int N_, int (*a)(vector<int>), bool (*b)(vector<int>, int), bool (*c)(int)) {
+size_t ExactRank(int N_, Oracle* O1_, Oracle* O2_) {
 	
 	size_t s;
-	N = N_;
-	M1_Rank  = a;
-	M2_Exch  = b;
-	M2_Free  = c;
+	N  = N_;
+	O1 = O1_;
+	O2 = O2_;
 
 	cout << "Init...\n";
-	Init();
-	//FindGreedy();
+	Init(N);
 	//UpdateIndependentSet();
-	
-	//TODO allocate candidates here
 
 	int x=0;
 	do
@@ -361,21 +329,18 @@ size_t ExactRank(int N_, int (*a)(vector<int>), bool (*b)(vector<int>, int), boo
 }
 
 
-size_t ApproxRank(int N_, int (*a)(vector<int>), bool (*b)(vector<int>, int), bool (*c)(int), double eps=0.1) {
+size_t ApproxRank(int N_, Oracle* O1_, Oracle* O2_, double eps=0.1) {
 
 	size_t s;
-	N = N_;
-
-	M1_Rank = a;
-	M2_Exch = b;
-	M2_Free = c;
-
+	N  = N_;
+	O1 = O1_;
+	O2 = O2_;
+ 
 	//TODO allocate candidates here
 
 	int i = 0;
 
-	Init();
-	//FindGreedy();
+	Init(N);
 	//UpdateIndependentSet();
 	
 	while (i++ != (int)(1/eps) or s!=SZ) //FIXME 1/eps
@@ -392,32 +357,3 @@ size_t ApproxRank(int N_, int (*a)(vector<int>), bool (*b)(vector<int>, int), bo
 
 	return SZ;
 }
-
-
-int main(){}
-
-/*
-int main() {
-
-	cin >> N;
-
-	in_independent_set.resize(N,false);
-	index_.resize(N,-1);
-
-
-	auto start = high_resolution_clock::now();
-
-	ExactRank();
-	//ApproxRank(0.1);
-
-	auto stop = high_resolution_clock::now();
-
-	auto duration = duration_cast<microseconds>(stop - start);
-
-	cout << "Time taken by function: " << duration.count() << " microseconds" << endl;
-
-	PrintIndependentSet();
-
-	return 0;
-}
-*/

@@ -34,5 +34,5 @@ bool LeftMatching::Exchangeable_Set(vector<int> A, int b) {  // O(|A|)
     return false;
 }
 void LeftMatching::show() {
-    std::cout << "Left Matching" << endl;
+    std::cout << "Left Matching: " << N << " edges" << endl;
 }
