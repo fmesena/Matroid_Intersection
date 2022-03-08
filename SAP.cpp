@@ -5,34 +5,15 @@
 
 using namespace std;
 
-//vector<int> graph[MAX_V]; needed for the other version (see last comment at the end of the file)
+static Oracle* O1;
+static Oracle* O2;
 
 void okSAP() {
-	cout <<"okSAP\n";
-	DISTANCE_TARGET=2;
-	cout << DISTANCE_TARGET << endl;
+	cout <<"okSAP\n"; //DISTANCE_TARGET=2; cout << DISTANCE_TARGET << endl;
 	return;
 }
 
-void Init() {
-	in_independent_set.resize(N, false);
-	return;
-}
-
-void Find_Greedy(Oracle* O1, Oracle* O2) {   // O (n.T) 
-	for (int i = 0; i < N; ++i)
-	{
-		if (O1->Free(i) && O2->Free(i))
-		{
-			independent_set.push_back(i);
-			in_independent_set[i]=true;
-			//Update_State(); FIXME
-		}
-	}
-	return;
-}
-
-bool BFS_Without_Graph(Oracle* O1, Oracle* O2) {   // O (n + n.T + nr.T + 2r)
+bool BFS_Augment() {   // O (n + n.T + nr.T + 2r)
 
 	const int NOT_VISITED = -4;
 	const int NO_AUGMENTATION = -5;
@@ -54,7 +35,7 @@ bool BFS_Without_Graph(Oracle* O1, Oracle* O2) {   // O (n + n.T + nr.T + 2r)
 	for (int i = 0; i < N; ++i)
 		parent[i] = NOT_VISITED;
 
-	// Compute free elements wrt M1 and M2
+	// free elements
 	vector<bool> X1 = vector<bool>(not_independent.size(), false);
 	vector<bool> X2 = vector<bool>(not_independent.size(), false);
 	for (size_t i = 0; i < not_independent.size(); i++)
@@ -74,15 +55,16 @@ bool BFS_Without_Graph(Oracle* O1, Oracle* O2) {   // O (n + n.T + nr.T + 2r)
 			q.push(e);
 			parent[e] = SOURCE;
 		}
-    }
+	}
 
+	// bfs
 	int current;
+	int neighb;
 	int endpoint = NO_AUGMENTATION;
 
-    while (!q.empty())
-    {	
-    	int neighb;
-    	current = q.front(); q.pop();
+	while (!q.empty())
+	{	
+		current = q.front(); q.pop();
 
     	if (IN_INDEPENDENT(current))
     	{
@@ -109,33 +91,34 @@ bool BFS_Without_Graph(Oracle* O1, Oracle* O2) {   // O (n + n.T + nr.T + 2r)
 				if (!O2->Exchangeable(neighb, current)) continue;
 				q.push(neighb);
 				parent[neighb] = current;
-    		}
-    	}
-   	}
+			}
+		}
+	}
 
 	if (endpoint == NO_AUGMENTATION) return false;
-
-    do { 
+	
+	// augment
+	do {
     	in_independent_set[endpoint] = in_independent_set[endpoint] == true ? false:true;
 		endpoint = parent[endpoint];
 	} while (endpoint != SOURCE);
-
-	UpdateIndependentSet();
 
 	return true;
 }
 
 
-size_t SAP(int N_, Oracle* oracle1, Oracle* oracle2) {  // O (n.r^2.T) 
+size_t SAP(int N_, Oracle* O1_, Oracle* O2_) {  // O (n.r^2.T) 
 
 	N = N_;
+	O1 = O1_;
+	O2 = O2_;
 
-	Init();
-	//Independent_Set_Greedy();
+	Init(N);
+	//Find_Greedy();
 
-	while (BFS_Without_Graph(oracle1, oracle2));
+	while (BFS_Augment());
 
-	PrintIndependentSet();
+	//PrintIndependentSet();
 	return independent_set.size();
 }
 
@@ -181,6 +164,8 @@ int operation (int x, int y,int (*function)(int,int)){return function(x,y);}*/
 
 
 /* this is a version builiding the graph explicitly
+
+//vector<int> graph[MAX_V];
 
 bool BFS() {   // O (n + n.T + nr + 2r) 
 

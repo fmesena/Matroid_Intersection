@@ -9,10 +9,17 @@
 
 using namespace std;
 
-int exchangeable; //hack
+static Oracle* O1;
+static Oracle* O2;
 
+#define		M1_Exch(A,b)				O1->Exchangeable_Set(A,b)
+#define		M2_Exch(A,b)				O2->Exchangeable_Set(A,b)
+#define		Oracle_M1_Free(b)			O1->Free(b)
+#define		Oracle_M2_Free(b)			O2->Free(b)
 
-int FindExchange(bool (*Oracle)(vector<int>, int), int const b, vector<int> &A) {
+static int exchangeable; //hack
+
+int FindExchange(Oracle* oracle, int const b, vector<int> &A) {
 
 	if (A.empty()) { cerr << "A is empty\n"; return -1; }
 	if (!Oracle(A,b)) return -1;
@@ -29,7 +36,7 @@ int FindExchange(bool (*Oracle)(vector<int>, int), int const b, vector<int> &A) 
 		M = L + (R-L)/2;      // (L+R)/2
 		A_ = Slice(A, L, M);  // this takes O(|A|) operations overall
 		
-		if (Oracle(A_,b)) // is S-A+b independent?
+		if (oracle->Exchangeable_Set(A_,b)) // is S-A+b independent?
 			R = exchangeable = M;
 		else
 			L = exchangeable = M+1;
@@ -38,22 +45,7 @@ int FindExchange(bool (*Oracle)(vector<int>, int), int const b, vector<int> &A) 
 }
 
 
-void FindGreedy() {
-	for (int i = 0; i < N; ++i)
-	{
-		independent_set.push_back(i);
-		in_independent_set[i]=true;
-		if (!Oracle_M1(independent_set) || !Oracle_M2(independent_set))
-		{
-			independent_set.pop_back();
-			in_independent_set[i]=false;
-		}
-	}
-	return;
-}
-
-
-void GetDistancesIndep(bool (*Oracle1)(vector<int>, int), bool (*Oracle2)(vector<int>, int), int *distance, vector<int> candidates[]) {
+void GetDistancesIndep(Oracle* O1, Oracle* O2, int *distance, vector<int> candidates[]) {
 
 	int l = 0;
 	int marked = 0;
@@ -98,7 +90,7 @@ void GetDistancesIndep(bool (*Oracle1)(vector<int>, int), bool (*Oracle2)(vector
 				cout << "\nVisiting " << b << endl;
 				if (Q.empty()) { cout << "Q.empty()" << endl; break;} // irrelevant but why not
 
-				while ( (a = FindExchange(Oracle2, b, Q)) != -1)
+				while ( (a = FindExchange(O2, b, Q)) != -1)
 				{
 					cout << "\nArc from " << b << " to " << a << endl;
 					
@@ -129,7 +121,7 @@ void GetDistancesIndep(bool (*Oracle1)(vector<int>, int), bool (*Oracle2)(vector
 			DEBUG_VECTOR(candidates[l+1]);
 			for (int b : candidates[l+1])
 			{
-				arc = l==0 ? (Oracle_M1_Free(independent_set, b) && !IN_INDEPENDENT(b)) : (FindExchange(Oracle1, b, candidates[l]) != -1);
+				arc = l==0 ? (Oracle_M1_Free(independent_set, b) && !IN_INDEPENDENT(b)) : (FindExchange(O1, b, candidates[l]) != -1);
 				cout << "l: " << l << " arc: " << arc << endl;
 				if (arc)
 				{
@@ -221,13 +213,15 @@ void OnePath(int *distance, vector<int> candidates[]) {
 }
 
 
-void AugmentingPaths(bool (*Oracle1)(vector<int>, int), bool (*Oracle2)(vector<int>, int)) {
+void AugmentingPaths(int N_, Oracle* O1_, Oracle* O2_) {
 
-	FindGreedy();
-	UpdateIndependentSet();
-	PrintIndependentSet();
+	cout << "Indep alive\n";
 
-	int *distance = new int[N]();
+	N  = N_;
+	O1 = O1_;
+	O2 = O2_;
+
+	Init(N);
 	// Remark: the shortest path from SOURCE to TARGET has at most 2*(SZ+1) arcs.
 	vector<int> candidates[200];
 	//maybe  vector< vector<int> > e no final de cada iteraçao faço 2x. push_back de vector<int>
@@ -275,7 +269,7 @@ void AugmentingPaths(bool (*Oracle1)(vector<int>, int), bool (*Oracle2)(vector<i
 	return;
 }
 
-
+/*
 int main() {
 
 	cin >> N;
@@ -288,4 +282,4 @@ int main() {
 	PrintIndependentSet();
 
 	return 0;
-}
+}*/
