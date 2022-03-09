@@ -10,5 +10,6 @@ void GetDistancesRank();
 void BlockFlow();
 size_t ExactRank (int, Oracle*, Oracle*);
 size_t ApproxRank(int, Oracle*, Oracle*, double eps);
+void okRank();
 
 #endif

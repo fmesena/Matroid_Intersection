@@ -3,10 +3,10 @@
 #include <time.h>
 #include <chrono>
 #include <unordered_map>
-#include "Rank.h"
-//#include "Indep.h"
 #include "SAP.h"
 #include "Cun86.h"
+#include "Rank.h"
+#include "Indep.h"
 //#include "Bipartite_Matching.h"
 #include "gen.h"
 #include "oracleheaders.h"
@@ -51,6 +51,8 @@ int main() {
 	okSAP();
 	okCun();
 	okGEN();
+	okRank();
+	okIndep();
 
 	while (RUNS++ < 1) 
 	{		

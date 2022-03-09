@@ -10,6 +10,9 @@ static Oracle* O2;
 
 void okSAP() {
 	cout <<"okSAP\n"; //DISTANCE_TARGET=2; cout << DISTANCE_TARGET << endl;
+	okutils();
+	vector<int> x = vector<int>(5,2);
+	DEBUG_VECTOR(x);
 	return;
 }
 

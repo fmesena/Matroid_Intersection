@@ -5,12 +5,10 @@
 #include <stack>
 #include <assert.h>
 #include <limits>
-#include <chrono>
-#include "Rank.h"
 #include "utils.h"
+#include "Rank.h"
 
 using namespace std;
-using namespace std::chrono;
 
 static Oracle* O1;
 static Oracle* O2;
@@ -20,11 +18,12 @@ static Oracle* O2;
 #define		Oracle_M2_Free(b)			O2->Free(b)
 
 static int exchangeable; //hack
-static int free_;		  //hack
-bool TARGET_IN_B;
-vector<int> B_S;
-vector<int> B_not_S;
+static int free_;		 //hack
+static bool TARGET_IN_B;
+static vector<int> B_S;
+static vector<int> B_not_S;
 
+void okRank() {cout<<"okRank\n";}
 
 int FindExchange(int const b, vector<int> const &A) {
 
@@ -34,7 +33,7 @@ int FindExchange(int const b, vector<int> const &A) {
 	int M;
 	int L=0;
 	int R=A.size()-1;
-
+	okutils();
 	exchangeable = 0;
 	vector<int> A_;
 

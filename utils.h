@@ -29,10 +29,21 @@ extern int CURRENT_RANK;
 //extern int **candidates; TODO
 
 template<typename T>
-void DEBUG_VECTOR(const std::vector<T> &v);
+void DEBUG_VECTOR(const vector<T> &v) {
+	cout << "DEBUG BEGIN" << endl;
+	cout << "The vector size is " << v.size() << " and its " << "capacity is " << v.capacity() << endl;
+	cout << "Vector content:" << endl;
+	for (int i = 0; i < v.size(); ++i) cout << v[i] << endl;
+	cout << "DEBUG END" << endl;
+}
 
 template<typename T>
-std::vector<T> Slice(std::vector<T> const &v, int m, int n);
+vector<T> Slice(vector<T> const &v, int m, int n) {
+	auto first = v.cbegin() + m;
+	auto last = v.cbegin() + n+1;
+	vector<T> vec(first, last);
+	return vec;
+}
 
 void Init(int);
 void clear_swap(std::vector<int> &v);
@@ -43,5 +54,6 @@ bool equal_content_same_order(vector<int> &a, vector<int> &b);
 void PrintCandidates(vector<int> c[]);
 void UpdateIndependentSet();
 vector<int> RemoveSubset(vector<int> S, vector<int> A);
+void okutils();
 
 #endif

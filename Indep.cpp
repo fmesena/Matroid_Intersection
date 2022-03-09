@@ -19,10 +19,12 @@ static Oracle* O2;
 
 static int exchangeable; //hack
 
+void okIndep() {cout<<"okIndep\n";}
+
 int FindExchange(Oracle* oracle, int const b, vector<int> &A) {
 
 	if (A.empty()) { cerr << "A is empty\n"; return -1; }
-	if (!Oracle(A,b)) return -1;
+	if (!oracle->Exchangeable_Set(A,b)) return -1;
 
 	int M;
 	int L=0;
@@ -45,7 +47,7 @@ int FindExchange(Oracle* oracle, int const b, vector<int> &A) {
 }
 
 
-void GetDistancesIndep(Oracle* O1, Oracle* O2, int *distance, vector<int> candidates[]) {
+void GetDistancesIndep(int *distances, vector<int> candidates[]) {
 
 	int l = 0;
 	int marked = 0;
@@ -55,7 +57,7 @@ void GetDistancesIndep(Oracle* O1, Oracle* O2, int *distance, vector<int> candid
 
 	// unnecessary, already done along the execution of GetDistancesIndep- CHECK THIS
 	/*for (int i = 0; i < N; ++i)
-		candidates[distance[i]].push_back(i);*/
+		candidates[distances[i]].push_back(i);*/
 
 	while (l >= 0)
 	{
@@ -94,7 +96,7 @@ void GetDistancesIndep(Oracle* O1, Oracle* O2, int *distance, vector<int> candid
 				{
 					cout << "\nArc from " << b << " to " << a << endl;
 					
-					distance[a] = l+1;
+					distances[a] = l+1;
 					marked++;
 					
 					swap(Q[exchangeable], Q.back());
@@ -121,12 +123,12 @@ void GetDistancesIndep(Oracle* O1, Oracle* O2, int *distance, vector<int> candid
 			DEBUG_VECTOR(candidates[l+1]);
 			for (int b : candidates[l+1])
 			{
-				arc = l==0 ? (Oracle_M1_Free(independent_set, b) && !IN_INDEPENDENT(b)) : (FindExchange(O1, b, candidates[l]) != -1);
+				arc = l==0 ? (O1->Free(b) && !IN_INDEPENDENT(b)) : (FindExchange(O1, b, candidates[l]) != -1);
 				cout << "l: " << l << " arc: " << arc << endl;
 				if (arc)
 				{
 					cout << "arc to " << b << endl;
-					distance[b] = l+1;
+					distances[b] = l+1;
 					updated_l_plus_one.push_back(b);
 					marked++;
 				}
@@ -141,7 +143,7 @@ void GetDistancesIndep(Oracle* O1, Oracle* O2, int *distance, vector<int> candid
 }
 
 
-void OnePath(int *distance, vector<int> candidates[]) {
+void OnePath(int *distances, vector<int> candidates[]) {
 	assert(even(DISTANCE_TARGET));
 	
 	int l = DISTANCE_TARGET;
@@ -165,7 +167,7 @@ void OnePath(int *distance, vector<int> candidates[]) {
 
 			if (a == TARGET)
 			{
-				if (Oracle_M2_Free(independent_set,b))
+				if (O2->Free(b))
 				{
 					cout << "setting " << b << " to true" << endl;
 					in_independent_set[b] = true;
@@ -177,7 +179,7 @@ void OnePath(int *distance, vector<int> candidates[]) {
 			{
 				if (odd(l))
 				{
-					if (Oracle_M1_Exch(independent_set,b,a))
+					if (O1->Exchangeable(b,a))
 					{
 						in_independent_set[a] = true;
 						in_independent_set[b] = false;
@@ -186,7 +188,7 @@ void OnePath(int *distance, vector<int> candidates[]) {
 				}
 				else if (even(l))
 				{
-					if (Oracle_M2_Exch(independent_set,a,b))
+					if (O2->Exchangeable(a,b))
 					{
 						in_independent_set[a] = false;
 						in_independent_set[b] = true;
@@ -200,7 +202,7 @@ void OnePath(int *distance, vector<int> candidates[]) {
 				swap(candidates[l-1][i], candidates[l-1].back());
 				candidates[l-1].pop_back(); //
 				candidates[l].push_back(b);	/*if b was in S, then it entered V\S. if b was in V\S, then it entered S. in both cases, its new distance is at least its current distance plus one*/
-				distance[b]++;				//
+				distances[b]++;				//
 				a=b;
 				break; 
 			}
@@ -230,12 +232,12 @@ void AugmentingPaths(int N_, Oracle* O1_, Oracle* O2_) {
 	{
 		if (IN_INDEPENDENT(i))
 		{
-			distance[i] = 2;
+			distances[i] = 2;
 			candidates[2].push_back(i);
 		}
 		else
 		{
-			distance[i] = 1;
+			distances[i] = 1;
 			candidates[1].push_back(i);
 		}
 	}
@@ -246,16 +248,16 @@ void AugmentingPaths(int N_, Oracle* O1_, Oracle* O2_) {
 
 	while (true)
 	{
-		GetDistancesIndep(Oracle1,Oracle2,distance,candidates);
+		GetDistancesIndep(distances,candidates);
 		cout << "DistancesIndep finished. Target reached with distance " << DISTANCE_TARGET << endl;
 
 		if (DISTANCE_TARGET < numeric_limits<int>::max())
 		{
-			OnePath(distance,candidates);
+			OnePath(distances,candidates);
 			UpdateIndependentSet();
 			PrintIndependentSet();
-			cout << "\ndistance:"<<endl;
-			for (int i=0; i<N; i++) cout << distance[i] << " ";
+			cout << "\ndistances:"<<endl;
+			for (int i=0; i<N; i++) cout << distances[i] << " ";
 			cout << endl << endl;
 		}
 		else break;
@@ -263,23 +265,8 @@ void AugmentingPaths(int N_, Oracle* O1_, Oracle* O2_) {
 
 	cout << "Finished AugmentingPaths" << endl;
 
-	delete[] distance;
-	//TODO free(candidates);
+	delete[] distances;
+	//TODO delete[][] candidates;
 
 	return;
 }
-
-/*
-int main() {
-
-	cin >> N;
-
-	in_independent_set.resize(N,false);
-	index_.resize(N,-1);
-
-	AugmentingPaths(&Oracle_PowerSet_Free,&Oracle_Uniform_Free);
-
-	PrintIndependentSet();
-
-	return 0;
-}*/
