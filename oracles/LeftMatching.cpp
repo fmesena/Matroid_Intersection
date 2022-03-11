@@ -1,8 +1,9 @@
 #include "LeftMatching.h"
 
-LeftMatching::LeftMatching(int _N, vector<Edge> _edges):Oracle() {
-    N = _N;
-    edges = _edges;
+LeftMatching::LeftMatching(int N_, vector<Edge> edges_):Oracle() {
+    N = N_;
+    edges = edges_;
+    left = vector<int>(N_,0);
 }
 void LeftMatching::Update_State(vector<int> S) {  //additive factor of O(r^2)
     left = {0};
@@ -13,6 +14,9 @@ bool LeftMatching::Exchangeable(int a, int b) {  //O(1)
     return left[edges[b].u]==0 || edges[a].u == edges[b].u;
 }
 bool LeftMatching::Free(int b) {  //O(1)
+    std::cout<<"LM\n";
+    std::cout<<b<<endl;
+    std::cout<<"LM\n";
     return left[edges[b].u]==0;
 }
 int LeftMatching::Rank(vector<int> B) {  //O(n)

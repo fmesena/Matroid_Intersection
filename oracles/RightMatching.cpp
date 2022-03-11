@@ -1,8 +1,9 @@
 #include "RightMatching.h"
 
-RightMatching::RightMatching(int _N, vector<Edge> _edges):Oracle() {
-    N = _N;
-    edges = _edges;
+RightMatching::RightMatching(int N_, vector<Edge> edges_):Oracle() {
+    N = N_;
+    edges = edges_;
+    right = vector<int>(N_,0);
 }
 void RightMatching::Update_State(vector<int> S) {
     right = {0};

@@ -1,16 +1,20 @@
+#include <cstdlib>
 #include "gen.h"
+
+void okGEN() {cout << "okGEN\n";}
 
 /* Generators */
 
-vector<vector<int>> GenerateGraph_Matchings(int V) {
+//vector<vector<int>>
+
+pair<vector<vector<int>>, vector<Edge>> GenerateGraph_Matchings(int V) {
 	vector<vector<int>> graph;
 	vector<Edge> edges;
-	//V = rand() % 1000 + 50;  //does not generate uniformly distributed random numbers in the span (since in most cases this operation makes lower numbers slightly more likely)
 	int arc;
-	if (V%2==1) V++;
-	for (int i = 0; i < V+1; ++i) graph.push_back(vector<int>());
-	for (int i = 1; i <= V/2; ++i)
-		for (int j = 1+V/2; j <= V; ++j) {
+	for (int i = 0; i < V; ++i)
+		graph.push_back(vector<int>());
+	for (int i = 0; i < V/2; ++i)
+		for (int j = V/2; j < V; ++j) {
 			arc = rand() % 2;
 			if (!arc) continue;
 			edges.push_back({i,j});
@@ -23,7 +27,7 @@ vector<vector<int>> GenerateGraph_Matchings(int V) {
 		cout << e.u << " " << e.v << endl;
 	
 	//For flows we add soure and target with ids "0" and "V+1"
-	for (int i = 1; i <= V/2; ++i)
+	/*for (int i = 1; i <= V/2; ++i)
 	{
 		graph[0].push_back(i);
 		graph[i].push_back(0);
@@ -33,17 +37,17 @@ vector<vector<int>> GenerateGraph_Matchings(int V) {
 	{
 		graph[V+1].push_back(i);
 		graph[i].push_back(V+1);
-	}
+	}*/
 
 	cout << "\nAdj list\n";
-	for (int i=0; i<=V+1; i++)
+	for (int i=0; i<V; i++)
 	{
 		cout << i << ": ";
 		for (auto x : graph[i])
 			cout << x << " ";
 		cout << endl;
 	}
-	return graph;
+	return {graph,edges};
 }
 
 //TODO include designated root "r"
@@ -75,10 +79,6 @@ vector<vector<int>> Generate_Arborescence(int V, int root) {
 		cout << endl;
 	}
 	return graph;
-}
-
-void okGEN() {
-	cout << "okGEN\n";
 }
 
 /* Checkers */

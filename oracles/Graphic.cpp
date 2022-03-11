@@ -1,9 +1,8 @@
 #include "Graphic.h"
 
-Graphic::Graphic(int _N/*, LCT _lct*/) {
-    Base();
-    N = _N;
-    //lct = _lct;
+Graphic::Graphic(int N_, LCT lct_):Oracle() {
+    N = N_;
+    lct = lct_;
 }
 bool Graphic::Exchangeable(int a, int b) {  // 4*lgN amortized
     /*
@@ -35,7 +34,7 @@ int Graphic::Rank(vector<int> B) { //TODO
 bool Graphic::Exchangeable_Set(vector<int> A, int b) {  //TODO
     return true;
 }
-void Graphic::Update_State(vector<int> _S) {  //TODO
+void Graphic::Update_State(vector<int> S_) {  //TODO
     //lct[S[i]]...
 }
 void Graphic::show() {

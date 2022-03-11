@@ -1,6 +1,7 @@
 #include "utils.h"
 
 void Init(int N_) {
+	independent_set.clear();
 	not_independent.clear();
 	in_independent_set.clear();
 	in_independent_set.resize(N_, false);

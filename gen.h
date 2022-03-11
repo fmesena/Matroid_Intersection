@@ -8,7 +8,7 @@
 
 using namespace std;
 
-vector<vector<int>> GenerateGraph_Matchings(int);
+pair<vector<vector<int>>, vector<Edge>> GenerateGraph_Matchings(int);
 vector<vector<int>> Generate_Arborescence(int, int);
 void okGEN();
 bool assertArb(vector<Edge>, vector<vector<int>>);

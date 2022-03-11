@@ -14,7 +14,7 @@ public:
     LeftMatching(int, vector<Edge>);
     bool Exchangeable(int, int);
     bool Free(int);
-    int Rank(vector<int>);
+    int  Rank(vector<int>);
     bool Exchangeable_Set(vector<int>, int);
     void Update_State(vector<int>);
     void show();

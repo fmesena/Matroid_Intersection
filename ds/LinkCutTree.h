@@ -13,7 +13,7 @@ extern "C" {
 
 //#include "graph.h"
 
-typedef struct LCT* LCT; /** Link-Cut tree abstract data type. */
+typedef struct _LCT* LCT; /** Link-Cut tree abstract data type. */
 /* typedef ... LCTAux;  */  /* Bad idea exposess splay tree internals. AVOID. */
 
 /** @return Empty LCT, over vertexes labelled 1 to V */

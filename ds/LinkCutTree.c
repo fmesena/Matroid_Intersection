@@ -18,9 +18,9 @@
     }
 }*/
 
-typedef struct LCT* LCTAux; /** Used to represent splay trees. */
+typedef struct _LCT* LCTAux; /** Used to represent splay trees. */
 
-struct LCT { /** This structure is used to represent a node in the LCT. */
+struct _LCT { /** This structure is used to represent a node in the LCT. */
   //uint64_t h; /** h value for node number */
   //uint64_t Hf; /** hash value for the sequence on the sub-tree (forward). */
   //uint64_t Hb; /** hash value for the sequence on the sub-tree (forward). */
@@ -386,7 +386,7 @@ splay(LCT t,
 
       pt = (intptr_t) t[v].hook;
       pt -= (intptr_t) t[p].hook;
-      pt %= sizeof(struct LCT);
+      pt %= sizeof(struct _LCT);
 
       if (0 == pt) /* Zig Zig case */
         rotate(t, &t[p]);
@@ -415,7 +415,7 @@ ptrToIndex(LCT t,
   if (NULL != p) {
     pr = (intptr_t) p;
     pr -= (intptr_t) t;
-    pr /= sizeof(struct LCT);
+    pr /= sizeof(struct _LCT);
     r = (int) pr;
   }
 
@@ -488,7 +488,7 @@ allocLCT(int V /**< [in] Number of vertexes of the underlying graph */
   LCT t;
   int i;
 
-  t = (LCT) malloc((V+1)*sizeof(struct LCT));
+  t = (LCT) malloc((V+1)*sizeof(struct _LCT));
   *(int*)t = V; /* Store number of vertexes */
 
   /*i = V;

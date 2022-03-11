@@ -7,7 +7,7 @@
 #include "Cun86.h"
 #include "Rank.h"
 #include "Indep.h"
-//#include "Bipartite_Matching.h"
+#include "Bipartite_Matching.h"
 #include "gen.h"
 #include "oracleheaders.h"
 
@@ -48,15 +48,28 @@ int main() {
 
 	V=20;
 
-	okSAP();
+	/*okSAP();
 	okCun();
 	okGEN();
 	okRank();
 	okIndep();
+	okBM();*/
 
 	while (RUNS++ < 1) 
 	{		
-		//GenerateGraph();
+		V = rand() % 10+6;  //does not generate uniformly distributed random numbers in the span (since in most cases this operation makes lower numbers slightly more likely)
+		if (V%2==1) V++;
+		//int xx=EdmondsKarp(V/2,GenerateGraph_Matchings(V));
+		//cout << "Flow: " << xx << endl;
+		V=6;
+		pair<vector<vector<int>>,vector<Edge>> x = GenerateGraph_Matchings(V);
+		vector<vector<int>> g=x.first;
+		vector<Edge> edgelist=x.second;
+
+		LeftMatching  *lm = new LeftMatching(V,edgelist); //rewrite into PartitionMatroid(int V, vector<vector<int>> partition, vector<int> ks)  assert(ks==partition.size())
+		RightMatching *rm = new RightMatching(V,edgelist);
+		lm->show();
+		rm->show();
 
 		cout << "\n###Iteration number: " << RUNS << endl;
 
@@ -66,7 +79,7 @@ int main() {
 		//uo2->show();
 
 		auto start = high_resolution_clock::now();
-		S = SAP(5,uo1,uo2);
+		S = SAP(edgelist.size(),lm,rm);
 		auto stop = high_resolution_clock::now();
 		auto duration = duration_cast<microseconds>(stop - start);
 		cout << "###SAP\n";
@@ -79,7 +92,7 @@ int main() {
 		myfile << endl;
 
 
-		start = high_resolution_clock::now();
+		/*start = high_resolution_clock::now();
 		C = Cun86(5,uo1,uo2);
 		stop = high_resolution_clock::now();
 		duration = duration_cast<microseconds>(stop - start);
@@ -88,7 +101,7 @@ int main() {
 		printsol();
 		cout << "###Resources:\n";
 		cout << "   Calls: " << uo1->getOracleCalls()+uo2->getOracleCalls() << endl; //max(uo1->getOracleCalls(),uo2->getOracleCalls())
-		cout << "   Time:  "   << duration.count() << " microseconds" << endl;
+		cout << "   Time:  "   << duration.count() << " microseconds" << endl;*/
 
 		myfile << V << " " << C << " " << duration.count() << " " << endl;
 
@@ -103,7 +116,8 @@ int main() {
 	}
 	
 	myfile.close();
-
+	cout << endl;
+	
 	return 0;
 }
 
