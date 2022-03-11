@@ -2,7 +2,7 @@
 #define CUN86_H_
 
 #include "oracles/Base.h"
-
+#include "utils.h"
 void okCun();
 void Build_Exchange_Graph();
 bool BFS();

@@ -2,6 +2,7 @@
 #define SAP_H_
 
 #include "oracles/Base.h"
+#include "utils.h"
 
 void okSAP();
 bool BFS_Augment();
