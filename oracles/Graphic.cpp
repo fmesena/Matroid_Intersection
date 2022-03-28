@@ -1,8 +1,8 @@
 #include "Graphic.h"
 
-Graphic::Graphic(int N_, LCT lct_):Oracle() {
+Graphic::Graphic(int N_):Oracle() {
     N = N_;
-    lct = lct_;
+    lct = allocLCT(N);
 }
 bool Graphic::Exchangeable(int a, int b) {  // 4*lgN amortized
     /*
@@ -34,9 +34,13 @@ int Graphic::Rank(vector<int> B) { //TODO
 bool Graphic::Exchangeable_Set(vector<int> A, int b) {  //TODO
     return true;
 }
-void Graphic::Update_State(vector<int> S_) {  //TODO
+void Graphic::Update_State(vector<int> S) {  //TODO
     //lct[S[i]]...
 }
 void Graphic::show() {
     std::cout << "Graphic matroid oracle (LCT)" << endl;
+
+    link(lct,2,3);
+    showLCT(lct,"teste");
+    showRepTree(lct,"rep.dot"); //use with GraphViz online
 }

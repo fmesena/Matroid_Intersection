@@ -3,9 +3,6 @@
 #include <vector>
 #include <queue>
 #include <stack>
-#include <assert.h>
-#include <limits>
-#include "utils.h"
 #include "Rank.h"
 
 using namespace std;
@@ -201,7 +198,7 @@ void BlockFlow() {
 	if (DISTANCE_TARGET == numeric_limits<int>::max()) { cout << "Target unreachable\n"; return; }
 
 	// TODO: update candidates along the execution of GetDistancesRank
-	vector<int> candidates[2*SZ+3]; //FIXME magic numbers, 2*SZ+3 is just a safe upper bound on the number of distinc distancess
+	ClearCandidates();
 	for (int i = 0; i < N; ++i)
 		if (distances[i] != numeric_limits<int>::max())
 			candidates[distances[i]].push_back(i);
@@ -217,7 +214,7 @@ void BlockFlow() {
 	vector<int>  indexes;
 	vector<int>  prev_element;
 
-	//PrintCandidates(candidates);
+	//PrintCandidates();
 
 	int augmenting_paths_count = 0;
 
@@ -227,16 +224,16 @@ void BlockFlow() {
 	{
 		if (l<DISTANCE_TARGET)
 		{	
-			// i think this condition is useless
-			if (candidates[l].empty()) {
-				cout << "not useless after all...\n";
+			// when the current layer only has useless elements they are all removed => there is no way of reaching a vertex with distance l+1 (considering the distances at the beginning of the stage)
+			if (candidates[l+1].empty()) {
         		return;
       		}
       		cout << "Current:" << current << ", at level " << l << endl;
 			int next = OutArc(current, candidates[l+1]);
 			cout << "Next:" << next << endl;
 			if (next == -1)
-			{
+			{	
+				// this block corresponds to the part of removing the so called "useless" elements (Cunningham)
 				if (current != SOURCE)
 				{
 					swap(candidates[l].back(), candidates[l][indexes.back()]);
@@ -255,6 +252,7 @@ void BlockFlow() {
 				if (next != TARGET)
 				{
 					path.push_back(next);
+					//indexes.push_back(exchangeble);
 					indexes.push_back(l%2==0 ? free_:exchangeable); //even layer correspond to SOURCE and elements in S, odd correspond to elements in \overline{S}
 					prev_element.push_back(current);
 
@@ -264,7 +262,7 @@ void BlockFlow() {
 			}
 		}
 
-		if (l==DISTANCE_TARGET)
+		if (l==DISTANCE_TARGET) //FIXME need to check if last element in the path is free wrt M2
 		{
 			augmenting_paths_count++;
 			cout << "l==DISTANCE_TARGET, apc: " << augmenting_paths_count << endl;
@@ -280,6 +278,8 @@ void BlockFlow() {
 			}
 
 			UpdateIndependentSet();
+			O1->Update_State(independent_set);
+			O2->Update_State(independent_set);
 
 			TARGET_IN_B = true;
 
@@ -322,7 +322,10 @@ size_t ExactRank(int N_, Oracle* O1_, Oracle* O2_) {
 	PrintIndependentSet();
 
 	delete[] distances;
-	//TODO free candidates here maybe?	
+	/*for (int i = 0; i < ?; i++) {
+        delete[] candidates[i];
+    }
+    delete[] candidates;*/
 
 	return SZ;
 }
@@ -334,14 +337,10 @@ size_t ApproxRank(int N_, Oracle* O1_, Oracle* O2_, double eps=0.1) {
 	N  = N_;
 	O1 = O1_;
 	O2 = O2_;
- 
-	//TODO allocate candidates here
-
-	int i = 0;
 
 	Init(N);
-	//UpdateIndependentSet();
 	
+	int i = 0;
 	while (i++ != (int)(1/eps) or s!=SZ) //FIXME 1/eps
 	{
 		s=SZ;
@@ -352,7 +351,10 @@ size_t ApproxRank(int N_, Oracle* O1_, Oracle* O2_, double eps=0.1) {
 	PrintIndependentSet();
 
 	delete[] distances;
-	//TODO free candidates here	
+	/*for (int i = 0; i < ?; i++) {
+        delete[] candidates[i];
+    }
+    delete[] candidates;*/	
 
 	return SZ;
 }

@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <vector>
 #include <iostream>
+#include <cassert>
 #include "ds/Edge.h"
 
 using namespace std;

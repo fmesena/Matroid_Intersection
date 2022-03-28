@@ -1,13 +1,14 @@
 #include "utils.h"
 
 void Init(int N_) {
+	MAX_DIST = N_+1;
 	independent_set.clear();
 	not_independent.clear();
-	in_independent_set.clear();
 	in_independent_set.resize(N_, false);
-	distances = new int[N_]();
-	//TODO allocate candidates here maybe
+	in_independent_set.clear();
 	index_.resize(N_,-1);
+	distances = new int[N_];
+	candidates = vector<vector<int>>(MAX_DIST);
 	CURRENT_RANK=0;
 }
 
@@ -35,7 +36,7 @@ bool equal_content_same_order(vector<int> &a, vector<int> &b) {
 }
 
 void PrintIndependentSet() {
-	cout << "###Solution: ";
+	cout << "###Curent solution: ";
 	for (int i = 0; i < independent_set.size(); ++i) cout << independent_set[i] << " ";
 	cout << endl;
 }
@@ -59,15 +60,21 @@ void UpdateIndependentSet() {
 	CURRENT_RANK++;
 }
 
-void PrintCandidates(vector<int> c[]) {
-	for (int i = 0; i < 3; ++i)
+void PrintCandidates() {
+	cout << "Printing candidates\n";
+	for (int i = 0; i < MAX_DIST; ++i)
 	{
 		cout << "Distance " << i << endl;
-		for (int k : c[i])
+		for (int k : candidates[i])
 			cout << k << " ";
 		cout << endl;
 	}
 	cout << endl;
+}
+
+void ClearCandidates() {
+	for (int i = 0; i < MAX_DIST; ++i)
+		candidates[i].clear();
 }
 
 // returns V \subseteq S where all elements from A \subseteq S are removed from S

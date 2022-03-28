@@ -8,6 +8,7 @@ void okGEN() {cout << "okGEN\n";}
 //vector<vector<int>>
 
 pair<vector<vector<int>>, vector<Edge>> GenerateGraph_Matchings(int V) {
+	assert(V%2==0);
 	vector<vector<int>> graph;
 	vector<Edge> edges;
 	int arc;
@@ -22,9 +23,9 @@ pair<vector<vector<int>>, vector<Edge>> GenerateGraph_Matchings(int V) {
 			graph[j].push_back(i);
 		}
 	size_t E = edges.size();
-	cout << "Edge list\n";
+	/*cout << "Edge list\n";
 	for (Edge e : edges)
-		cout << e.u << " " << e.v << endl;
+		cout << e.u << " " << e.v << endl;*/
 	
 	//For flows we add soure and target with ids "0" and "V+1"
 	/*for (int i = 1; i <= V/2; ++i)
@@ -39,14 +40,14 @@ pair<vector<vector<int>>, vector<Edge>> GenerateGraph_Matchings(int V) {
 		graph[i].push_back(V+1);
 	}*/
 
-	cout << "\nAdj list\n";
+	/*cout << "\nAdj list\n";
 	for (int i=0; i<V; i++)
 	{
 		cout << i << ": ";
 		for (auto x : graph[i])
 			cout << x << " ";
 		cout << endl;
-	}
+	}*/
 	return {graph,edges};
 }
 

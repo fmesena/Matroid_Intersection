@@ -289,13 +289,16 @@ int main() {
 /************ EDMONDS KARP ***********/
 /*************************************/
 
-static int N; // number of nodes in the left or right side of the bipartition
+static int N;
 static int s;
 static int t;
-static int capacity[10000][10000] = {0}; //could be a 0-1 matrix
+//The matrix capacity stores the capacity for every pair of vertices
+//adj is the adjacency list of the undirected graph, since we have also to use the reversed of directed edges when we are looking for augmenting paths
+static int **capacity; //could be a 0-1 matrix in this particular case
 static vector<vector<int>> adj;
 
-int bfsEK(vector<int>& parent) {
+
+int bfsEK(vector<int> &parent) {
     fill(parent.begin(), parent.end(), -1);
     parent[s] = -2;
     queue<pair<int, int>> q;
@@ -305,7 +308,6 @@ int bfsEK(vector<int>& parent) {
         int cur = q.front().first;
         int flow = q.front().second;
         q.pop();
-
         for (int next : adj[cur]) {
             if (parent[next] == -1 && capacity[cur][next]) {
                 parent[next] = cur;
@@ -324,31 +326,33 @@ int EdmondsKarp(int N_, vector<vector<int>> g) {
 	N = N_;
 	adj = g;
 
-	s = 0;
-	t = 2*N+1;
-
-    int flow = 0;
-    int new_flow;
-    vector<int> parent(2*N+2);
-
-	////
-	/*for (int i=1; i<=N; i++) {
-		adj[s].push_back(i); adj[i].push_back(s);
+	capacity = new int*[N+2];
+	for (int i = 0; i < N+2; ++i) {
+		capacity[i] = new int[N+2];
 	}
-	for (int i=N+1; i<=2*N; i++) {
-		adj[i].push_back(t); adj[t].push_back(i);
-	}*/
 
-	for (int i = 1; i <= N; ++i)
+	s = N;
+	t = N+1;
+	
+	for (int i = 0; i < N/2; ++i)
 	{
-		capacity[s][i] = 1;   capacity[i][s] = 0;
-		capacity[i+N][t] = 1; capacity[t][i+N] = 0;
 		for (auto x : adj[i]) {
 			capacity[i][x] = 1;
 			capacity[x][i] = 0;
 		}
  	}
-	////
+    adj.push_back(vector<int>());
+    adj.push_back(vector<int>());
+	for (int i=0; i<N/2; i++) {
+		adj[s].push_back(i); adj[i].push_back(s);
+		adj[i+N/2].push_back(t); adj[t].push_back(i+N/2);
+		capacity[s][i]=1; capacity[i+N/2][t]=1;
+		capacity[i][s]=0; capacity[t][i+N/2]=0;
+	}
+ 	
+	int flow = 0;
+	int new_flow;
+	vector<int> parent(N+2);
 
     while (new_flow = bfsEK(parent)) {
         flow += new_flow;
@@ -360,5 +364,44 @@ int EdmondsKarp(int N_, vector<vector<int>> g) {
             cur = prev;
         }
     }
+	for (int i = 0; i < N+2; i++) {
+		delete[] capacity[i];
+	}
+	delete[] capacity;
     return flow;
 }
+
+/*void GenerateGraph_Matchings(int V) {
+	assert(V%2==0);
+	int arc;
+	for (int i = 0; i < V; ++i)
+		adj.push_back(vector<int>());
+	for (int i = 0; i < V/2; ++i)
+		for (int j = V/2; j < V; ++j) {
+			arc = rand() % 2;
+			if (!arc) continue;
+			adj[i].push_back(j);
+			adj[j].push_back(i);
+		}
+	return;
+}
+
+void pg() {
+	cout << "Adj list\n";
+	for (int i=0; i<N; i++)
+	{
+		cout << i << ": ";
+		for (auto x : adj[i])
+			cout << x << " ";
+		cout << endl;
+	}
+}
+
+int main() {
+	N=500;
+	GenerateGraph_Matchings(N);
+	pg();
+	int res = EdmondsKarp();
+	cout << "Flow: " << res << endl;
+	return 0;
+}*/

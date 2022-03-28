@@ -2,11 +2,12 @@
 #define INDEP_H_
 
 #include "oracles/Base.h"
+#include "utils.h"
 
-int FindExchange(Oracle*, int const, std::vector<int> const &A);
-void GetDistancesIndep(int*, std::vector<int> candidates[]);
-void OnePath(int*, std::vector<int> candidates[]);
-void AugmentingPaths(Oracle*, Oracle*);
 void okIndep();
+int FindExchange(Oracle*, int const, std::vector<int> const &A);
+void GetDistancesIndep();
+void OnePath();
+size_t AugmentingPaths(int, Oracle*, Oracle*);
 
 #endif

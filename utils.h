@@ -5,6 +5,7 @@
 #include <vector>
 #include <iostream>
 #include <assert.h>
+#include <limits>
 
 using namespace std;
 
@@ -13,7 +14,7 @@ using namespace std;
 #define		even(x)				x%2==0
 #define		odd(x)				!even(x)
 #define		SZ 					independent_set.size()
-#define 	IN_INDEPENDENT(a)	in_independent_set[a]==true
+#define 	IN_INDEPENDENT(i)	in_independent_set[i]==true
 #define 	SOURCE 				-2
 #define 	TARGET 				-3
 
@@ -23,10 +24,11 @@ extern vector<int>  independent_set;
 extern vector<int>  not_independent;
 extern vector<bool> in_independent_set;
 extern vector<int>  index_;  // index[i]=-1 if i-th element is not in S, index[i]=j 0<j<N-1 if i-th element is in S
-extern int  DISTANCE_TARGET;
+extern int DISTANCE_TARGET;
 extern int *distances;
+extern vector<vector<int>> candidates;
 extern int CURRENT_RANK;
-//extern int **candidates; TODO
+extern int MAX_DIST;
 
 template<typename T>
 void DEBUG_VECTOR(const vector<T> &v) {
@@ -51,7 +53,8 @@ void addEdge(std::vector<int> graph[], int u, int v);
 void printGraph(std::vector<int> graph[]);
 void PrintIndependentSet();
 bool equal_content_same_order(vector<int> &a, vector<int> &b);
-void PrintCandidates(vector<int> c[]);
+void PrintCandidates();
+void ClearCandidates();
 void UpdateIndependentSet();
 vector<int> RemoveSubset(vector<int> S, vector<int> A);
 void okutils();

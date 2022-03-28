@@ -3,11 +3,11 @@
 
 #include "oracles/Base.h"
 #include "utils.h"
+
 void okCun();
-void Build_Exchange_Graph();
-bool BFS();
+bool GetDistances();
 int  FindArc(int const);
-bool Augment();
+void Augment();
 size_t Cun86(int, Oracle*, Oracle*);
 
 #endif

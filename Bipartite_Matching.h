@@ -1,6 +1,7 @@
 #ifndef BIPARTITE_MATCHING_H_
 #define BIPARTITE_MATCHING_H_
 
+#include <stdlib.h>
 #include<vector>
 
 using namespace std;

@@ -2,28 +2,21 @@
 #include <algorithm>
 #include <vector>
 #include <queue>
-#include <assert.h>
-#include <limits>
 #include "Indep.h"
-#include "utils.h"
 
 using namespace std;
 
 static Oracle* O1;
 static Oracle* O2;
-
-#define		M1_Exch(A,b)				O1->Exchangeable_Set(A,b)
-#define		M2_Exch(A,b)				O2->Exchangeable_Set(A,b)
-#define		Oracle_M1_Free(b)			O1->Free(b)
-#define		Oracle_M2_Free(b)			O2->Free(b)
-
 static int exchangeable; //hack
+
 
 void okIndep() {cout<<"okIndep\n";}
 
+
 int FindExchange(Oracle* oracle, int const b, vector<int> &A) {
 
-	if (A.empty()) { cerr << "A is empty\n"; return -1; }
+	if (A.empty()) { cout << "A is empty\n"; return -1; }
 	if (!oracle->Exchangeable_Set(A,b)) return -1;
 
 	int M;
@@ -47,58 +40,40 @@ int FindExchange(Oracle* oracle, int const b, vector<int> &A) {
 }
 
 
-void GetDistancesIndep(int *distances, vector<int> candidates[]) {
+void GetDistancesIndep() {
 
 	int l = 0;
-	int marked = 0;
-
 	DISTANCE_TARGET = numeric_limits<int>::max();
 	vector<int> updated_l_plus_one;
 
-	// unnecessary, already done along the execution of GetDistancesIndep- CHECK THIS
-	/*for (int i = 0; i < N; ++i)
-		candidates[distances[i]].push_back(i);*/
-
 	while (l >= 0)
 	{
-		cout << "\nMarked: " << marked << endl;
-		cout << "DISTANCE_TARGET: " << DISTANCE_TARGET << endl;
-		cout << "Layer: " << l << endl << endl;
-		
-		PrintCandidates(candidates);
+		//cout << "Layer: " << l << endl << endl;
+		//PrintCandidates(N+5,candidates);
 
 		updated_l_plus_one.clear();
+		
 		if (odd(l))
 		{	
+			if (candidates[l].empty()) return;
+			for (int b : candidates[l]) if (O2->Free(b)) { /*cout << "FREE M2\n";*/ DISTANCE_TARGET=min(DISTANCE_TARGET,l+1);}
+
 			if (candidates[l+1].empty())
-			{
-				cout << "\nEND IN ODD" << endl;
-				if (marked == N) { cout << "TARGET REACHED: " << l+1 << endl; DISTANCE_TARGET = min(DISTANCE_TARGET,l+1);} 
 				return;
-			}
 
 			int a;
 			vector<int> Q = candidates[l+1];
-			DEBUG_VECTOR(Q);
 
 			for (int b : candidates[l])
 			{
-				/*
-				if (IN_INDEPENDENT(b))
+				if (Q.empty()) break;
+				//cout << "SIZE: " << Q.size() << " " << l << endl;
+				while ( (!Q.empty()) && (a = FindExchange(O2, b, Q)) != -1)
 				{
-					candidates[l+1].push_back(b);
-					continue;
-				}*/
-				cout << "\nVisiting " << b << endl;
-				if (Q.empty()) { cout << "Q.empty()" << endl; break;} // irrelevant but why not
-
-				while ( (a = FindExchange(O2, b, Q)) != -1)
-				{
-					cout << "\nArc from " << b << " to " << a << endl;
+					//cout << "arc M2" << endl;
 					
 					distances[a] = l+1;
-					marked++;
-					
+
 					swap(Q[exchangeable], Q.back());
 					Q.pop_back();
 
@@ -106,31 +81,24 @@ void GetDistancesIndep(int *distances, vector<int> candidates[]) {
 				}
 			}
 			candidates[l+1] = updated_l_plus_one; 			 // L_l+1 <- L_l+1 - Q
-			for (int q : Q)	  candidates[l+3].push_back(q);	 // L_l+3 <- L_l+3 + Q
+			for (int q : Q)   candidates[l+3].push_back(q);	 // L_l+3 <- L_l+3 + Q, not done in O(1) :(
 		}
-
+		//even(l)
 		else
 		{
-
-			if (candidates[l+1].empty())
-			{
-				cout << "\nEND IN EVEN" << endl;
-				if (marked == N) cout << "\nVISITED ALL NODES || TARGET UNREACHABLE\n" << endl;
-				return;
-			}
-
+			if (candidates[l].empty() && l!=0) cerr << "even layer candidates[l] is empty " << l << endl;
 			bool arc;
-			DEBUG_VECTOR(candidates[l+1]);
 			for (int b : candidates[l+1])
 			{
-				arc = l==0 ? (O1->Free(b) && !IN_INDEPENDENT(b)) : (FindExchange(O1, b, candidates[l]) != -1);
-				cout << "l: " << l << " arc: " << arc << endl;
-				if (arc)
+				bool x=l==0;
+				//cout << "SIZE: " << candidates[l].size() << " " << l << endl;
+				arc = x ? O1->Free(b) : FindExchange(O1, b, candidates[l]) != -1; // O1->Exchangeble_Set(candidates[l],b);
+				cout << arc << " " << b << " " << x << endl;
+				if (arc==1)
 				{
-					cout << "arc to " << b << endl;
 					distances[b] = l+1;
 					updated_l_plus_one.push_back(b);
-					marked++;
+					//cout << "arc M1\n";
 				}
 				else
 					candidates[l+3].push_back(b);
@@ -143,24 +111,24 @@ void GetDistancesIndep(int *distances, vector<int> candidates[]) {
 }
 
 
-void OnePath(int *distances, vector<int> candidates[]) {
+void OnePath() {
 	assert(even(DISTANCE_TARGET));
-	
-	int l = DISTANCE_TARGET;
-	int a = TARGET;
+	assert(candidates[0].size()==0);
+	//cout << "OnePath begin\n";
+	int b;
 	bool arc;
+	int a = TARGET;
+	int l = DISTANCE_TARGET;
 	vector<int> Q;
 
 	while (l>0)
 	{
-		cout << "\nWhile com l=" << l << endl;
+		//cout << "\nWhile com l=" << l << endl;
 		Q = candidates[l-1];
 		DEBUG_VECTOR(candidates[l-1]);
 		arc = false;
 
-		int b;
-
-		for (int i=0; i < candidates[l-1].size(); i++)
+		for (int i=0; i < candidates[l-1].size(); i++) //when l=1 we do not enter the loop since any element with distane 1 is free in M1
 		{
 			
 			b = candidates[l-1][i];
@@ -181,7 +149,6 @@ void OnePath(int *distances, vector<int> candidates[]) {
 				{
 					if (O1->Exchangeable(b,a))
 					{
-						in_independent_set[a] = true;
 						in_independent_set[b] = false;
 						arc=true;
 					}
@@ -190,7 +157,6 @@ void OnePath(int *distances, vector<int> candidates[]) {
 				{
 					if (O2->Exchangeable(a,b))
 					{
-						in_independent_set[a] = false;
 						in_independent_set[b] = true;
 						arc=true;		
 					}
@@ -204,30 +170,30 @@ void OnePath(int *distances, vector<int> candidates[]) {
 				candidates[l].push_back(b);	/*if b was in S, then it entered V\S. if b was in V\S, then it entered S. in both cases, its new distance is at least its current distance plus one*/
 				distances[b]++;				//
 				a=b;
-				break; 
+				break;
 			}
 		}
 		l--;
 	}
+	PrintCandidates();
 	// when l is odd,  S - b + a_l \in I_1
 	// when l is even, S - a_l + b \in I_2
+	UpdateIndependentSet();
+	O1->Update_State(independent_set);
+	O2->Update_State(independent_set);
 	return;
 }
 
 
-void AugmentingPaths(int N_, Oracle* O1_, Oracle* O2_) {
-
-	cout << "Indep alive\n";
+size_t AugmentingPaths(int N_, Oracle* O1_, Oracle* O2_) {
 
 	N  = N_;
 	O1 = O1_;
 	O2 = O2_;
 
 	Init(N);
-	// Remark: the shortest path from SOURCE to TARGET has at most 2*(SZ+1) arcs.
-	vector<int> candidates[200];
-	//maybe  vector< vector<int> > e no final de cada iteraçao faço 2x. push_back de vector<int>
 
+	//distance lower bounds
 	for (int i = 0; i < N; ++i)
 	{
 		if (IN_INDEPENDENT(i))
@@ -248,25 +214,27 @@ void AugmentingPaths(int N_, Oracle* O1_, Oracle* O2_) {
 
 	while (true)
 	{
-		GetDistancesIndep(distances,candidates);
-		cout << "DistancesIndep finished. Target reached with distance " << DISTANCE_TARGET << endl;
+		GetDistancesIndep();
+		//cout << "DistancesIndep finished. Target reached with distance " << DISTANCE_TARGET << endl;
 
 		if (DISTANCE_TARGET < numeric_limits<int>::max())
 		{
-			OnePath(distances,candidates);
-			UpdateIndependentSet();
-			PrintIndependentSet();
-			cout << "\ndistances:"<<endl;
-			for (int i=0; i<N; i++) cout << distances[i] << " ";
-			cout << endl << endl;
+			OnePath();
+			//PrintIndependentSet();
+			//cout << "\ndistances:"<<endl;
+			//for (int i=0; i<N; i++) cout << distances[i] << " ";
+			//cout << endl << endl;
 		}
 		else break;
 	}
 
-	cout << "Finished AugmentingPaths" << endl;
+	//cout << "Finished AugmentingPaths" << endl;
 
 	delete[] distances;
-	//TODO delete[][] candidates;
+	/*for (int i = 0; i < ?; i++) {
+        delete[] candidates[i];
+    }
+    delete[] candidates;*/
 
-	return;
+	return SZ;
 }
