@@ -4,6 +4,8 @@
 #define NIL 0
 #define INF INT_MAX
 
+using namespace std;
+
 void okBM() {cout<<"okBM\n";}
 
 /*

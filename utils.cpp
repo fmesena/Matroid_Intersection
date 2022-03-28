@@ -1,5 +1,7 @@
 #include "utils.h"
 
+using namespace std;
+
 void Init(int N_) {
 	MAX_DIST = N_+1;
 	independent_set.clear();

@@ -1,6 +1,8 @@
 #include <cstdlib>
 #include "gen.h"
 
+using namespace std;
+
 void okGEN() {cout << "okGEN\n";}
 
 /* Generators */

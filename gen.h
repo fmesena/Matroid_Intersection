@@ -7,13 +7,11 @@
 #include <cassert>
 #include "ds/Edge.h"
 
-using namespace std;
-
-pair<vector<vector<int>>, vector<Edge>> GenerateGraph_Matchings(int);
-vector<vector<int>> Generate_Arborescence(int, int);
+std::pair<std::vector<std::vector<int>>, std::vector<Edge>> GenerateGraph_Matchings(int);
+std::vector<std::vector<int>> Generate_Arborescence(int, int);
 void okGEN();
-bool assertArb(vector<Edge>, vector<vector<int>>);
-bool assertGraphic(vector<Edge>, vector<vector<int>>, vector<vector<int>>);
-bool assertMatching(vector<Edge>);
+bool assertArb(std::vector<Edge>, std::vector<std::vector<int>>);
+bool assertGraphic(std::vector<Edge>, std::vector<std::vector<int>>, std::vector<std::vector<int>>);
+bool assertMatching(std::vector<Edge>);
 
 #endif

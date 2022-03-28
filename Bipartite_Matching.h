@@ -4,11 +4,9 @@
 #include <stdlib.h>
 #include<vector>
 
-using namespace std;
-
-int bfsEK(vector<int>& parent);
+int bfsEK(std::vector<int>& parent);
 bool DFS(int u);
-int EdmondsKarp(int, vector<vector<int>>);
+int EdmondsKarp(int, std::vector<std::vector<int>>);
 int HopcroftKarp_();
 int HopcroftKarp();
 void AddEdge_(int u, int v);
