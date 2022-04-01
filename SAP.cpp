@@ -9,14 +9,6 @@ static Oracle* O2;
 static vector<bool> X1;
 static vector<bool> X2;
 
-void okSAP() {
-	cout <<"okSAP\n"; //DISTANCE_TARGET=2; cout << DISTANCE_TARGET << endl;
-	okutils();
-	vector<int> x = vector<int>(5,2);
-	DEBUG_VECTOR(x);
-	return;
-}
-
 bool BFS_Augment() {   // O (n + n.T + nr.T + 2r)
 
 	const int NOT_VISITED = -4;
@@ -36,9 +28,6 @@ bool BFS_Augment() {   // O (n + n.T + nr.T + 2r)
 	O1->Update_State(independent_set);
 	O2->Update_State(independent_set);
 
-	//DEBUG_VECTOR(in_independent_set);
-	//DEBUG_VECTOR(independent_set);
-	//DEBUG_VECTOR(not_independent);
 	int parent[N];
 	queue<int> q;
 
@@ -46,32 +35,25 @@ bool BFS_Augment() {   // O (n + n.T + nr.T + 2r)
 		parent[i] = NOT_VISITED;
 	}
 
-	//DEBUG_VECTOR(not_independent);
 	fill (X1.begin(),X1.end(),false);
 	fill (X2.begin(),X2.end(),false);
-	//cout << "not indep size: " << not_independent.size() << endl;
 	for (size_t i = 0; i < not_independent.size(); i++)
 	{
 		int e = not_independent[i];
-		if (O1->Free(e)) X1[i] = true;
-		if (O2->Free(e)) X2[i] = true;
-		if (X1[i] && X2[i])
+		if (O1->Free(e)) X1[e] = true;
+		if (O2->Free(e)) X2[e] = true;
+		if (X1[e] && X2[e])
 		{
 			in_independent_set[not_independent[i]] = true;
-			//cout << "be free!\n";
 			return true;
 		}
-		if (X1[i]) 
+		if (X1[e]) 
 		{
-			//cout << "Pushing to queue: " << e << endl;
 			q.push(e);
 			parent[e] = SOURCE;
 		}
 	}
-	//cout<<"between\n";
-	//DEBUG_VECTOR(X1);
-	//DEBUG_VECTOR(X2);
-	// bfs
+
 	int current;
 	int neighb;
 	int endpoint = NO_AUGMENTATION;
@@ -79,7 +61,6 @@ bool BFS_Augment() {   // O (n + n.T + nr.T + 2r)
 	while (!q.empty())
 	{	
 		current = q.front(); q.pop();
-		//cout <<"BFS expanding: " << current << endl;
     	if (IN_INDEPENDENT(current))
     	{
     		for (size_t i = 0; i < not_independent.size(); ++i)
@@ -88,7 +69,6 @@ bool BFS_Augment() {   // O (n + n.T + nr.T + 2r)
     			if (parent[neighb] != NOT_VISITED) continue;
 				if (!O1->Exchangeable(current, neighb)) continue;
 				q.push(neighb);
-				//cout << "exchanging M1\n";
 				parent[neighb] = current;
     		}
     	}
@@ -105,7 +85,6 @@ bool BFS_Augment() {   // O (n + n.T + nr.T + 2r)
     			if (parent[neighb] != NOT_VISITED) continue;
 				if (!O2->Exchangeable(neighb, current)) continue;
 				q.push(neighb);
-				//cout << "exchanging M2\n";
 				parent[neighb] = current;
 			}
 		}
@@ -113,12 +92,10 @@ bool BFS_Augment() {   // O (n + n.T + nr.T + 2r)
 
 	if (endpoint == NO_AUGMENTATION) return false;
 	
-	// augment
 	do {
     	in_independent_set[endpoint] = in_independent_set[endpoint] == true ? false:true;
 		endpoint = parent[endpoint];
 	} while (endpoint != SOURCE);
-	//cout << "finished improving current sol";
 	return true;
 }
 
@@ -133,6 +110,9 @@ size_t SAP(int N_, Oracle* O1_, Oracle* O2_) {  // O (n.r^2.T)
 	in_independent_set.clear();
 	X1 = vector<bool>(N, false);
 	X2 = vector<bool>(N, false);
+	for (int i = 0; i < N; ++i) {
+		not_independent.push_back(i);
+	}
 
 	while (BFS_Augment());
 
