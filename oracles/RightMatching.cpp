@@ -10,6 +10,14 @@ void RightMatching::Update_State(vector<int> S) {
     for (size_t i = 0; i < S.size(); ++i)
         right [edges[S[i]].v] = 1;
 }
+void RightMatching::Temp_Update_State(int a, bool to_be_added) {
+    if (to_be_added) {
+        right [edges[a].v] = 1;
+    }
+    else {
+        right [edges[a].v] = 0;
+    }
+}
 bool RightMatching::Exchangeable(int a, int b) {
     ORACLE_CALLS++;
     return right[edges[b].v]==0 || edges[a].v == edges[b].v;
@@ -24,18 +32,19 @@ int RightMatching::Rank(vector<int> B) {
     int r=0;
     for (int i=0; i<B.size(); i++)
     {
-        if (occupied[edges[i].v] == 1) continue;
-        occupied[edges[i].v] = 1;
+        if (occupied[edges[B[i]].v] == 1) continue;
+        occupied[edges[B[i]].v] = 1;
         r++;
     }
-    return r;
+    return r; //returns rank(B\cup S)
 }
 bool RightMatching::Exchangeable_Set(vector<int> A, int b) {
     ORACLE_CALLS++;
-    if (right[edges[b].v]==0) return true;
-    for (int a:A)
-        if (edges[a].v == edges[b].v)
+    for (int a:A) {
+        if (edges[a].v == edges[b].v) {
             return true;
+        }
+    }
     return false;
 }
 void RightMatching::show() {

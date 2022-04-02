@@ -327,7 +327,7 @@ int EdmondsKarp(int N_, vector<vector<int>> g) {
 
 	N = N_;
 	adj = g;
-
+	
 	capacity = new int*[N+2];
 	for (int i = 0; i < N+2; ++i) {
 		capacity[i] = new int[N+2];
@@ -343,11 +343,12 @@ int EdmondsKarp(int N_, vector<vector<int>> g) {
 			capacity[x][i] = 0;
 		}
  	}
-    adj.push_back(vector<int>());
-    adj.push_back(vector<int>());
+ 	
+    adj.push_back(vector<int>()); //source
+    adj.push_back(vector<int>()); //target
 	for (int i=0; i<N/2; i++) {
-		adj[s].push_back(i); adj[i].push_back(s);
-		adj[i+N/2].push_back(t); adj[t].push_back(i+N/2);
+		adj[s].push_back(i); adj[i+N/2].push_back(t);
+		adj[i].push_back(s); adj[t].push_back(i+N/2);
 		capacity[s][i]=1; capacity[i+N/2][t]=1;
 		capacity[i][s]=0; capacity[t][i+N/2]=0;
 	}
@@ -373,6 +374,8 @@ int EdmondsKarp(int N_, vector<vector<int>> g) {
     return flow;
 }
 
+
+
 /*void GenerateGraph_Matchings(int V) {
 	assert(V%2==0);
 	int arc;
@@ -388,7 +391,7 @@ int EdmondsKarp(int N_, vector<vector<int>> g) {
 	return;
 }
 
-void pg() {
+void pgg() {
 	cout << "Adj list\n";
 	for (int i=0; i<N; i++)
 	{

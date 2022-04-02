@@ -17,6 +17,7 @@ public:
     int  Rank(vector<int>);
     bool Exchangeable_Set(vector<int>, int);
     void Update_State(vector<int>);
+    void Temp_Update_State(int, bool);
     void show();
 };
 

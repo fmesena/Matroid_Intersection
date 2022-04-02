@@ -8,9 +8,8 @@
 #include <limits>
 
 #define 	MAX_V				100000
-#define 	min(u, v) 			(u<v ? u:v)
+#define		odd(x)				x%2==1
 #define		even(x)				x%2==0
-#define		odd(x)				!even(x)
 #define		SZ 					independent_set.size()
 #define 	IN_INDEPENDENT(i)	in_independent_set[i]==true
 #define 	SOURCE 				-2
@@ -53,8 +52,8 @@ void PrintIndependentSet();
 bool equal_content_same_order(std::vector<int> &a, std::vector<int> &b);
 void PrintCandidates();
 void ClearCandidates();
+void UpdateIndependentSetNew(int);
 void UpdateIndependentSet();
 std::vector<int> RemoveSubset(std::vector<int> S, std::vector<int> A);
-void okutils();
 
 #endif

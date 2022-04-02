@@ -1,15 +1,10 @@
 #include <cstdlib>
 #include "gen.h"
 
-using namespace std;
+using std::pair, std::vector, std::cout, std::endl, std::string;
 
-void okGEN() {cout << "okGEN\n";}
 
-/* Generators */
-
-//vector<vector<int>>
-
-pair<vector<vector<int>>, vector<Edge>> GenerateGraph_Matchings(int V) {
+pair<vector<vector<int>>, vector<Edge>> Generate_BipartiteGraph(int V) {
 	assert(V%2==0);
 	vector<vector<int>> graph;
 	vector<Edge> edges;
@@ -28,19 +23,6 @@ pair<vector<vector<int>>, vector<Edge>> GenerateGraph_Matchings(int V) {
 	/*cout << "Edge list\n";
 	for (Edge e : edges)
 		cout << e.u << " " << e.v << endl;*/
-	
-	//For flows we add soure and target with ids "0" and "V+1"
-	/*for (int i = 1; i <= V/2; ++i)
-	{
-		graph[0].push_back(i);
-		graph[i].push_back(0);
-	}
-
-	for (int i = 1+V/2; i <= V; ++i)
-	{
-		graph[V+1].push_back(i);
-		graph[i].push_back(V+1);
-	}*/
 
 	/*cout << "\nAdj list\n";
 	for (int i=0; i<V; i++)
@@ -52,6 +34,33 @@ pair<vector<vector<int>>, vector<Edge>> GenerateGraph_Matchings(int V) {
 	}*/
 	return {graph,edges};
 }
+
+
+vector<vector<int>> Generate_SimpleGraph(int V, int type) {
+	vector<vector<int>> graph;
+	vector<Edge> edges;
+	/*
+	type 0 = random p=...,
+	type 1 = random p=...,
+	type 2 = random p=...,
+	type 3 = SFN    ...,
+	...
+	type n = ...
+	
+	https://en.cppreference.com/w/cpp/language/enum
+	enum Color { red, green, blue };
+	Color r = red;
+	 
+	switch(r)
+	{
+	    case red  : std::cout << "red\n";   break;
+	    case green: std::cout << "green\n"; break;
+	    case blue : std::cout << "blue\n";  break;
+	}
+	*/
+	return graph;
+}
+
 
 //TODO include designated root "r"
 vector<vector<int>> Generate_Arborescence(int V, int root) {
@@ -84,24 +93,36 @@ vector<vector<int>> Generate_Arborescence(int V, int root) {
 	return graph;
 }
 
+
 /* Checkers */
 
-bool assertMatching(vector<Edge> matching) {
-	cout << "assertMatching\n";
-	return true;
+void assertMatching(vector<Edge> matching, int V, string name) {
+	cout << name << " ";
+	vector<bool> matched = vector<bool>(V,false);
+	assert(matching.size()<=V/2);
+	for (Edge &e:matching)
+	{
+		assert(!matched[e.u] && !matched[e.v]);
+		matched[e.u]=matched[e.v]=true;
+	}
 }
 
-bool assertGraphic(vector<Edge> forest, vector<vector<int>> g1, vector<vector<int>> g2) {
-	return true;
+void DFS_aux(int cur, vector<vector<int>> adj) {
+
 }
 
-bool assertArb(vector<Edge> arb, vector<vector<int>> g) {
-	return true;
+void DFS(vector<Edge> forest, vector<vector<int>> adj) {
+
 }
 
-/*
-vector<Edge> BFS_Directed(int root) {
-	int current;
+void assertGraphic(vector<Edge> forest, vector<vector<int>> adj, string name) {
+	//https://codeforces.com/contest/1375/submission/86366903
+	cout << name << " ";
+	DFS(forest, adj);
+}
+
+void assertArb(vector<Edge> arb, vector<vector<int>> adj, string name) {
+	/*int current;
 	queue<int> q; 
 	q.push(root);
 	bool visited[N] = {false};
@@ -118,34 +139,5 @@ vector<Edge> BFS_Directed(int root) {
 			arborescence.push_back({i,j});
 		}
 	}
-	return arborescence;
+	return arborescence;*/
 }
-*/
-
-/*
-// N colours are identified with integers from 0 to N-1
-bool Oracle_Colour(vector<int> S) {
-	bool counter[N] = {false};
-	for (int e : S)
-	{
-		if (counter[e]==true)
-			return false;
-		counter[e] = true;
-	}
-	return true;
-}
-
-bool Oracle_Colour_Free(vector<int> S, int free) {
-	S.push_back(free);
-	return Oracle_Colour(S);
-}
-bool Oracle_Colour_Exchangeable(vector<int> S, int a, int b) {
-	if (a==b) return Oracle_Colour(S);
-	if (Oracle_Colour(S))
-	{
-		S.push_back(b);
-		return Oracle_Colour(S);
-	}
-	return false;
-}
-*/

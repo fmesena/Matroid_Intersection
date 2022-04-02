@@ -16,7 +16,7 @@ void okIndep() {cout<<"okIndep\n";}
 
 int FindExchange(Oracle* oracle, int const b, vector<int> &A) {
 
-	if (A.empty()) { cout << "A is empty\n"; return -1; }
+	if (A.empty()) { cout << ">>ERROR: Indep::FindExchange, A is empty" << endl; return -1; }
 	if (!oracle->Exchangeable_Set(A,b)) return -1;
 
 	int M;
@@ -48,15 +48,17 @@ void GetDistancesIndep() {
 
 	while (l >= 0)
 	{
-		//cout << "Layer: " << l << endl << endl;
-		//PrintCandidates(N+5,candidates);
-
 		updated_l_plus_one.clear();
 		
 		if (odd(l))
-		{	
+		{
 			if (candidates[l].empty()) return;
-			for (int b : candidates[l]) if (O2->Free(b)) { /*cout << "FREE M2\n";*/ DISTANCE_TARGET=min(DISTANCE_TARGET,l+1);}
+			for (int b : candidates[l]) {
+				if (O2->Free(b)) { 
+					DISTANCE_TARGET=l+1;
+					return;
+				}
+			}
 
 			if (candidates[l+1].empty())
 				return;
@@ -67,11 +69,8 @@ void GetDistancesIndep() {
 			for (int b : candidates[l])
 			{
 				if (Q.empty()) break;
-				//cout << "SIZE: " << Q.size() << " " << l << endl;
 				while ( (!Q.empty()) && (a = FindExchange(O2, b, Q)) != -1)
 				{
-					//cout << "arc M2" << endl;
-					
 					distances[a] = l+1;
 
 					swap(Q[exchangeable], Q.back());
@@ -83,22 +82,21 @@ void GetDistancesIndep() {
 			candidates[l+1] = updated_l_plus_one; 			 // L_l+1 <- L_l+1 - Q
 			for (int q : Q)   candidates[l+3].push_back(q);	 // L_l+3 <- L_l+3 + Q, not done in O(1) :(
 		}
-		//even(l)
-		else
+		else //even(l)
 		{
-			if (candidates[l].empty() && l!=0) cerr << "even layer candidates[l] is empty " << l << endl;
 			bool arc;
+			if (candidates[l+1].empty() || (candidates[l].empty() && l!=0))
+				return;
 			for (int b : candidates[l+1])
 			{
-				bool x=l==0;
-				//cout << "SIZE: " << candidates[l].size() << " " << l << endl;
-				arc = x ? O1->Free(b) : FindExchange(O1, b, candidates[l]) != -1; // O1->Exchangeble_Set(candidates[l],b);
-				cout << arc << " " << b << " " << x << endl;
-				if (arc==1)
+				if (l==0)
+					arc = O1->Free(b);
+				else
+					arc = O1->Exchangeable_Set(candidates[l],b);
+				if (arc==true)
 				{
 					distances[b] = l+1;
 					updated_l_plus_one.push_back(b);
-					//cout << "arc M1\n";
 				}
 				else
 					candidates[l+3].push_back(b);
@@ -125,7 +123,7 @@ void OnePath() {
 	{
 		//cout << "\nWhile com l=" << l << endl;
 		Q = candidates[l-1];
-		DEBUG_VECTOR(candidates[l-1]);
+		//DEBUG_VECTOR(candidates[l-1]);
 		arc = false;
 
 		for (int i=0; i < candidates[l-1].size(); i++) //when l=1 we do not enter the loop since any element with distane 1 is free in M1
@@ -137,7 +135,7 @@ void OnePath() {
 			{
 				if (O2->Free(b))
 				{
-					cout << "setting " << b << " to true" << endl;
+					//cout << "setting " << b << " to true" << endl;
 					in_independent_set[b] = true;
 					arc=true;
 				}
@@ -175,7 +173,7 @@ void OnePath() {
 		}
 		l--;
 	}
-	PrintCandidates();
+	//PrintCandidates();
 	// when l is odd,  S - b + a_l \in I_1
 	// when l is even, S - a_l + b \in I_2
 	UpdateIndependentSet();
@@ -184,7 +182,6 @@ void OnePath() {
 	return;
 }
 
-
 size_t AugmentingPaths(int N_, Oracle* O1_, Oracle* O2_) {
 
 	N  = N_;
@@ -192,8 +189,9 @@ size_t AugmentingPaths(int N_, Oracle* O1_, Oracle* O2_) {
 	O2 = O2_;
 
 	Init(N);
+	//Greedy_Intersection();
 
-	//distance lower bounds
+	//initial distance lower bounds
 	for (int i = 0; i < N; ++i)
 	{
 		if (IN_INDEPENDENT(i))
@@ -208,27 +206,14 @@ size_t AugmentingPaths(int N_, Oracle* O1_, Oracle* O2_) {
 		}
 	}
 
-	//-----------------------------------------------------------//
-
-	cout << "Starting AugmentingPaths" << endl;
-
 	while (true)
 	{
 		GetDistancesIndep();
-		//cout << "DistancesIndep finished. Target reached with distance " << DISTANCE_TARGET << endl;
-
 		if (DISTANCE_TARGET < numeric_limits<int>::max())
-		{
 			OnePath();
-			//PrintIndependentSet();
-			//cout << "\ndistances:"<<endl;
-			//for (int i=0; i<N; i++) cout << distances[i] << " ";
-			//cout << endl << endl;
-		}
-		else break;
+		else
+			break;
 	}
-
-	//cout << "Finished AugmentingPaths" << endl;
 
 	delete[] distances;
 	/*for (int i = 0; i < ?; i++) {

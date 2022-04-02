@@ -43,6 +43,25 @@ void PrintIndependentSet() {
 	cout << endl;
 }
 
+/*void UpdateIndependentSetNew(int e) {
+	if (in_independent_set[e]==true)
+	{
+		in_independent_set[e] = false;
+		O1->Temp_Update_State(e,false);
+		O2->Temp_Update_State(e,false);
+		not_independent.push_back(e);
+		//index_[i] = -1;
+	}
+	else
+	{
+		in_independent_set[e] = true;
+		O1->Temp_Update_State(e,true);
+		O2->Temp_Update_State(e,true);
+		independent_set.push_back(e);
+		//index_[i] = independent_set.size()-1;
+	}
+}*/
+
 // index[i] = -1 if i-th element is not in S, index[i]=j 0<j<N-1 if i-th element is in S
 void UpdateIndependentSet() {
 	independent_set.clear();
@@ -75,7 +94,8 @@ void PrintCandidates() {
 }
 
 void ClearCandidates() {
-	for (int i = 0; i < MAX_DIST; ++i)
+	assert(candidates.size()==MAX_DIST);
+	for (int i = 0; i < candidates.size(); ++i)
 		candidates[i].clear();
 }
 
@@ -93,5 +113,3 @@ vector<int> RemoveSubset(vector<int> S, vector<int> A) {
 			S_.push_back(i);
 	return S_;
 }
-
-void okutils() {cout << "okutils\n";}

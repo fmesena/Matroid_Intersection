@@ -5,10 +5,18 @@ LeftMatching::LeftMatching(int N_, vector<Edge> edges_):Oracle() {
     edges = edges_;
     left = vector<int>(N_,0);
 }
-void LeftMatching::Update_State(vector<int> S) {  //additive factor of O(r^2)
+void LeftMatching::Update_State(vector<int> S) {
     fill (left.begin(),left.end(),0);
     for (size_t i = 0; i < S.size(); ++i)
         left [edges[S[i]].u] = 1;
+}
+void LeftMatching::Temp_Update_State(int a, bool to_be_added) {
+    if (to_be_added) {
+        left [edges[a].u] = 1;
+    }
+    else {
+        left [edges[a].u] = 0;
+    }
 }
 bool LeftMatching::Exchangeable(int a, int b) {  //O(1)
     ORACLE_CALLS++;
@@ -24,21 +32,19 @@ int LeftMatching::Rank(vector<int> B) {  //O(n)
     int r=0;
     for (int i=0; i<B.size(); i++)
     {
-        if (occupied[edges[i].u] == 1) continue;
-        occupied[edges[i].u] = 1;
+        if (occupied[edges[B[i]].u] == 1) continue;
+        occupied[edges[B[i]].u] = 1;
         r++;
     }
-    return r;
+    return r; //returns rank(B\cup S)
 }
 bool LeftMatching::Exchangeable_Set(vector<int> A, int b) {  // O(|A|)
     ORACLE_CALLS++;
-    cerr << "exch set LM1!\n";
-    if (left[edges[b].u]==0) return true;
-    for (int a:A)
+    for (int a:A) {
         if (edges[a].u == edges[b].u) {
-            cerr << "exch set LM2\n";
             return true;
         }
+    }
     return false;
 }
 void LeftMatching::show() {

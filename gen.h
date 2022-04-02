@@ -3,15 +3,17 @@
 
 #include <stdlib.h>
 #include <vector>
+#include <queue>
 #include <iostream>
+#include <string>
 #include <cassert>
 #include "ds/Edge.h"
 
-std::pair<std::vector<std::vector<int>>, std::vector<Edge>> GenerateGraph_Matchings(int);
+std::pair<std::vector<std::vector<int>>, std::vector<Edge>> Generate_BipartiteGraph(int);
+std::vector<std::vector<int>> Generate_SimpleGraph(int, int);
 std::vector<std::vector<int>> Generate_Arborescence(int, int);
-void okGEN();
-bool assertArb(std::vector<Edge>, std::vector<std::vector<int>>);
-bool assertGraphic(std::vector<Edge>, std::vector<std::vector<int>>, std::vector<std::vector<int>>);
-bool assertMatching(std::vector<Edge>);
+void assertArb(std::vector<Edge>, std::vector<std::vector<int>>,std::string);
+void assertGraphic(std::vector<Edge>, std::vector<std::vector<int>>, std::vector<std::vector<int>>,int,std::string);
+void assertMatching(std::vector<Edge>,int,std::string);
 
 #endif

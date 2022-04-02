@@ -20,12 +20,14 @@ class Graphic : public Oracle {
 public:
     LCT lct;
     int N;
-    Graphic(int);
+    vector<Edge> edges;
+    Graphic(int,vector<Edge>);
     bool Exchangeable(int a, int b);
     bool Free(int b);
     int  Rank(vector<int> B);
     bool Exchangeable_Set(vector<int> A, int b);
     void Update_State(vector<int> S);
+    void Temp_Update_State(int, bool);
     void show();
 };
 
