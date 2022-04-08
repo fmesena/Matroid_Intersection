@@ -2,11 +2,15 @@ import numpy as np
 from matplotlib import pyplot as plt
 import math
 
-sapf = open("sap.txt", "r")
-cunf = open("cun.txt", "r")
+sapf   = open("stats/sap.txt", "r")
+cunf   = open("stats/cun.txt", "r")
+indepf = open("stats/indep.txt", "r")
+rankf  = open("stats/rank.txt", "r")
 
-sap = []
-cun = []
+sap   = []
+cun   = []
+indep = []
+rank  = []
 
 i=0
 for line in sapf:
@@ -18,21 +22,48 @@ for line in cunf:
 	if i!=0:
 		cun.append(list(map(int, line[:len(line)-1].split(" "))))
 	i+=1
+i=0
+for line in indepf:
+	if i!=0:
+		indep.append(list(map(int, line[:len(line)-1].split(" "))))
+	i+=1
+i=0
+for line in rankf:
+	if i!=0:
+		rank.append(list(map(int, line[:len(line)-1].split(" "))))
+	i+=1
 
 n1 		 = [row[0] for row in sap]
 r1 		 = [row[1] for row in sap]
 CALLS1 	 = [row[2] for row in sap]
 O_CALLS1 = [row[3] for row in sap]
-time1 	 = [row[4] for row in sap]	
-bound1   = [row[0]*row[1]*row[1] for row in sap]
+time1 	 = [row[4] for row in sap]
+bound_S  = [row[0]*row[1]*row[1] for row in sap]
 
 n2 		 = [row[0] for row in cun]
 r2 		 = [row[1] for row in cun]
 CALLS2   = [row[2] for row in cun]
 O_CALLS2 = [row[3] for row in cun]
 time2	 = [row[4] for row in cun]	
-bound2   = [row[0]*row[1]*math.sqrt(row[1]) for row in cun]
+bound_C  = [row[0]*row[1]*math.sqrt(row[1]) for row in cun]
 
+n3 		 = [row[0] for row in indep]
+r3 		 = [row[1] for row in indep]
+CALLS3 	 = [row[2] for row in indep]
+O_CALLS3 = [row[3] for row in indep]
+time3 	 = [row[4] for row in indep]	
+bound_I  = [row[0]*row[1]*math.log(row[1],2) for row in indep]
+
+n4 		 = [row[0] for row in rank]
+r4 		 = [row[1] for row in rank]
+CALLS4   = [row[2] for row in rank]
+O_CALLS4 = [row[3] for row in rank]
+time4	 = [row[4] for row in rank]	
+bound_R  = [row[0]*math.log(row[0],2)*math.sqrt(row[1]) for row in rank]
+
+
+#TODO error checking
+'''
 if (len(n1)!=len(n2) or len(r1)!=len(r2) or len(CALLS1)!=len(CALLS2) or len(O_CALLS1)!=len(O_CALLS2) or len(bound1)!=len(bound2)):
 	print(">>ERROR")
 	exit()
@@ -40,44 +71,52 @@ for i in range(len(n1)):
 	if (n1[i]!=n2[i] or r1[i]!=r2[i]):
 		print(">>ERROR")
 		exit()
+'''
 
 ####################
 
-#https://matplotlib.org/3.5.1/api/_as_gen/matplotlib.pyplot.plot.html
-X = np.array(bound1)
+#plt.rcParams['text.usetex'] = True
 
-#https://matplotlib.org/3.5.1/api/_as_gen/matplotlib.pyplot.plot.html
-y = np.array(CALLS1)
-z = np.array(CALLS2)
+X = np.array(n1)
+
+y = np.array(O_CALLS1)
+z = np.array(O_CALLS2)
+w = np.array(O_CALLS3)
+o = np.array(O_CALLS4)
+
+xmax=max(n1)
+#ymax=max(CALLS4)
+ymax=max(max(O_CALLS1),max(O_CALLS2),max(O_CALLS3),max(O_CALLS4))
+plt.xlim(0, xmax+100)
+plt.ylim(0, ymax+100000)
+
+#plt.ylim(min(min(time1),min(time2)), max(max(time1),max(time2)))
+
 
 # Plotting both the curves simultaneously
-#plt.plot(X, y, 'r+', label='A&D')
-#plt.plot(X, z, 'g*', label='Cunningham')
-plt.plot(X, y, 'r+--', linewidth=1, markersize=6, label='A&D')
-plt.plot(X, z, 'go--', linewidth=1, markersize=6, label='Cunningham') #https://www.geeksforgeeks.org/graph-plotting-in-python-set-1/
-#can also use: 'g*--'
+plt.plot(X, y, 'rs-', linewidth=1, markersize=3.5, label='A&D')
+plt.plot(X, z, 'go-', linewidth=1, markersize=4, label='Cunningham') #https://www.geeksforgeeks.org/graph-plotting-in-python-set-1/
+plt.plot(X, w, 'b^-', linewidth=1, markersize=4, label='Indep')
+plt.plot(X, o, 'y*--', linewidth=1, markersize=5, label='ExactRank')
+#(x, y, color='green', linestyle='dashed', linewidth = 3, marker='o', markerfacecolor='blue', markersize=12)
 
 # Naming the x-axis, y-axis and the whole graph
-plt.xlabel("nr^1.5")
-plt.ylabel("Number of queries")
-plt.title("Title")
+plt.xlabel("$n$")
+plt.ylabel("O(Number of queries)")
+plt.title("Title???")
 
 #Adding text at coordinate 8x,y)
 #plt.text(60, .025, r'$\mu=100,\ \sigma=15$')
-
-plt.xlim(0, max(bound1)+10)
-#plt.ylim(min(min(time1),min(time2)), max(max(time1),max(time2)))
-plt.ylim(min(min(CALLS1),min(CALLS2)), max(max(CALLS1),max(CALLS2)))
 
 # Adding legend, which helps us recognize the curve according to it's color
 plt.legend()
 
 #Adding a grid
-plt.grid(True, color='grey', ls=':', lw=1, zorder=1)
+plt.grid(True, color='grey', ls=':', lw=1)
 #plt.grid(True)
   
 # To load the display window
-plt.savefig('results/CALLSx.svg')
+plt.savefig('results/all_normalscale_O(CALLS).svg')
 
 
 """

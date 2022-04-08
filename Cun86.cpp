@@ -11,6 +11,58 @@ static vector<bool> X2;
 static size_t hack;
 
 
+/*
+	fill (X1.begin(),X1.end(),false);
+	fill (X2.begin(),X2.end(),false);
+	for (size_t i = 0; i < not_independent.size(); i++)
+	{
+		int e = not_independent[i];
+		if (O1->Free(e)) X1[e] = true;
+		if (O2->Free(e)) X2[e] = true;
+		if (X1[e] && X2[e])
+		{
+			for (size_t j = 0; j < i; ++i)
+			{
+				e = not_independent[j];
+				parent[e]    = NOT_VISITED;
+				distances[e] = numeric_limits<int>::max();
+			}
+			in_independent_set[not_independent[i]] = true;
+			UpdateIndependentSet();
+			O1->Update_State(independent_set);
+			O2->Update_State(independent_set);
+			DISTANCE_TARGET=2;
+			i=0;
+			fill (X1.begin(),X1.end(),false);
+			fill (X2.begin(),X2.end(),false);
+		}
+		else
+		{
+			if (O1->Free(e))
+			{
+				X1[e] = true;
+				q.push(e);
+				parent[e] = SOURCE;
+				distances[e] = 1;
+			}
+			if (distances[e]>DISTANCE_TARGET) { //this is the DT of the previous stage
+				if (O2->Free(e)) {
+					X2[e] = true;
+				}
+			}
+		}
+	}
+
+	DISTANCE_TARGET = numeric_limits<int>::max();
+	for (int i = 0; i < N; ++i)
+	{
+		parent[i]    = NOT_VISITED;
+		distances[i] = numeric_limits<int>::max();
+	}
+*/
+
+/**/
+
 bool GetDistances() {
 
 	const int NOT_VISITED = -4;

@@ -84,25 +84,26 @@ int main() {
 	int HK;
 	int EK;
 
-	int RUNS = 50;
+	const int RUNS = 1;
 
 	ofstream sap_file;
 	ofstream cun_file;
 	ofstream indep_file;
 	ofstream rank_file;
-	sap_file.open ("plots/stats/sap.txt");
-	cun_file.open ("plots/stats/cun.txt");
-	indep_file.open("plots/stats/indep.txt");
-	rank_file.open("plots/stats/rank.txt");
+	sap_file.open ("plots/stats/sapG.txt");
+	cun_file.open ("plots/stats/cunG.txt");
+	indep_file.open("plots/stats/indepG.txt");
+	rank_file.open("plots/stats/rankG.txt");
 	sap_file   << "n  r  total_calls  O(calls)  time(microseconds)" << endl;
 	cun_file   << "n  r  total_calls  O(calls)  time(microseconds)" << endl;
 	rank_file  << "n  r  total_calls  O(calls)  time(microseconds)" << endl;
 	indep_file << "n  r  total_calls  O(calls)  time(microseconds)" << endl;
 
-	/*E=10;
+	E=10;
+	int w=1;
 	while (E <= 200)
 	{
-		cout << "###Iteration number: " << RUNS++ << ", Edges=" << E << endl;
+		cout << "###Iteration number: " << w++ << ", Edges=" << E << endl;
 		srand(73);
 		
 		pair<int,vector<Edge>> x = Generate_SimpleGraph(E);
@@ -146,10 +147,9 @@ int main() {
 		assert(R==S);
 
 		E++;
-	}*/
+	}
 
-	V=10;
-	int w=1;
+	/*V=10;
 	while (V <= 200)
 	{
 		int ct;
@@ -189,7 +189,7 @@ int main() {
 			maxcallsavg += max(lm->getOracleCalls(),rm->getOracleCalls());
 			totaltimeavg+= duration.count();
 		} 
-		sap_file << edgelist.size() << " " << S << " " << sumcallsavg/RUNS << " " << maxcallsavg/RUNS << " " << totaltimeavg/RUNS << " " << lm->getOracleCalls()+rm->getOracleCalls() << endl;
+		sap_file << edgelist.size() << " " << S << " " << sumcallsavg/RUNS << " " << maxcallsavg/RUNS << " " << totaltimeavg/RUNS << endl; //<< lm->getOracleCalls()+rm->getOracleCalls() << endl;
 
 
 		sumcallsavg = 0;
@@ -212,7 +212,7 @@ int main() {
 			maxcallsavg += max(lm->getOracleCalls(),rm->getOracleCalls());
 			totaltimeavg+= duration.count();
 		} 
-		cun_file << edgelist.size() << " " << C << " " << sumcallsavg/RUNS << " " << maxcallsavg/RUNS << " " << totaltimeavg/RUNS << " " << lm->getOracleCalls()+rm->getOracleCalls() << endl;
+		cun_file << edgelist.size() << " " << C << " " << sumcallsavg/RUNS << " " << maxcallsavg/RUNS << " " << totaltimeavg/RUNS << endl;//" " << lm->getOracleCalls()+rm->getOracleCalls() << endl;
 		sumcallsavg = 0;
 		maxcallsavg = 0;
 		totaltimeavg = 0;
@@ -234,7 +234,7 @@ int main() {
 			maxcallsavg += max(lm->getOracleCalls(),rm->getOracleCalls());
 			totaltimeavg+= duration.count();
 		} 
-		indep_file << edgelist.size() << " " << I << " " << sumcallsavg/RUNS << " " << maxcallsavg/RUNS << " " << totaltimeavg/RUNS << " " << lm->getOracleCalls()+rm->getOracleCalls() << endl;
+		indep_file << edgelist.size() << " " << I << " " << sumcallsavg/RUNS << " " << maxcallsavg/RUNS << " " << totaltimeavg/RUNS << endl;// " " << lm->getOracleCalls()+rm->getOracleCalls() << endl;
 
 		sumcallsavg = 0;
 		maxcallsavg = 0;
@@ -257,11 +257,11 @@ int main() {
 			maxcallsavg += max(lm->getOracleCalls(),rm->getOracleCalls());
 			totaltimeavg+= duration.count();
 		} 
-		rank_file << edgelist.size() << " " << R << " " << sumcallsavg/RUNS << " " << maxcallsavg/RUNS << " " << totaltimeavg/RUNS << " " << lm->getOracleCalls()+rm->getOracleCalls() << endl;
+		rank_file << edgelist.size() << " " << R << " " << sumcallsavg/RUNS << " " << maxcallsavg/RUNS << " " << totaltimeavg/RUNS << endl;// << " " << lm->getOracleCalls()+rm->getOracleCalls() << endl;
 		
 		cout << endl;
 		V+=2;
-	}
+	}*/
 	
 	sap_file.close();
 	cun_file.close();
