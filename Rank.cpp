@@ -60,7 +60,7 @@ int FindFree(vector<int> const &B) {
 		M = L + (R-L)/2;
 		B_ = Slice(B,L,M);		// this takes O(|B|) operations in total
 
-		if (O1->Rank(B_) > CURRENT_RANK)
+		if (O1->Rank(B_) > 0)
 			R = free_ = M;
 		else
 			L = free_ = M+1;

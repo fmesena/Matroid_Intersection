@@ -1,8 +1,9 @@
 #include <cstdlib>
 #include "gen.h"
 
-using std::pair, std::vector, std::cout, std::endl, std::string;
+using std::pair, std::vector, std::cout, std::endl, std::string, std::max;
 
+/*** Generators *************************/
 
 pair<vector<vector<int>>, vector<Edge>> Generate_BipartiteGraph(int V) {
 	assert(V%2==0);
@@ -36,11 +37,21 @@ pair<vector<vector<int>>, vector<Edge>> Generate_BipartiteGraph(int V) {
 }
 
 
-vector<vector<int>> Generate_SimpleGraph(int V, int type) {
-	vector<vector<int>> graph;
+//returns a vector of Edges with vertices in the range 1..V
+pair<int,vector<Edge>> Generate_SimpleGraph(int E) {
 	vector<Edge> edges;
-	/*
-	type 0 = random p=...,
+	int V = 0.5*(1 + sqrt(1+16*E));
+	int m = 0;
+	int u,v;
+	while (m++<E)
+	{
+		u = rand() % V + 1;
+		v = rand() % V + 1;
+		while (v==u) v = rand() % V + 1;
+		edges.push_back({u,v});
+	}
+
+	/*type 0 = random p=...,
 	type 1 = random p=...,
 	type 2 = random p=...,
 	type 3 = SFN    ...,
@@ -56,9 +67,8 @@ vector<vector<int>> Generate_SimpleGraph(int V, int type) {
 	    case red  : std::cout << "red\n";   break;
 	    case green: std::cout << "green\n"; break;
 	    case blue : std::cout << "blue\n";  break;
-	}
-	*/
-	return graph;
+	}*/
+	return {V,edges};
 }
 
 
@@ -94,10 +104,10 @@ vector<vector<int>> Generate_Arborescence(int V, int root) {
 }
 
 
-/* Checkers */
+/*** Checkers *************************/
 
 void assertMatching(vector<Edge> matching, int V, string name) {
-	cout << name << " ";
+	//cout << name << " ";
 	vector<bool> matched = vector<bool>(V,false);
 	assert(matching.size()<=V/2);
 	for (Edge &e:matching)
@@ -107,18 +117,39 @@ void assertMatching(vector<Edge> matching, int V, string name) {
 	}
 }
 
-void DFS_aux(int cur, vector<vector<int>> adj) {
-
+void DFS(vector<vector<int>> adj, int u, int last, bool *visited) {
+	visited[u]=true;
+	for (int v: adj[u]) {
+		if (v!=last) {
+			//assert(!visited[v] && "back-edge");
+			if (visited[v]==true) {
+				cout << "ERROR: back-edge " << u+1 << "-" << v+1 << endl;
+				assert(!visited[v] && "back-edge");
+			}
+			DFS(adj,v,u,visited);
+		}
+	}
 }
 
-void DFS(vector<Edge> forest, vector<vector<int>> adj) {
-
-}
-
-void assertGraphic(vector<Edge> forest, vector<vector<int>> adj, string name) {
-	//https://codeforces.com/contest/1375/submission/86366903
-	cout << name << " ";
-	DFS(forest, adj);
+void assertGraphic(vector<Edge> forest, string name) {
+	//cout << name << " ";
+	vector<vector<int>> adj; //should be dynamically allocated
+	int V=0;
+	for (Edge e:forest)
+	{
+		V = max(e.u,e.v);
+		while (V>adj.size()) adj.push_back(vector<int>());
+		adj[e.u-1].push_back(e.v-1);
+		adj[e.v-1].push_back(e.u-1);
+	}
+	bool *visited = new bool[V]();
+	for (int u=0; u<V; u++) {
+		if (!visited[u]) {
+			visited[u] = true;
+			DFS(adj, u, -1, visited);
+		}
+	}
+	delete[] visited; //may leak if assertion fails, lazy
 }
 
 void assertArb(vector<Edge> arb, vector<vector<int>> adj, string name) {

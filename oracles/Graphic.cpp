@@ -5,16 +5,28 @@ Graphic::Graphic(int N_,vector<Edge> edges_):Oracle() {
     edges = edges_;
     lct = allocLCT(N);
 }
-bool Graphic::Exchangeable(int a, int b) {  // 3.logN amortized
+Graphic::~Graphic() {
+    freeLCT(lct);
+}
+bool Graphic::Exchangeable(int a, int b) {  // 3.log n
     ORACLE_CALLS++;
     cut(lct, edges[a].u, edges[a].v);
-    bool ok=true;
-    if (linkedQ(lct, edges[b].u, edges[b].v) )
-        ok = false;
+    bool ok = !linkedQ(lct, edges[b].u, edges[b].v);
     link(lct, edges[a].u, edges[a].v);
     return ok;
 }
-bool Graphic::Free(int b) {  // logN amortized
+bool Graphic::Exchangeable_Set(vector<int> A, int b) { // 2.r.log n
+    ORACLE_CALLS++;
+    for (int i=0; i<A.size(); i++) {
+        cut(lct, edges[A[i]].u, edges[A[i]].v);
+    }
+    bool ok = !linkedQ(lct, edges[b].u, edges[b].v);
+    for (int i=0; i<A.size(); i++) {
+        link(lct, edges[A[i]].u, edges[A[i]].v);
+    }
+    return ok;
+}
+bool Graphic::Free(int b) {  // log n
     ORACLE_CALLS++;
     if (linkedQ(lct, edges[b].u, edges[b].v) )
         return false;
@@ -31,19 +43,12 @@ int Graphic::Rank(vector<int> B) {
             link(lct, edges[B[i]].u, edges[B[i]].v);
         }
     }
-    for (int i=0; i<B.size(); i++)
-        cut(lct, edges[B[i]].u, edges[B[i]].v);
-
+    for (int i=0; i<B.size(); i++) {
+        if (edgeQ(lct, edges[B[i]].u, edges[B[i]].v) ) {
+            cut(lct, edges[B[i]].u, edges[B[i]].v);
+        }
+    }
     return r; //returns rank(B\cup S)
-}
-bool Graphic::Exchangeable_Set(vector<int> A, int b) {
-    ORACLE_CALLS++;
-    for (int i=0; i<A.size(); i++)
-        cut(lct, edges[A[i]].u, edges[A[i]].v);
-    bool ok = linkedQ(lct, edges[b].u, edges[b].v) == 0;
-    for (int i=0; i<A.size(); i++)
-        link(lct, edges[A[i]].u, edges[A[i]].v);
-    return ok;
 }
 void Graphic::Update_State(vector<int> S) {
     cleanLCT(lct);
@@ -61,10 +66,9 @@ void Graphic::Temp_Update_State(int a, bool to_be_added) {
     }
 }
 void Graphic::show() {
-    std::cout << "Graphic matroid oracle (using LCTs)" << endl;
-    link(lct,2,3);
-    link(lct,3,4);
-    //cleanLCT(lct);
+    std::cout << "Graphic matroid oracle (using LCTs). Printing edge list:\n";
+    for (Edge &e:edges) cout << e.u << "-" << e.v << " | ";
+    cout << endl;
     showLCT(lct,"teste");
     showRepTree(lct,"rep.dot"); //use with GraphViz online
 }

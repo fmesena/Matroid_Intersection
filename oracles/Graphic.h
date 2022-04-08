@@ -22,6 +22,7 @@ public:
     int N;
     vector<Edge> edges;
     Graphic(int,vector<Edge>);
+    ~Graphic();
     bool Exchangeable(int a, int b);
     bool Free(int b);
     int  Rank(vector<int> B);

@@ -129,6 +129,7 @@ void Augment() {
 
 	int l = 0;
 	int current = SOURCE;
+	int augmenting_paths_count = 0;
 	vector<int> path;
 	vector<int> indexes;
 	vector<int> prev_element;
@@ -184,6 +185,7 @@ void Augment() {
 		}
 		else if (l==DISTANCE_TARGET)
 		{
+			augmenting_paths_count++;
 			for (size_t j=0; j<path.size(); j++)
 			{
 				in_independent_set[path[j]] = IN_INDEPENDENT(path[j]) ? false:true;
@@ -208,6 +210,7 @@ void Augment() {
 			cerr << ">>ERROR: Cunningham::Augment, l>DISTANCE_TARGET" << endl;
 		}
 	}
+	AUGMENTATIONS.push_back(augmenting_paths_count);
 	return;
 }
 
@@ -224,7 +227,8 @@ size_t Cun86(int N_, Oracle* O1_, Oracle* O2_) {  // O (nr^{1.5}.T)
 	}
 	X1 = vector<bool>(N, false);
 	X2 = vector<bool>(N, false);
-
+	AUGMENTATIONS.clear();
+	
 	while (GetDistances()) {
 		Augment();
 	}

@@ -43,15 +43,20 @@ for i in range(len(n1)):
 
 ####################
 
-X = np.array(bound2)
+#https://matplotlib.org/3.5.1/api/_as_gen/matplotlib.pyplot.plot.html
+X = np.array(bound1)
 
+#https://matplotlib.org/3.5.1/api/_as_gen/matplotlib.pyplot.plot.html
 y = np.array(CALLS1)
 z = np.array(CALLS2)
 
 # Plotting both the curves simultaneously
-plt.plot(X, y, color='r', label='A&D')
-plt.plot(X, z, color='g', label='Cunningham')
-  
+#plt.plot(X, y, 'r+', label='A&D')
+#plt.plot(X, z, 'g*', label='Cunningham')
+plt.plot(X, y, 'r+--', linewidth=1, markersize=6, label='A&D')
+plt.plot(X, z, 'go--', linewidth=1, markersize=6, label='Cunningham') #https://www.geeksforgeeks.org/graph-plotting-in-python-set-1/
+#can also use: 'g*--'
+
 # Naming the x-axis, y-axis and the whole graph
 plt.xlabel("nr^1.5")
 plt.ylabel("Number of queries")
@@ -60,7 +65,7 @@ plt.title("Title")
 #Adding text at coordinate 8x,y)
 #plt.text(60, .025, r'$\mu=100,\ \sigma=15$')
 
-plt.xlim(0, max(bound2)+200)
+plt.xlim(0, max(bound1)+10)
 #plt.ylim(min(min(time1),min(time2)), max(max(time1),max(time2)))
 plt.ylim(min(min(CALLS1),min(CALLS2)), max(max(CALLS1),max(CALLS2)))
 
@@ -72,7 +77,7 @@ plt.grid(True, color='grey', ls=':', lw=1, zorder=1)
 #plt.grid(True)
   
 # To load the display window
-plt.savefig('CALLSx.svg')
+plt.savefig('results/CALLSx.svg')
 
 
 """

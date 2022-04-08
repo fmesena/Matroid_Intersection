@@ -8,8 +8,8 @@ void Init(int N_) {
 	not_independent.clear();
 	in_independent_set.resize(N_, false);
 	in_independent_set.clear();
-	index_.resize(N_,-1);
-	distances = new int[N_];
+	index_.resize(N_,-1); //default value initialization
+	distances = new int[N_]();
 	candidates = vector<vector<int>>(MAX_DIST);
 	CURRENT_RANK=0;
 }

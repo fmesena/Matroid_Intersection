@@ -32,8 +32,8 @@ int CURRENT_RANK;
 int MAX_DIST;
 
 vector<Edge> solution;
-
 vector<Edge> edgelist;
+
 void printsol() {
 	cout << "###Solution:\n";
 	for (int i = 0; i < independent_set.size(); ++i) {
@@ -61,132 +61,204 @@ void BuildSolution() {
 	}
 }
 
+vector<Edge> BuildSolution(vector<Edge> el, string name) {
+	vector<Edge> res;
+	solution.clear();
+	cout << name << " Forest: ";
+	for (int i = 0; i < independent_set.size(); ++i) {
+		res.push_back(el[independent_set[i]]);
+		cout << res[i].u << "-" << res[i].v << " | ";
+	}
+	cout << endl;
+	return res;
+}
+
+
 
 int main() {
 
-	int RUNS = 1;
-	int S  = 0;
-	int C  = 0;
-	int I  = 0;
-	int R  = 0;
-	int HK = 0;
-	int EK = 0;
+	int S;
+	int C;
+	int I;
+	int R;
+	int HK;
+	int EK;
+
+	int RUNS = 50;
 
 	ofstream sap_file;
 	ofstream cun_file;
 	ofstream indep_file;
 	ofstream rank_file;
-	sap_file.open ("plots/sap.txt");
-	cun_file.open ("plots/cun.txt");
-	indep_file.open("plots/indep.txt");
-	rank_file.open("plots/rank.txt");
+	sap_file.open ("plots/stats/sap.txt");
+	cun_file.open ("plots/stats/cun.txt");
+	indep_file.open("plots/stats/indep.txt");
+	rank_file.open("plots/stats/rank.txt");
 	sap_file   << "n  r  total_calls  O(calls)  time(microseconds)" << endl;
 	cun_file   << "n  r  total_calls  O(calls)  time(microseconds)" << endl;
 	rank_file  << "n  r  total_calls  O(calls)  time(microseconds)" << endl;
 	indep_file << "n  r  total_calls  O(calls)  time(microseconds)" << endl;
 
-	/*Graphic *gr= new Graphic(5);
-	gr->show();*/
-
-	V=4;
-	while (V <= 200) 
+	/*E=10;
+	while (E <= 200)
 	{
+		cout << "###Iteration number: " << RUNS++ << ", Edges=" << E << endl;
+		srand(73);
+		
+		pair<int,vector<Edge>> x = Generate_SimpleGraph(E);
+		pair<int,vector<Edge>> y = Generate_SimpleGraph(E);
+		for (auto e: x.second) cout << e.u << "-" << e.v << " | ";
+		cout << "\n\n";
+		for (auto e: y.second) cout << e.u << "-" << e.v << " | ";
+		cout << "\n";
+
+		Graphic *gr1 = new Graphic(x.first, x.second);
+		Graphic *gr2 = new Graphic(y.first, y.second);
+	
+		assert(E==x.second.size());
+		S = SAP(E,gr1,gr2);
+		assertGraphic(BuildSolution(x.second,"SAP"),"SAP");
+		assertGraphic(BuildSolution(y.second,"SAP"),"SAP");
+
+		gr1 = new Graphic(x.first, x.second);
+		gr2 = new Graphic(y.first, y.second);
+
+		C = Cun86(E,gr1,gr2);
+		assertGraphic(BuildSolution(x.second,"Cun"),"Cun");
+		assertGraphic(BuildSolution(y.second,"Cun"),"Cun");
+		assert(C==S);
+
+		gr1 = new Graphic(x.first, x.second);
+		gr2 = new Graphic(y.first, y.second);
+
+		I = AugmentingPaths(E,gr1,gr2);
+		assertGraphic(BuildSolution(x.second,"Indep"),"Indep");
+		assertGraphic(BuildSolution(y.second,"Indep"),"Indep");
+		assert(I==S);
+
+		gr1 = new Graphic(x.first, x.second);
+		gr2 = new Graphic(y.first, y.second);
+
+		R = ExactRank(E,gr1,gr2);
+		BuildSolution();
+		assertGraphic(BuildSolution(x.second,"Rank"),"Rank");
+		assertGraphic(BuildSolution(y.second,"Rank"),"Rank");
+		assert(R==S);
+
+		E++;
+	}*/
+
+	V=10;
+	int w=1;
+	while (V <= 200)
+	{
+		int ct;
+
 		//V = rand() % 10+6;  does not generate uniformly distributed random numbers in the span (since in most cases this operation makes lower numbers slightly more likely)
 		pair<vector<vector<int>>,vector<Edge>> x = Generate_BipartiteGraph(V);
 		vector<vector<int>> g=x.first;
 		edgelist=x.second;
 
-		cout << "###Iteration number: " << RUNS++ << ", Edges=" << edgelist.size() << " with V=" << V << endl;
+		cout << "###Iteration number: " << w++ << ", Edges=" << edgelist.size() << " with V=" << V << endl;
 
 		//random_shuffle(edgelist.begin(), edgelist.end());
 		auto rng = default_random_engine {};
-		shuffle(begin(edgelist), end(edgelist), rng);
-		//cout << "Shuffled:\n";
-		/*for (Edge e : edgelist)
-			cout << e.u << " " << e.v << endl;*/
 
-		LeftMatching  *lm = new LeftMatching(V,edgelist);
-		RightMatching *rm = new RightMatching(V,edgelist);
+		LeftMatching  *lm;
+		RightMatching *rm;
 
-		auto start = high_resolution_clock::now();
-		S = SAP(edgelist.size(),lm,rm);
-		//printsol();
-		BuildSolution();
-		assertMatching(solution,V,"SAP");
-		EK = EdmondsKarp(V,g);
-		assert(S==EK);
-		auto stop = high_resolution_clock::now();
-		auto duration = duration_cast<microseconds>(stop - start);
-		sap_file << edgelist.size() << " " << S << " " << lm->getOracleCalls()+rm->getOracleCalls() << " " << max(lm->getOracleCalls(),rm->getOracleCalls()) << " " << duration.count() << endl;
-		/*cout << "###SAP\n";
-		cout << "###Ground set size: " << edgelist.size() << endl;
-		cout << "###Independent set found with size " << S <<  endl;
-		////printsol();
-		cout << "###Resources:\n";
-		cout << "   Number of calls: " << lm->getOracleCalls()+rm->getOracleCalls() << endl; //max(lm->getOracleCalls(),rm->getOracleCalls())
-		cout << "   Time:  "   << duration.count() << " microseconds" << endl;*/
+		int sumcallsavg = 0;
+		int maxcallsavg = 0;
+		std::chrono::duration<long int, std::ratio<1, 1000000> >::rep totaltimeavg = 0;
 
-		lm = new LeftMatching(V,edgelist);
-		rm = new RightMatching(V,edgelist);
-		start = high_resolution_clock::now();
-		C = Cun86(edgelist.size(),lm,rm);
-		//printsol();
-		BuildSolution();
-		assertMatching(solution,V,"Cun");
-		assert(C==S);
-		stop = high_resolution_clock::now();
-		duration = duration_cast<microseconds>(stop - start);
-		cun_file << edgelist.size() << " " << C << " " << lm->getOracleCalls()+rm->getOracleCalls() << " " << max(lm->getOracleCalls(),rm->getOracleCalls()) << " " << duration.count() << endl;
-		/*cout << "###Cun86\n";
-		cout << "###Independent set found with size " << C << endl;
-		//printsol();
-		cout << "###Resources:\n";
-		cout << "   Number of calls: "    << lm->getOracleCalls()+rm->getOracleCalls() << endl; 
-		cout << "   O(Number of calls): " << max(lm->getOracleCalls(),rm->getOracleCalls()) << endl;
-		cout << "   O1 calls: " << lm->getOracleCalls() << "; O2 calls: " << rm->getOracleCalls() << endl;
-		cout << "   Time:  "   << duration.count() << " microseconds" << endl;*/
+		for (ct=0; ct<RUNS; ct++)
+		{
+			shuffle(begin(edgelist), end(edgelist), rng);
+			lm = new LeftMatching(V,edgelist);
+			rm = new RightMatching(V,edgelist);
+			auto start = high_resolution_clock::now();
+			S = SAP(edgelist.size(),lm,rm);
+			auto stop = high_resolution_clock::now();
+			auto duration = duration_cast<microseconds>(stop - start);
+			//printsol();
+			BuildSolution();
+			assertMatching(solution,V,"SAP");
+			EK = EdmondsKarp(V,g);
+			assert(S==EK);
+			sumcallsavg += lm->getOracleCalls()+rm->getOracleCalls();
+			maxcallsavg += max(lm->getOracleCalls(),rm->getOracleCalls());
+			totaltimeavg+= duration.count();
+		} 
+		sap_file << edgelist.size() << " " << S << " " << sumcallsavg/RUNS << " " << maxcallsavg/RUNS << " " << totaltimeavg/RUNS << " " << lm->getOracleCalls()+rm->getOracleCalls() << endl;
 
-		lm = new LeftMatching(V,edgelist);
-		rm = new RightMatching(V,edgelist);
-		start = high_resolution_clock::now();
-		I = AugmentingPaths(edgelist.size(),lm,rm);
-		//printsol();
-		BuildSolution();
-		assertMatching(solution,V,"Indep");
-		assert(I==S);
-		stop = high_resolution_clock::now();
-		duration = duration_cast<microseconds>(stop - start);
-		indep_file << edgelist.size() << " " << I << " " << lm->getOracleCalls()+rm->getOracleCalls() << " " << max(lm->getOracleCalls(),rm->getOracleCalls()) << " " << duration.count() << endl;
-		/*cout << "\n###FMI Indep\n";
-		cout << "###Independent set found with size " << I <<  endl;
-		////printsol();
-		cout << "###Resources:\n";
-		cout << "   Number of calls: "    << lm->getOracleCalls()+rm->getOracleCalls() << endl; 
-		cout << "   O(Number of calls): " << max(lm->getOracleCalls(),rm->getOracleCalls()) << endl;
-		cout << "   O1 calls: " << lm->getOracleCalls() << "; O2 calls: " << rm->getOracleCalls() << endl;
-		cout << "   Time:  "   << duration.count() << " microseconds" << endl;*/
 
-		lm = new LeftMatching(V,edgelist);
-		rm = new RightMatching(V,edgelist);
-		start = high_resolution_clock::now();
-		//pg(g);
-		R = ExactRank(edgelist.size(),lm,rm);
-		//printsol();
-		BuildSolution();
-		//assertMatching(solution,V,"Rank");
-		assert(R==S);
-		stop = high_resolution_clock::now();
-		duration = duration_cast<microseconds>(stop - start);
-		rank_file << edgelist.size() << " " << R << " " << lm->getOracleCalls()+rm->getOracleCalls() << " " << max(lm->getOracleCalls(),rm->getOracleCalls()) << " " << duration.count() << endl;
+		sumcallsavg = 0;
+		maxcallsavg = 0;
+		totaltimeavg = 0;
+		for (ct=0; ct<RUNS; ct++)
+		{
+			shuffle(begin(edgelist), end(edgelist), rng);
+			lm = new LeftMatching(V,edgelist);
+			rm = new RightMatching(V,edgelist);
+			auto start = high_resolution_clock::now();
+			C = Cun86(edgelist.size(),lm,rm);
+			auto stop = high_resolution_clock::now();
+			auto duration = duration_cast<microseconds>(stop - start);
+			//printsol();
+			BuildSolution();
+			assertMatching(solution,V,"Cun");
+			assert(C==S);
+			sumcallsavg += lm->getOracleCalls()+rm->getOracleCalls();
+			maxcallsavg += max(lm->getOracleCalls(),rm->getOracleCalls());
+			totaltimeavg+= duration.count();
+		} 
+		cun_file << edgelist.size() << " " << C << " " << sumcallsavg/RUNS << " " << maxcallsavg/RUNS << " " << totaltimeavg/RUNS << " " << lm->getOracleCalls()+rm->getOracleCalls() << endl;
+		sumcallsavg = 0;
+		maxcallsavg = 0;
+		totaltimeavg = 0;
+
+		for (ct=0; ct<RUNS; ct++)
+		{
+			shuffle(begin(edgelist), end(edgelist), rng);
+			lm = new LeftMatching(V,edgelist);
+			rm = new RightMatching(V,edgelist);
+			auto start = high_resolution_clock::now();
+			I = AugmentingPaths(edgelist.size(),lm,rm);
+			auto stop = high_resolution_clock::now();
+			auto duration = duration_cast<microseconds>(stop - start);
+			//printsol();
+			BuildSolution();
+			assertMatching(solution,V,"Indep");
+			assert(I==S);
+			sumcallsavg += lm->getOracleCalls()+rm->getOracleCalls();
+			maxcallsavg += max(lm->getOracleCalls(),rm->getOracleCalls());
+			totaltimeavg+= duration.count();
+		} 
+		indep_file << edgelist.size() << " " << I << " " << sumcallsavg/RUNS << " " << maxcallsavg/RUNS << " " << totaltimeavg/RUNS << " " << lm->getOracleCalls()+rm->getOracleCalls() << endl;
+
+		sumcallsavg = 0;
+		maxcallsavg = 0;
+		totaltimeavg = 0;
+		for (ct=0; ct<RUNS; ct++)
+		{
+			shuffle(begin(edgelist), end(edgelist), rng);
+			lm = new LeftMatching(V,edgelist);
+			rm = new RightMatching(V,edgelist);
+			auto start = high_resolution_clock::now();
+			//pg(g);
+			R = ExactRank(edgelist.size(),lm,rm);
+			auto stop = high_resolution_clock::now();
+			auto duration = duration_cast<microseconds>(stop - start);
+			//printsol();
+			BuildSolution();
+			assertMatching(solution,V,"Rank");
+			assert(R==S);
+			sumcallsavg += lm->getOracleCalls()+rm->getOracleCalls();
+			maxcallsavg += max(lm->getOracleCalls(),rm->getOracleCalls());
+			totaltimeavg+= duration.count();
+		} 
+		rank_file << edgelist.size() << " " << R << " " << sumcallsavg/RUNS << " " << maxcallsavg/RUNS << " " << totaltimeavg/RUNS << " " << lm->getOracleCalls()+rm->getOracleCalls() << endl;
 		
-		/*cout << "\n###FMI Rank\n";
-		cout << "###Independent set found with size " << R <<  endl;
-		//printsol();
-		cout << "###Resources:\n";
-		cout << "   Number of calls: "    << lm->getOracleCalls()+rm->getOracleCalls() << endl; 
-		cout << "   O(Number of calls): " << max(lm->getOracleCalls(),rm->getOracleCalls()) << endl;
-		cout << "   O1 calls: " << lm->getOracleCalls() << "; O2 calls: " << rm->getOracleCalls() << endl;
-		cout << "   Time:  "   << duration.count() << " microseconds" << endl;*/
 		cout << endl;
 		V+=2;
 	}
