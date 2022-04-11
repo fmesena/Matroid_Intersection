@@ -357,7 +357,7 @@ int EdmondsKarp(int N_, vector<vector<int>> g) {
 	int new_flow;
 	vector<int> parent(N+2);
 
-    while (new_flow = bfsEK(parent)) {
+    while ( (new_flow = bfsEK(parent)) ) {
         flow += new_flow;
         int cur = t;
         while (cur != s) {

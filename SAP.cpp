@@ -108,6 +108,9 @@ size_t SAP(int N_, Oracle* O1_, Oracle* O2_) {  // O (n.r^2.T)
 
 	in_independent_set.resize(N, false);
 	in_independent_set.clear();
+	independent_set.clear();
+	not_independent.clear();
+
 	X1 = vector<bool>(N, false);
 	X2 = vector<bool>(N, false);
 	for (int i = 0; i < N; ++i) {
@@ -116,5 +119,5 @@ size_t SAP(int N_, Oracle* O1_, Oracle* O2_) {  // O (n.r^2.T)
 
 	while (BFS_Augment());
 
-	return independent_set.size();
+	return SZ;
 }

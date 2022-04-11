@@ -278,7 +278,6 @@ size_t ExactRank(int N_, Oracle* O1_, Oracle* O2_) {
 	Init(N);
 	AUGMENTATIONS.clear();
 
-	int x=0;
 	do
 	{
 		s = SZ;

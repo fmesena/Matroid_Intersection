@@ -98,7 +98,7 @@ void GetDistancesIndep() {
 					distances[b] = l+1;
 					updated_l_plus_one.push_back(b);
 				}
-				else
+				else 
 					candidates[l+3].push_back(b);
 			}
 			candidates[l+1] = updated_l_plus_one;
@@ -126,7 +126,7 @@ void OnePath() {
 		//DEBUG_VECTOR(candidates[l-1]);
 		arc = false;
 
-		for (int i=0; i < candidates[l-1].size(); i++) //when l=1 we do not enter the loop since any element with distane 1 is free in M1
+		for (size_t i=0; i < candidates[l-1].size(); i++) //when l=1 we do not enter the loop since any element with distane 1 is free in M1
 		{
 			
 			b = candidates[l-1][i];
@@ -187,6 +187,8 @@ size_t AugmentingPaths(int N_, Oracle* O1_, Oracle* O2_) {
 	N  = N_;
 	O1 = O1_;
 	O2 = O2_;
+
+	if (N==0) return 0;
 
 	Init(N);
 	//Greedy_Intersection();

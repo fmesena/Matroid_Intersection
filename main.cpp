@@ -31,12 +31,14 @@ vector<int>  AUGMENTATIONS;
 int CURRENT_RANK;
 int MAX_DIST;
 
+const int WRITE=0;
+
 vector<Edge> solution;
 vector<Edge> edgelist;
 
 void printsol() {
 	cout << "###Solution:\n";
-	for (int i = 0; i < independent_set.size(); ++i) {
+	for (size_t i = 0; i < independent_set.size(); ++i) {
 		cout << edgelist[independent_set[i]].u << " " << edgelist[independent_set[i]].v << endl;
 	}
 	cout << endl;
@@ -56,7 +58,7 @@ void pg(vector<vector<int>> adj) {
 
 void BuildSolution() {
 	solution.clear();
-	for (int i = 0; i < independent_set.size(); ++i) {
+	for (size_t i = 0; i < independent_set.size(); ++i) {
 		solution.push_back(edgelist[independent_set[i]]);
 	}
 }
@@ -65,7 +67,7 @@ vector<Edge> BuildSolution(vector<Edge> el, string name) {
 	vector<Edge> res;
 	solution.clear();
 	cout << name << " Forest: ";
-	for (int i = 0; i < independent_set.size(); ++i) {
+	for (size_t i = 0; i < independent_set.size(); ++i) {
 		res.push_back(el[independent_set[i]]);
 		cout << res[i].u << "-" << res[i].v << " | ";
 	}
@@ -74,33 +76,36 @@ vector<Edge> BuildSolution(vector<Edge> el, string name) {
 }
 
 
-
 int main() {
 
-	int S;
-	int C;
-	int I;
-	int R;
-	int HK;
+	size_t S;
+	size_t C;
+	size_t I;
+	size_t R;
+	//int HK;
 	int EK;
 
-	const int RUNS = 1;
+	const int RUNS = 50;
 
 	ofstream sap_file;
 	ofstream cun_file;
 	ofstream indep_file;
 	ofstream rank_file;
-	sap_file.open ("plots/stats/sapG.txt");
-	cun_file.open ("plots/stats/cunG.txt");
-	indep_file.open("plots/stats/indepG.txt");
-	rank_file.open("plots/stats/rankG.txt");
-	sap_file   << "n  r  total_calls  O(calls)  time(microseconds)" << endl;
-	cun_file   << "n  r  total_calls  O(calls)  time(microseconds)" << endl;
-	rank_file  << "n  r  total_calls  O(calls)  time(microseconds)" << endl;
-	indep_file << "n  r  total_calls  O(calls)  time(microseconds)" << endl;
 
-	E=10;
+	if (WRITE) {
+		sap_file.open ("plots/stats/sap_ER_GRAPH.txt");
+		cun_file.open ("plots/stats/cun_ER_GRAPH.txt");
+		indep_file.open("plots/stats/indep_ER_GRAPH.txt");
+		rank_file.open("plots/stats/rank_ER_GRAPH.txt");
+		sap_file   << "p  n   r  #Q   O(#Q)   time(-6)  EXCHANGES" << endl;
+		cun_file   << "p  n   r  #Q   O(#Q)   time(-6)  EXCHANGES" << endl;
+		rank_file  << "p  n   r  #Q   O(#Q)   time(-6)  EXCHANGES" << endl;
+		indep_file << "p  n   r  #Q   O(#Q)   time(-6)  EXCHANGES" << endl;
+	}
+	
 	int w=1;
+
+	/*E=10;
 	while (E <= 200)
 	{
 		cout << "###Iteration number: " << w++ << ", Edges=" << E << endl;
@@ -147,30 +152,32 @@ int main() {
 		assert(R==S);
 
 		E++;
-	}
+	}*/
 
-	/*V=10;
-	while (V <= 200)
+
+	V=10; // RUN VALGRIND WITH SMALL VALUES OF V (hope to find seg fault on Cunningham's algorithm)
+	int p=0;
+
+	while (p <= 50)
 	{
 		int ct;
 
-		//V = rand() % 10+6;  does not generate uniformly distributed random numbers in the span (since in most cases this operation makes lower numbers slightly more likely)
-		pair<vector<vector<int>>,vector<Edge>> x = Generate_BipartiteGraph(V);
+		pair<vector<vector<int>>,vector<Edge>> x = Generate_BipartiteGraph(V,p);
 		vector<vector<int>> g=x.first;
 		edgelist=x.second;
+		
+		cout << "###Iteration number: " << w++ << ", Edges=" << edgelist.size() << " with V=" << V << " and p=" << p << endl;
 
-		cout << "###Iteration number: " << w++ << ", Edges=" << edgelist.size() << " with V=" << V << endl;
-
-		//random_shuffle(edgelist.begin(), edgelist.end());
-		auto rng = default_random_engine {};
+		auto rng = default_random_engine {}; //random_shuffle(edgelist.begin(), edgelist.end());
 
 		LeftMatching  *lm;
 		RightMatching *rm;
 
-		int sumcallsavg = 0;
-		int maxcallsavg = 0;
+		int sumcallsavg  = 0;
+		int maxcallsavg  = 0;
+		int exchangesavg = 0;
 		std::chrono::duration<long int, std::ratio<1, 1000000> >::rep totaltimeavg = 0;
-
+		cout << "sap\n";
 		for (ct=0; ct<RUNS; ct++)
 		{
 			shuffle(begin(edgelist), end(edgelist), rng);
@@ -184,17 +191,24 @@ int main() {
 			BuildSolution();
 			assertMatching(solution,V,"SAP");
 			EK = EdmondsKarp(V,g);
-			assert(S==EK);
-			sumcallsavg += lm->getOracleCalls()+rm->getOracleCalls();
-			maxcallsavg += max(lm->getOracleCalls(),rm->getOracleCalls());
-			totaltimeavg+= duration.count();
-		} 
-		sap_file << edgelist.size() << " " << S << " " << sumcallsavg/RUNS << " " << maxcallsavg/RUNS << " " << totaltimeavg/RUNS << endl; //<< lm->getOracleCalls()+rm->getOracleCalls() << endl;
+			assert((int)S==EK);
+			sumcallsavg  += lm->getOracleCalls()+rm->getOracleCalls();
+			maxcallsavg  += max(lm->getOracleCalls(),rm->getOracleCalls());
+			totaltimeavg += duration.count();
+			exchangesavg += lm->getExchangeCalls()+rm->getExchangeCalls();
+			assert(lm->getExchangeCalls()+lm->getFreeCalls()==lm->getOracleCalls());
+			assert(rm->getExchangeCalls()+rm->getFreeCalls()==rm->getOracleCalls());
+			delete lm;
+			delete rm;
+		}
+		if (WRITE)
+			sap_file << p << " " << edgelist.size() << " " << S << " " << sumcallsavg/RUNS << " " << maxcallsavg/RUNS << " " << totaltimeavg/RUNS << " " << exchangesavg/RUNS << endl;
 
-
-		sumcallsavg = 0;
-		maxcallsavg = 0;
+		sumcallsavg  = 0;
+		maxcallsavg  = 0;
+		exchangesavg = 0;
 		totaltimeavg = 0;
+		cout << "cun\n";
 		for (ct=0; ct<RUNS; ct++)
 		{
 			shuffle(begin(edgelist), end(edgelist), rng);
@@ -208,15 +222,23 @@ int main() {
 			BuildSolution();
 			assertMatching(solution,V,"Cun");
 			assert(C==S);
-			sumcallsavg += lm->getOracleCalls()+rm->getOracleCalls();
-			maxcallsavg += max(lm->getOracleCalls(),rm->getOracleCalls());
-			totaltimeavg+= duration.count();
-		} 
-		cun_file << edgelist.size() << " " << C << " " << sumcallsavg/RUNS << " " << maxcallsavg/RUNS << " " << totaltimeavg/RUNS << endl;//" " << lm->getOracleCalls()+rm->getOracleCalls() << endl;
-		sumcallsavg = 0;
-		maxcallsavg = 0;
+			sumcallsavg  += lm->getOracleCalls()+rm->getOracleCalls();
+			maxcallsavg  += max(lm->getOracleCalls(),rm->getOracleCalls());
+			totaltimeavg += duration.count();
+			exchangesavg += lm->getExchangeCalls()+rm->getExchangeCalls();
+			assert(lm->getExchangeCalls()+lm->getFreeCalls()==lm->getOracleCalls());
+			assert(rm->getExchangeCalls()+rm->getFreeCalls()==rm->getOracleCalls());
+			delete lm;
+			delete rm;
+		}
+		if (WRITE)
+			cun_file << p << " " << edgelist.size() << " " << C << " " << sumcallsavg/RUNS << " " << maxcallsavg/RUNS << " " << totaltimeavg/RUNS << " " << exchangesavg/RUNS << endl;
+		
+		sumcallsavg  = 0;
+		maxcallsavg  = 0;
+		exchangesavg = 0;
 		totaltimeavg = 0;
-
+		cout << "indep\n";
 		for (ct=0; ct<RUNS; ct++)
 		{
 			shuffle(begin(edgelist), end(edgelist), rng);
@@ -230,15 +252,23 @@ int main() {
 			BuildSolution();
 			assertMatching(solution,V,"Indep");
 			assert(I==S);
-			sumcallsavg += lm->getOracleCalls()+rm->getOracleCalls();
-			maxcallsavg += max(lm->getOracleCalls(),rm->getOracleCalls());
-			totaltimeavg+= duration.count();
-		} 
-		indep_file << edgelist.size() << " " << I << " " << sumcallsavg/RUNS << " " << maxcallsavg/RUNS << " " << totaltimeavg/RUNS << endl;// " " << lm->getOracleCalls()+rm->getOracleCalls() << endl;
+			sumcallsavg  += lm->getOracleCalls()+rm->getOracleCalls();
+			maxcallsavg  += max(lm->getOracleCalls(),rm->getOracleCalls());
+			totaltimeavg += duration.count();
+			exchangesavg += lm->getExchangeCalls()+rm->getExchangeCalls();
+			assert(lm->getExchangeCalls()+lm->getFreeCalls()==lm->getOracleCalls());
+			assert(rm->getExchangeCalls()+rm->getFreeCalls()==rm->getOracleCalls());
+			delete lm;
+			delete rm;
+		}
+		if (WRITE)
+			indep_file << p << " " << edgelist.size() << " " << I << " " << sumcallsavg/RUNS << " " << maxcallsavg/RUNS << " " << totaltimeavg/RUNS << " " << exchangesavg/RUNS << endl;
 
-		sumcallsavg = 0;
-		maxcallsavg = 0;
+		sumcallsavg  = 0;
+		maxcallsavg  = 0;
+		exchangesavg = 0;
 		totaltimeavg = 0;
+		cout << "rank\n";
 		for (ct=0; ct<RUNS; ct++)
 		{
 			shuffle(begin(edgelist), end(edgelist), rng);
@@ -253,34 +283,31 @@ int main() {
 			BuildSolution();
 			assertMatching(solution,V,"Rank");
 			assert(R==S);
-			sumcallsavg += lm->getOracleCalls()+rm->getOracleCalls();
-			maxcallsavg += max(lm->getOracleCalls(),rm->getOracleCalls());
-			totaltimeavg+= duration.count();
-		} 
-		rank_file << edgelist.size() << " " << R << " " << sumcallsavg/RUNS << " " << maxcallsavg/RUNS << " " << totaltimeavg/RUNS << endl;// << " " << lm->getOracleCalls()+rm->getOracleCalls() << endl;
+			sumcallsavg  += lm->getOracleCalls()+rm->getOracleCalls();
+			maxcallsavg  += max(lm->getOracleCalls(),rm->getOracleCalls());
+			totaltimeavg += duration.count();
+			exchangesavg += lm->getExchangeCalls()+rm->getExchangeCalls();
+			assert(lm->getExchangeCalls()+lm->getFreeCalls()==lm->getOracleCalls());
+			assert(rm->getExchangeCalls()+rm->getFreeCalls()==rm->getOracleCalls());
+			delete lm;
+			delete rm;
+ 		}
+		if (WRITE)
+			rank_file << p << " " << edgelist.size() << " " << R << " " << sumcallsavg/RUNS << " " << maxcallsavg/RUNS << " " << totaltimeavg/RUNS << " " << exchangesavg/RUNS << endl;
 		
 		cout << endl;
-		V+=2;
-	}*/
+		//V+=2;
+		p+=5;
+	}
 	
-	sap_file.close();
-	cun_file.close();
-	indep_file.close();
-	rank_file.close();
+	if (WRITE) {
+		sap_file.close();
+		cun_file.close();
+		indep_file.close();
+		rank_file.close();
+	}
+
+	cout << ">>SUCCESS\n";
 
 	return 0;
 }
-
-
-/*void FindGreedy() {   // O (n.T) 
-	for (int i = 0; i < N; ++i)
-	{
-		if (O1->Free(i) && O2->Free(i))
-		{
-			independent_set.push_back(i);
-			in_independent_set[i]=true;
-			//Update_State();
-		}
-	}
-	return;
-}*/

@@ -3,7 +3,7 @@
 using namespace std;
 
 void Init(int N_) {
-	MAX_DIST = N_+1;
+	MAX_DIST = N_+10;
 	independent_set.clear();
 	not_independent.clear();
 	in_independent_set.resize(N_, false);
@@ -31,7 +31,7 @@ void printGraph(vector<int> graph[]) {
 
 bool equal_content_same_order(vector<int> &a, vector<int> &b) {
 	if (a.size() != b.size()) return false;
-	for (int i = 0; i < a.size(); ++i)
+	for (size_t i = 0; i < a.size(); ++i)
 		if (a[i] != b[i])
 			return false;
 	return true;
@@ -39,7 +39,7 @@ bool equal_content_same_order(vector<int> &a, vector<int> &b) {
 
 void PrintIndependentSet() {
 	cout << "###Curent solution: ";
-	for (int i = 0; i < independent_set.size(); ++i) cout << independent_set[i] << " ";
+	for (size_t i = 0; i < independent_set.size(); ++i) cout << independent_set[i] << " ";
 	cout << endl;
 }
 
@@ -94,8 +94,8 @@ void PrintCandidates() {
 }
 
 void ClearCandidates() {
-	assert(candidates.size()==MAX_DIST);
-	for (int i = 0; i < candidates.size(); ++i)
+	assert((int)candidates.size()==MAX_DIST);
+	for (size_t i = 0; i < candidates.size(); ++i)
 		candidates[i].clear();
 }
 
@@ -104,11 +104,11 @@ void ClearCandidates() {
 vector<int> RemoveSubset(vector<int> S, vector<int> A) {
 	// index[i] = -1 if i-th element is not in S, index[i]=j 0<j<N-1 if i-th element is in S
 	int j=0;
-	for (int i = 0; i < A.size(); i++)
+	for (size_t i = 0; i < A.size(); i++)
 		if (index_[A[i]] != -1) {
 			S[index_[A[i]]] = -1; j++; }
 	vector<int> S_;
-	for (int i = 0; i < S.size(); i++)
+	for (size_t i = 0; i < S.size(); i++)
 		if (S[i] != -1)
 			S_.push_back(i);
 	return S_;

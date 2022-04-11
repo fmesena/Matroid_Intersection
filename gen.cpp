@@ -5,22 +5,32 @@ using std::pair, std::vector, std::cout, std::endl, std::string, std::max;
 
 /*** Generators *************************/
 
-pair<vector<vector<int>>, vector<Edge>> Generate_BipartiteGraph(int V) {
+pair<vector<vector<int>>, vector<Edge>> Generate_BipartiteGraph(int V, int p) {
 	assert(V%2==0);
 	vector<vector<int>> graph;
 	vector<Edge> edges;
 	int arc;
+	const int range_from  = 1;
+	const int range_to    = 100;
+	std::random_device                  rand_dev;
+	std::mt19937                        generator(rand_dev());
+	std::uniform_int_distribution<int>  distr(range_from, range_to);
+
 	for (int i = 0; i < V; ++i)
 		graph.push_back(vector<int>());
-	for (int i = 0; i < V/2; ++i)
+	for (int i = 0; i < V/2; ++i) {
 		for (int j = V/2; j < V; ++j) {
-			arc = rand() % 2;
+			arc = distr(generator) <= p? true:false;
 			if (!arc) continue;
 			edges.push_back({i,j});
 			graph[i].push_back(j);
 			graph[j].push_back(i);
 		}
+	}
 	size_t E = edges.size();
+	if (p==100) {
+		assert(E==V*V/4);
+	}
 	/*cout << "Edge list\n";
 	for (Edge e : edges)
 		cout << e.u << " " << e.v << endl;*/
@@ -77,7 +87,6 @@ vector<vector<int>> Generate_Arborescence(int V, int root) {
 	int arc1,arc2;
 	vector<vector<int>> graph;
 	vector<Edge> edges;
-	Edge e;
 	for (int i = 0; i < V; ++i) {
 		for (int j = 0; j < V; ++j) {
 			if (i==j) continue;
@@ -87,8 +96,8 @@ vector<vector<int>> Generate_Arborescence(int V, int root) {
 			if (arc2) { edges.push_back({j,i}); graph[j].push_back(i); }
 		}
 	}
-	size_t E = edges.size();
-	cout << "Edge list\n";
+	//size_t E = edges.size();
+	/*cout << "Edge list\n";
 	for (Edge e : edges)
 		cout << e.u << " " << e.v << endl;
 
@@ -99,7 +108,7 @@ vector<vector<int>> Generate_Arborescence(int V, int root) {
 		for (auto x : graph[i])
 			cout << x << " ";
 		cout << endl;
-	}
+	}*/
 	return graph;
 }
 
@@ -109,7 +118,7 @@ vector<vector<int>> Generate_Arborescence(int V, int root) {
 void assertMatching(vector<Edge> matching, int V, string name) {
 	//cout << name << " ";
 	vector<bool> matched = vector<bool>(V,false);
-	assert(matching.size()<=V/2);
+	assert((int)matching.size()<=V/2);
 	for (Edge &e:matching)
 	{
 		assert(!matched[e.u] && !matched[e.v]);
@@ -138,7 +147,7 @@ void assertGraphic(vector<Edge> forest, string name) {
 	for (Edge e:forest)
 	{
 		V = max(e.u,e.v);
-		while (V>adj.size()) adj.push_back(vector<int>());
+		while (V>(int)adj.size()) adj.push_back(vector<int>());
 		adj[e.u-1].push_back(e.v-1);
 		adj[e.v-1].push_back(e.u-1);
 	}
