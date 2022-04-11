@@ -5,7 +5,7 @@
 
 using namespace std;
 
-class Uniform : public Oracle { //poweroracle <=> U(n,n)
+class Uniform final : public Oracle { //poweroracle <=> U(n,n)
 public:
     int n;
     int r;

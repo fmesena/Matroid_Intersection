@@ -6,7 +6,7 @@
 
 using namespace std;
 
-class RightMatching : public Oracle {
+class RightMatching final : public Oracle {
 public:
     int N;
     vector<int> right;

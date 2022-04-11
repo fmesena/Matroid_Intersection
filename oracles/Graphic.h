@@ -16,7 +16,7 @@ extern "C" {
 
 using namespace std;
 
-class Graphic : public Oracle {
+class Graphic final : public Oracle {
 public:
     LCT lct;
     int N;

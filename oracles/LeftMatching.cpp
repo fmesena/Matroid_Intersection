@@ -20,17 +20,20 @@ void LeftMatching::Temp_Update_State(int a, bool to_be_added) {
 }
 bool LeftMatching::Exchangeable(int a, int b) {  //O(1)
     ORACLE_CALLS++;
+    EXCH_CALLS++;
     return left[edges[b].u]==0 || edges[a].u == edges[b].u;
 }
 bool LeftMatching::Free(int b) {  //O(1)
     ORACLE_CALLS++;
+    FREE_CALLS++;
     return left[edges[b].u]==0;
 }
 int LeftMatching::Rank(vector<int> B) {  //O(n)
     ORACLE_CALLS++;
+    EXCH_CALLS++;
     vector<int> occupied=left;
     int r=0;
-    for (int i=0; i<B.size(); i++)
+    for (size_t i=0; i<B.size(); i++)
     {
         if (occupied[edges[B[i]].u] == 1) continue;
         occupied[edges[B[i]].u] = 1;
@@ -40,6 +43,7 @@ int LeftMatching::Rank(vector<int> B) {  //O(n)
 }
 bool LeftMatching::Exchangeable_Set(vector<int> A, int b) {  // O(|A|)
     ORACLE_CALLS++;
+    EXCH_CALLS++;
     for (int a:A) {
         if (edges[a].u == edges[b].u) {
             return true;
