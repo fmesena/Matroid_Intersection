@@ -75,34 +75,59 @@ for i in range(len(n1)):
 
 ####################
 
-#plt.rcParams['text.usetex'] = True
+fig = plt.figure()
+ax = fig.add_subplot(1, 1, 1)
 
-X = np.array(n1)
+X = np.array(bound_C)
 
 y = np.array(O_CALLS1)
 z = np.array(O_CALLS2)
 w = np.array(O_CALLS3)
 o = np.array(O_CALLS4)
 
-xmax=max(n1)
-#ymax=max(CALLS4)
-ymax=max(max(O_CALLS1),max(O_CALLS2),max(O_CALLS3),max(O_CALLS4))
-plt.xlim(0, xmax+100)
-plt.ylim(0, ymax+100000)
-
+xmax=max(bound_C)
+ymax=max(CALLS2)
+#ymax=max(max(O_CALLS1),max(O_CALLS2),max(O_CALLS3),max(O_CALLS4))
+plt.xlim(0, xmax)
+plt.ylim(0, ymax)
 #plt.ylim(min(min(time1),min(time2)), max(max(time1),max(time2)))
 
 
+# Adding a grid
+major_ticks = ax.get_xticks()
+minor_ticks = np.array( [ major_ticks[i]+(major_ticks[i+1]-major_ticks[i])//2 for i in range(len(major_ticks)-1)] )
+ax.set_xticks(major_ticks)
+ax.set_xticks(minor_ticks, minor=True)
+
+major_ticks = ax.get_yticks()
+minor_ticks = np.array( [ major_ticks[i]+(major_ticks[i+1]-major_ticks[i])//2 for i in range(len(major_ticks)-1)] )
+ax.set_yticks(major_ticks)
+ax.set_yticks(minor_ticks, minor=True)
+
+ax.grid(which='both')
+
+#https://stackoverflow.com/questions/24943991/change-grid-interval-and-specify-tick-labels-in-matplotlib
+#https://matplotlib.org/3.5.0/api/_as_gen/matplotlib.pyplot.grid.html
+
+ax.grid(which='major', alpha=0.7, color='grey', linestyle=':', linewidth=1)
+ax.grid(which='minor', alpha=0.9, color='grey', linestyle=':', linewidth=0.6)
+#ax.grid(which='major', color='grey', linestyle=':', linewidth=1, alpha=0.5)
+
+#OLD
+#plt.grid(True, color='grey', ls=':', lw=1)
+
 # Plotting both the curves simultaneously
-plt.plot(X, y, 'rs-', linewidth=1, markersize=3.5, label='A&D')
+#plt.plot(X, y, 'rs-', linewidth=1, markersize=3.5, label='A&D')
 plt.plot(X, z, 'go-', linewidth=1, markersize=4, label='Cunningham') #https://www.geeksforgeeks.org/graph-plotting-in-python-set-1/
-plt.plot(X, w, 'b^-', linewidth=1, markersize=4, label='Indep')
-plt.plot(X, o, 'y*--', linewidth=1, markersize=5, label='ExactRank')
+#plt.plot(X, w, 'b^-', linewidth=1, markersize=4, label='Indep')
+#plt.plot(X, o, 'y*--', linewidth=1, markersize=5, label='ExactRank')
 #(x, y, color='green', linestyle='dashed', linewidth = 3, marker='o', markerfacecolor='blue', markersize=12)
 
+#plt.plot(X, X, 'k-', linewidth=1)	
+
 # Naming the x-axis, y-axis and the whole graph
-plt.xlabel("$n$")
-plt.ylabel("O(Number of queries)")
+plt.xlabel("$n ~ r ~ \log r$")
+plt.ylabel("Number of queries")
 plt.title("Title???")
 
 #Adding text at coordinate 8x,y)
@@ -111,12 +136,7 @@ plt.title("Title???")
 # Adding legend, which helps us recognize the curve according to it's color
 plt.legend()
 
-#Adding a grid
-plt.grid(True, color='grey', ls=':', lw=1)
-#plt.grid(True)
-  
-# To load the display window
-plt.savefig('results/all_normalscale_O(CALLS).svg')
+plt.savefig('results/testing.svg')
 
 
 """
