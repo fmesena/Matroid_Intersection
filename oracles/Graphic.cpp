@@ -1,5 +1,5 @@
 #include "Graphic.h"
-
+#include <cassert> 
 Graphic::Graphic(int N_,vector<Edge> edges_):Oracle() {
     N = N_;
     edges = edges_;
@@ -39,19 +39,30 @@ int Graphic::Rank(vector<int> B) {
     ORACLE_CALLS++;
     EXCH_CALLS++;
     int r=0;
+    //for (size_t i = 0; i < B.size(); ++i)
+    //{
+    //    cout << B[i] << ": " << edges[B[i]].u << "-" << edges[B[i]].v << " | ";
+    //}
+    //cout << endl;
+    LCT aux = lct;
+    vector<int> j;
     for (size_t i=0; i<B.size(); i++)
     {
+        //cout << B[i] << " ";
         if (!linkedQ(lct, edges[B[i]].u, edges[B[i]].v) )
         {
             r++;
             link(lct, edges[B[i]].u, edges[B[i]].v);
+            //cout << "!" << B[i] << "!" << endl;
+            j.push_back(i);
         }
     }
-    for (size_t i=0; i<B.size(); i++) {
-        if (edgeQ(lct, edges[B[i]].u, edges[B[i]].v) ) {
-            cut(lct, edges[B[i]].u, edges[B[i]].v);
-        }
+    for (size_t i=0; i<j.size(); i++) { //if (edgeQ(lct, edges[B[i]].u, edges[B[i]].v) )
+        cut(lct, edges[B[j[i]]].u, edges[B[j[i]]].v);
     }
+    //cout << "r: "<<r;
+    //cout << ", testing equivalence\n";
+    assert(fastEqQ(aux,lct));
     return r; //returns rank(B\cup S)
 }
 void Graphic::Update_State(vector<int> S) {
