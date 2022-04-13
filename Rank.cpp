@@ -41,7 +41,6 @@ int FindExchange(int const b, vector<int> const &A) {
 	return A[exchangeable];
 }
 
-
 int FindFree(vector<int> const &B) {
 	
 	if (B.empty()) return -1;
@@ -80,25 +79,24 @@ int OutArc(int const a, const vector<int> B) {
 		independent_set.pop_back();
 		O1->Temp_Update_State(a,false);
 		O2->Temp_Update_State(a,false);
-
+		
 		int e = FindFree(B);
-
+		
 		independent_set.push_back(a);
 		swap(independent_set.back(), independent_set[index_[a]]);
 		O1->Temp_Update_State(a,true);
 		O2->Temp_Update_State(a,true);
-
+		
 		return e;
 	}
 
-	if (!IN_INDEPENDENT(a) && O2->Free(a)) { return TARGET; }
+	if (!IN_INDEPENDENT(a) && O2->Free(a)) return TARGET;
 
-	if (!IN_INDEPENDENT(a)) { return FindExchange(a, B); }
+	if (!IN_INDEPENDENT(a)) 			   return FindExchange(a, B);
 
 	cerr << ">>ERROR: Rank::OutArc" << endl;
 	return -1;
 }
-
 
 void GetDistancesRank() {
 
@@ -160,7 +158,6 @@ void GetDistancesRank() {
 	}
 	return;
 }
-
 
 // An iterative DFS-like routine
 void BlockFlow() {
@@ -292,7 +289,6 @@ size_t ExactRank(int N_, Oracle* O1_, Oracle* O2_) {
 
 	return SZ;
 }
-
 
 size_t ApproxRank(int N_, Oracle* O1_, Oracle* O2_, double eps=0.1) {
 

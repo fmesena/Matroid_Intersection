@@ -8,6 +8,7 @@
 #include <string>
 #include <cassert>
 #include <random>
+#include <vector>
 #include <math.h>
 #include "ds/Edge.h"
 

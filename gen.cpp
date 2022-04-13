@@ -53,6 +53,13 @@ pair<int,vector<Edge>> Generate_SimpleGraph(int E) {
 	int V = 0.5*(1 + sqrt(1+16*E));
 	int m = 0;
 	int u,v;
+
+	const int range_from  = 1;
+	const int range_to    = 100;
+	std::random_device                  rand_dev;
+	std::mt19937                        generator(rand_dev());
+	std::uniform_int_distribution<int>  distr(range_from, range_to);
+
 	while (m++<E)
 	{
 		u = rand() % V + 1;
@@ -126,16 +133,15 @@ void assertMatching(vector<Edge> matching, int V, string name) {
 	}
 }
 
-void DFS(vector<vector<int>> adj, int u, int last, bool *visited) {
-	visited[u]=true;
+static void CheckBackEdge_DSF(vector<vector<int>> &adj, int u, int last, int* visited) {
+	visited[u]=1;
 	for (int v: adj[u]) {
 		if (v!=last) {
-			//assert(!visited[v] && "back-edge");
-			if (visited[v]==true) {
-				cout << "ERROR: back-edge " << u+1 << "-" << v+1 << endl;
+			if (visited[v]) {
+				delete[] visited;
 				assert(!visited[v] && "back-edge");
 			}
-			DFS(adj,v,u,visited);
+			CheckBackEdge_DSF(adj,v,u,visited);
 		}
 	}
 }
@@ -146,19 +152,20 @@ void assertGraphic(vector<Edge> forest, string name) {
 	int V=0;
 	for (Edge e:forest)
 	{
-		V = max(e.u,e.v);
+		V = max(V,max(e.u,e.v));
 		while (V>(int)adj.size()) adj.push_back(vector<int>());
 		adj[e.u-1].push_back(e.v-1);
 		adj[e.v-1].push_back(e.u-1);
 	}
-	bool *visited = new bool[V]();
+	int *visited = new int[V]();
 	for (int u=0; u<V; u++) {
 		if (!visited[u]) {
-			visited[u] = true;
-			DFS(adj, u, -1, visited);
+			visited[u] = 1;
+			CheckBackEdge_DSF(adj, u, -1, visited);
 		}
 	}
-	delete[] visited; //may leak if assertion fails, lazy
+	//cout << endl;
+	delete[] visited;
 }
 
 void assertArb(vector<Edge> arb, vector<vector<int>> adj, string name) {
