@@ -4,12 +4,12 @@ CFLAGS  = -g -Wall -pedantic -std=c++17
 all: exec
 
 exec: main.o SAP.o Cun86.o Indep.o Rank.o gen.o utils.o Bipartite_Matching.o ds/LinkCutTree.o oracles/RightMatching.o oracles/LeftMatching.o oracles/Uniform.o oracles/Graphic.o
-	$(CC) $(CFLAGS) main.o SAP.o Cun86.o Indep.o Rank.o gen.o utils.o Bipartite_Matching.o LinkCutTree.o RightMatching.o LeftMatching.o Uniform.o Graphic.o -o exec
+	$(CC) $(CFLAGS) -o exec main.o SAP.o Cun86.o Indep.o Rank.o gen.o utils.o Bipartite_Matching.o LinkCutTree.o RightMatching.o LeftMatching.o Uniform.o Graphic.o
 
-main.o: main.cpp
+main.o: main.cpp SAP.h Cun86.h Indep.h Rank.h gen.h Bipartite_Matching.h
 	$(CC) $(CFLAGS) -c main.cpp
 
-SAP.o:  SAP.cpp SAP.h
+SAP.o:  SAP.cpp SAP.h utils.h oracles/Base.h
 	$(CC) $(CFLAGS) -c SAP.cpp
 	
 Cun86.o:  Cun86.cpp Cun86.h utils.h oracles/Base.h
@@ -23,15 +23,15 @@ Rank.o:  Rank.cpp Rank.h utils.h oracles/Base.h
 
 gen.o:  gen.cpp gen.h ds/Edge.h
 	$(CC) $(CFLAGS) -c gen.cpp
-
-ds/LinkCutTree.o:  ds/LinkCutTree.c ds/LinkCutTree.h ds/Edge.h
-	gcc -g -c ds/LinkCutTree.c
 	
 utils.o:  utils.cpp utils.h 
 	$(CC) $(CFLAGS) -c utils.cpp
 
-BipartiteMatching.o:  BipartiteMatching.cpp BipartiteMatching.h 
-	$(CC) $(CFLAGS) -c BipartiteMatching.cpp
+Bipartite_Matching.o:  Bipartite_Matching.cpp Bipartite_Matching.h 
+	$(CC) $(CFLAGS) -c Bipartite_Matching.cpp
+
+ds/LinkCutTree.o:  ds/LinkCutTree.c ds/LinkCutTree.h
+	gcc -g -c ds/LinkCutTree.c
 
 oracles/RightMatching.o:  oracles/RightMatching.cpp oracles/RightMatching.h oracles/Base.h ds/Edge.h
 	$(CC) $(CFLAGS) -c oracles/RightMatching.cpp
