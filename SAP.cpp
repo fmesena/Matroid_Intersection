@@ -11,7 +11,7 @@ static vector<bool> X2;
 
 bool BFS_Augment() {   // O (n + n.T + nr.T + 2r)
 
-	const int NOT_VISITED = -4;
+	const int NO_ONE = -4;
 	const int NO_AUGMENTATION = -5;
 
 	independent_set.clear();
@@ -32,7 +32,7 @@ bool BFS_Augment() {   // O (n + n.T + nr.T + 2r)
 	queue<int> q;
 
 	for (int i = 0; i < N; ++i) {
-		parent[i] = NOT_VISITED;
+		parent[i] = NO_ONE;
 	}
 
 	fill (X1.begin(),X1.end(),false);
@@ -66,7 +66,7 @@ bool BFS_Augment() {   // O (n + n.T + nr.T + 2r)
     		for (size_t i = 0; i < not_independent.size(); ++i)
     		{
     			neighb = not_independent[i];
-    			if (parent[neighb] != NOT_VISITED) continue;
+    			if (parent[neighb] != NO_ONE) continue;
 				if (!O1->Exchangeable(current, neighb)) continue;
 				q.push(neighb);
 				parent[neighb] = current;
@@ -82,7 +82,7 @@ bool BFS_Augment() {   // O (n + n.T + nr.T + 2r)
     		for (size_t i = 0; i < independent_set.size(); ++i)
     		{
     			neighb = independent_set[i];
-    			if (parent[neighb] != NOT_VISITED) continue;
+    			if (parent[neighb] != NO_ONE) continue;
 				if (!O2->Exchangeable(neighb, current)) continue;
 				q.push(neighb);
 				parent[neighb] = current;
