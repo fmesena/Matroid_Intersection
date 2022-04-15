@@ -67,7 +67,7 @@ int FindFree(vector<int> const &B) {
 	return B[free_];
 }
 
-int OutArc(int const a, const vector<int> B) {
+int OutArc(int const a, const vector<int> &B) {
 
 	if (a == SOURCE) return FindFree(B);
 
