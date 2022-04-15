@@ -1,5 +1,6 @@
 #include "Graphic.h"
-#include <cassert> 
+#include <cassert>
+
 Graphic::Graphic(int N_,vector<Edge> edges_):Oracle() {
     N = N_;
     edges = edges_;
@@ -8,7 +9,14 @@ Graphic::Graphic(int N_,vector<Edge> edges_):Oracle() {
 Graphic::~Graphic() {
     freeLCT(lct);
 }
-bool Graphic::Exchangeable(int a, int b) {  // 3.log n
+bool Graphic::Free(int b) {  // log r
+    ORACLE_CALLS++;
+    FREE_CALLS++;
+    if (linkedQ(lct, edges[b].u, edges[b].v) )
+        return false;
+    return true;
+}
+bool Graphic::Exchangeable(int a, int b) {  // 3.log r
     ORACLE_CALLS++;
     EXCH_CALLS++;
     cut(lct, edges[a].u, edges[a].v);
@@ -16,7 +24,7 @@ bool Graphic::Exchangeable(int a, int b) {  // 3.log n
     link(lct, edges[a].u, edges[a].v);
     return ok;
 }
-bool Graphic::Exchangeable_Set(vector<int> A, int b) { // 2.r.log n
+bool Graphic::Exchangeable_Set(vector<int> A, int b) { // 2.r.log r
     ORACLE_CALLS++;
     EXCH_CALLS++;
     for (size_t i=0; i<A.size(); i++) {
@@ -28,40 +36,29 @@ bool Graphic::Exchangeable_Set(vector<int> A, int b) { // 2.r.log n
     }
     return ok;
 }
-bool Graphic::Free(int b) {  // log n
-    ORACLE_CALLS++;
-    FREE_CALLS++;
-    if (linkedQ(lct, edges[b].u, edges[b].v) )
-        return false;
-    return true;
-}
-int Graphic::Rank(vector<int> B) {
+int Graphic::Rank(vector<int> B) { // 3.n.log r
     ORACLE_CALLS++;
     EXCH_CALLS++;
     int r=0;
-    //for (size_t i = 0; i < B.size(); ++i)
-    //{
-    //    cout << B[i] << ": " << edges[B[i]].u << "-" << edges[B[i]].v << " | ";
-    //}
-    //cout << endl;
+    /*for (size_t i = 0; i < B.size(); ++i)
+    {
+        cout << B[i] << ": " << edges[B[i]].u << "-" << edges[B[i]].v << " | ";
+    }
+    cout << endl;*/
     LCT aux = lct;
-    vector<int> j;
+    vector<int> links;
     for (size_t i=0; i<B.size(); i++)
     {
-        //cout << B[i] << " ";
         if (!linkedQ(lct, edges[B[i]].u, edges[B[i]].v) )
         {
             r++;
             link(lct, edges[B[i]].u, edges[B[i]].v);
-            //cout << "!" << B[i] << "!" << endl;
-            j.push_back(i);
+            links.push_back(i);
         }
     }
-    for (size_t i=0; i<j.size(); i++) { //if (edgeQ(lct, edges[B[i]].u, edges[B[i]].v) )
-        cut(lct, edges[B[j[i]]].u, edges[B[j[i]]].v);
+    for (size_t i=0; i<links.size(); i++) { //if (edgeQ(lct, edges[B[i]].u, edges[B[i]].v) )
+        cut(lct, edges[B[links[i]]].u, edges[B[links[i]]].v);
     }
-    //cout << "r: "<<r;
-    //cout << ", testing equivalence\n";
     assert(fastEqQ(aux,lct));
     return r; //returns rank(B\cup S)
 }

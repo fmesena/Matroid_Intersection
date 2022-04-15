@@ -112,18 +112,15 @@ void GetDistancesIndep() {
 void OnePath() {
 	assert(even(DISTANCE_TARGET));
 	assert(candidates[0].size()==0);
-	//cout << "OnePath begin\n";
-	int b;
+	int  a 	= TARGET;
+	int  l 	= DISTANCE_TARGET;
+	int  b;
 	bool arc;
-	int a = TARGET;
-	int l = DISTANCE_TARGET;
 	vector<int> Q;
 
 	while (l>0)
 	{
-		//cout << "\nWhile com l=" << l << endl;
-		Q = candidates[l-1];
-		//DEBUG_VECTOR(candidates[l-1]);
+		Q 	= candidates[l-1];
 		arc = false;
 
 		for (size_t i=0; i < candidates[l-1].size(); i++) //when l=1 we do not enter the loop since any element with distane 1 is free in M1
@@ -135,7 +132,6 @@ void OnePath() {
 			{
 				if (O2->Free(b))
 				{
-					//cout << "setting " << b << " to true" << endl;
 					in_independent_set[b] = true;
 					arc=true;
 				}
@@ -173,7 +169,6 @@ void OnePath() {
 		}
 		l--;
 	}
-	//PrintCandidates();
 	// when l is odd,  S - b + a_l \in I_1
 	// when l is even, S - a_l + b \in I_2
 	UpdateIndependentSet();
@@ -191,7 +186,6 @@ size_t AugmentingPaths(int N_, Oracle* O1_, Oracle* O2_) {
 	if (N==0) return 0;
 
 	Init(N);
-	//Greedy_Intersection();
 
 	//initial distance lower bounds
 	for (int i = 0; i < N; ++i)

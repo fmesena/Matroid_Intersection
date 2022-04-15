@@ -5,28 +5,25 @@ RightMatching::RightMatching(int N_, vector<Edge> edges_):Oracle() {
     edges = edges_;
     right = vector<int>(N_,0);
 }
-void RightMatching::Update_State(vector<int> S) {
-    fill (right.begin(),right.end(),0);
-    for (size_t i = 0; i < S.size(); ++i)
-        right [edges[S[i]].v] = 1;
-}
-void RightMatching::Temp_Update_State(int a, bool to_be_added) {
-    if (to_be_added) {
-        right [edges[a].v] = 1;
-    }
-    else {
-        right [edges[a].v] = 0;
-    }
+bool RightMatching::Free(int b) {
+    ORACLE_CALLS++;
+    FREE_CALLS++;
+    return right[edges[b].v]==0;
 }
 bool RightMatching::Exchangeable(int a, int b) {
     ORACLE_CALLS++;
     EXCH_CALLS++;
     return right[edges[b].v]==0 || edges[a].v == edges[b].v;
 }
-bool RightMatching::Free(int b) {
+bool RightMatching::Exchangeable_Set(vector<int> A, int b) {
     ORACLE_CALLS++;
-    FREE_CALLS++;
-    return right[edges[b].v]==0;
+    EXCH_CALLS++;
+    for (int a:A) {
+        if (edges[a].v == edges[b].v) {
+            return true;
+        }
+    }
+    return false;
 }
 int RightMatching::Rank(vector<int> B) {
     ORACLE_CALLS++;
@@ -41,15 +38,18 @@ int RightMatching::Rank(vector<int> B) {
     }
     return r; //returns rank(B\cup S)
 }
-bool RightMatching::Exchangeable_Set(vector<int> A, int b) {
-    ORACLE_CALLS++;
-    EXCH_CALLS++;
-    for (int a:A) {
-        if (edges[a].v == edges[b].v) {
-            return true;
-        }
+void RightMatching::Update_State(vector<int> S) {
+    fill (right.begin(),right.end(),0);
+    for (size_t i = 0; i < S.size(); ++i)
+        right [edges[S[i]].v] = 1;
+}
+void RightMatching::Temp_Update_State(int a, bool to_be_added) {
+    if (to_be_added) {
+        right [edges[a].v] = 1;
     }
-    return false;
+    else {
+        right [edges[a].v] = 0;
+    }
 }
 void RightMatching::show() {
     cout << "Right Matching: " << N << " edges" << endl;

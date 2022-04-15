@@ -43,25 +43,6 @@ void PrintIndependentSet() {
 	cout << endl;
 }
 
-/*void UpdateIndependentSetNew(int e) {
-	if (in_independent_set[e]==true)
-	{
-		in_independent_set[e] = false;
-		O1->Temp_Update_State(e,false);
-		O2->Temp_Update_State(e,false);
-		not_independent.push_back(e);
-		//index_[i] = -1;
-	}
-	else
-	{
-		in_independent_set[e] = true;
-		O1->Temp_Update_State(e,true);
-		O2->Temp_Update_State(e,true);
-		independent_set.push_back(e);
-		//index_[i] = independent_set.size()-1;
-	}
-}*/
-
 // index[i] = -1 if i-th element is not in S, index[i]=j 0<j<N-1 if i-th element is in S
 void UpdateIndependentSet() {
 	independent_set.clear();
