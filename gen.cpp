@@ -1,11 +1,15 @@
 #include <cstdlib>
 #include "gen.h"
 
-using std::pair, std::vector, std::cout, std::endl, std::string, std::max;
+using std::pair, std::vector, std::cout, std::endl, std::string, std::max, std::min;
+
+#define rand_p() (((double) rand()) / RAND_MAX)
+#define rand_n(n) ((int) (((double) (n)) * (rand() / (RAND_MAX + 1.0))))
+
 
 /*** Generators *************************/
 
-pair<vector<vector<int>>, vector<Edge>> Generate_BipartiteGraph(int V, int p) {
+pair<vector<vector<int>>, vector<Edge>> GenerateRandomBipartiteGraph(int V, int p) {
 	assert(V%2==0);
 	vector<vector<int>> graph;
 	vector<Edge> edges;
@@ -47,76 +51,86 @@ pair<vector<vector<int>>, vector<Edge>> Generate_BipartiteGraph(int V, int p) {
 }
 
 
+pair<vector<vector<int>>, vector<Edge>> GenerateBlocksBipartiteGraph(int V, int n1) {
+	assert(V%2==0);
+	assert(V>=20);
+	assert(n1>=4);
+	V=V/2;
+	assert(V%n1==0);
+
+	vector<vector<int>> graph;
+	
+	vector<Edge> edges;
+	const int 	 n2 	 = V/n1;
+	const int 	 degree	 = min(5,n2*3); //average degree
+	cout << "Degree: " << degree << endl;
+	const double p 		 = degree/V;
+	
+	for (int a=0; a<n1; a++) {
+		for (int b=0; b<n2; b++) {
+			int u  = a*n2+b;
+			vector<int> neighb_group = {(-1+a+n1)%n1, a,(1+a+n1)%n1}; //find neighbours of "u" in blocks a-1,a,a+1
+			for (auto j : neighb_group) {
+				for (int v=n2*j; v<n2*(j+1); v++) {
+					if (rand_p() > p)
+						continue;
+					edges.push_back({u,v+V});
+				}
+			}
+		}
+	}
+	return {graph,edges};
+}
+
+
 //returns a vector of Edges with vertices in the range 1..V
-pair<int,vector<Edge>> Generate_SimpleGraph(int E) {
+pair<int,vector<Edge>> GenerateMultiGraph(int E) {
 	vector<Edge> edges;
 	int V = 0.5*(1 + sqrt(1+16*E));
 	int m = 0;
 	int u,v;
 
 	const int range_from  = 1;
-	const int range_to    = 100;
+	const int range_to    = V;
 	std::random_device                  rand_dev;
 	std::mt19937                        generator(rand_dev());
 	std::uniform_int_distribution<int>  distr(range_from, range_to);
 
 	while (m++<E)
 	{
-		u = rand() % V + 1;
-		v = rand() % V + 1;
-		while (v==u) v = rand() % V + 1;
+		u = distr(generator);
+		v = distr(generator);
+		while (v==u) v = distr(generator);
 		edges.push_back({u,v});
 	}
-
-	/*type 0 = random p=...,
-	type 1 = random p=...,
-	type 2 = random p=...,
-	type 3 = SFN    ...,
-	...
-	type n = ...
-	
-	https://en.cppreference.com/w/cpp/language/enum
-	enum Color { red, green, blue };
-	Color r = red;
-	 
-	switch(r)
-	{
-	    case red  : std::cout << "red\n";   break;
-	    case green: std::cout << "green\n"; break;
-	    case blue : std::cout << "blue\n";  break;
-	}*/
 	return {V,edges};
 }
 
+//returns a vector of Edges with vertices in the range 1..V
+pair<int,vector<Edge>> GenerateDuplicationDivergence(int V) {
+	assert(V>2);
+	const double p=0.51;
 
-//TODO include designated root "r"
-vector<vector<int>> Generate_Arborescence(int V, int root) {
-	int arc1,arc2;
-	vector<vector<int>> graph;
+	vector<vector<int>> adj = vector<vector<int>>(V+1);
+	adj[1].push_back(2); adj[2].push_back(1);
 	vector<Edge> edges;
-	for (int i = 0; i < V; ++i) {
-		for (int j = 0; j < V; ++j) {
-			if (i==j) continue;
-			arc1 = rand() % 2;
-			arc2 = rand() % 2;
-			if (arc1) { edges.push_back({i,j}); graph[i].push_back(j); }
-			if (arc2) { edges.push_back({j,i}); graph[j].push_back(i); }
-		}
-	}
-	//size_t E = edges.size();
-	/*cout << "Edge list\n";
-	for (Edge e : edges)
-		cout << e.u << " " << e.v << endl;
+	edges.push_back({1,2});
 
-	cout << "\nAdj list\n";
-	for (int i=0; i<V; i++)
+	int cur = 3;
+	while (cur <= V)
 	{
-		cout << i << ": ";
-		for (auto x : graph[i])
-			cout << x << " ";
-		cout << endl;
-	}*/
-	return graph;
+		int rnd_node = rand_n(cur)+1; cout << rnd_node << endl;
+		for (auto v : adj[rnd_node])
+		{
+			if (rand_p() > p)
+				continue;
+			adj[cur].push_back(v);
+			adj[v].push_back(cur);
+			edges.push_back({v,cur});
+		}
+		cur++;
+	}
+	return {V,edges};
 }
 
 
@@ -133,7 +147,7 @@ void assertMatching(vector<Edge> matching, int V, string name) {
 	}
 }
 
-static void CheckBackEdge_DSF(vector<vector<int>> &adj, int u, int last, int* visited) {
+static void CheckBackEdge_DFS(vector<vector<int>> &adj, int u, int last, int* visited) {
 	visited[u]=1;
 	for (int v: adj[u]) {
 		if (v!=last) {
@@ -141,7 +155,7 @@ static void CheckBackEdge_DSF(vector<vector<int>> &adj, int u, int last, int* vi
 				delete[] visited;
 				assert(!visited[v] && "back-edge");
 			}
-			CheckBackEdge_DSF(adj,v,u,visited);
+			CheckBackEdge_DFS(adj,v,u,visited);
 		}
 	}
 }
@@ -161,7 +175,7 @@ void assertGraphic(vector<Edge> forest, string name) {
 	for (int u=0; u<V; u++) {
 		if (!visited[u]) {
 			visited[u] = 1;
-			CheckBackEdge_DSF(adj, u, -1, visited);
+			CheckBackEdge_DFS(adj, u, -1, visited);
 		}
 	}
 	//cout << endl;
@@ -169,22 +183,4 @@ void assertGraphic(vector<Edge> forest, string name) {
 }
 
 void assertArb(vector<Edge> arb, vector<vector<int>> adj, string name) {
-	/*int current;
-	queue<int> q; 
-	q.push(root);
-	bool visited[N] = {false};
-	visited[root] = true;
-	vector<Edge> arborescence;
-	while (!q.empty())
-	{
-		current = q.front(); q.pop();
-		for (auto neighbour : graph_[current])
-		{
-			if (visited[neighbour]) continue;
-			q.push(neighbour);
-			visited[neighbour] = true;
-			arborescence.push_back({i,j});
-		}
-	}
-	return arborescence;*/
 }
