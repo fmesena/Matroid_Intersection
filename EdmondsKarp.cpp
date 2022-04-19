@@ -39,7 +39,7 @@ int bfsEK(vector<int> &parent) {
 
 int EdmondsKarp(int N_, vector<vector<int>> g) {
 
-	N = N_;
+	N 	= N_;
 	adj = g;
 	
 	capacity = new int*[N+2];

@@ -4,12 +4,7 @@
 #include "oracles/Base.h"
 #include "utils.h"
 
-void okSAP();
-bool BFS_Augment();
-size_t SAP(int, Oracle*, Oracle*);
-
-//bool BFS();
-//bool Augment();
-//void Build_Exchange_Graph();
+bool 	BFS_Augment();
+size_t 	SAP(int, Oracle*, Oracle*);
 
 #endif

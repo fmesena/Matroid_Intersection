@@ -28,12 +28,8 @@ bool BFS_Augment() {   // O (n + n.T + nr.T + 2r)
 	O1->Update_State(independent_set);
 	O2->Update_State(independent_set);
 
-	int parent[N];
-	queue<int> q;
-
-	for (int i = 0; i < N; ++i) {
-		parent[i] = NO_ONE;
-	}
+	vector<int> parent(N, NO_ONE);
+	queue<int>  q;
 
 	fill (X1.begin(),X1.end(),false);
 	fill (X2.begin(),X2.end(),false);

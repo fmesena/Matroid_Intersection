@@ -174,12 +174,13 @@ void BlockFlow() {
 	candidates[0].push_back(SOURCE);
 	candidates[DISTANCE_TARGET].push_back(TARGET);
 
-	int augmenting_paths_count = 0;
+	int l 				 = 0;
+	int current 		 = SOURCE;
+	int augmentations_ct = 0;
 	vector<int>  path;
 	vector<int>  indexes;
 	vector<int>  prev_element;
-	int current = SOURCE;
-	int l = 0;
+	
 	while (l>=0)
 	{	
 		if (l==DISTANCE_TARGET-1)
@@ -232,7 +233,7 @@ void BlockFlow() {
 		}
 		else if (l==DISTANCE_TARGET)
 		{
-			augmenting_paths_count++;
+			augmentations_ct++;
 			assert(path.size() == indexes.size());
 			assert(path.size() > 0);
 			for (size_t j=0; j<path.size(); j++)
@@ -260,14 +261,13 @@ void BlockFlow() {
 		}
 	}
 	
-	AUGMENTATIONS.push_back(augmenting_paths_count);
+	AUGMENTATIONS.push_back(augmentations_ct);
 
 	return;
 }
 
 size_t ExactRank(int N_, Oracle* O1_, Oracle* O2_) {
 	
-	size_t s;
 	N  = N_;
 	O1 = O1_;
 	O2 = O2_;
@@ -275,6 +275,7 @@ size_t ExactRank(int N_, Oracle* O1_, Oracle* O2_) {
 	Init(N);
 	AUGMENTATIONS.clear();
 
+	size_t s;
 	do
 	{
 		s = SZ;
@@ -292,15 +293,16 @@ size_t ExactRank(int N_, Oracle* O1_, Oracle* O2_) {
 
 size_t ApproxRank(int N_, Oracle* O1_, Oracle* O2_, double eps=0.1) {
 
-	size_t s;
 	N  = N_;
 	O1 = O1_;
 	O2 = O2_;
 
+	int 	i 	= 0;
+	size_t 	s 	= 0;
+
 	Init(N);
 	AUGMENTATIONS.clear();
 	
-	int i = 0;
 	while (i++ != (int)(1/eps) or s!=SZ)
 	{
 		s=SZ;

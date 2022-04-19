@@ -11,9 +11,6 @@ static Oracle* O2;
 static int exchangeable; //hack
 
 
-void okIndep() {cout<<"okIndep\n";}
-
-
 int FindExchange(Oracle* oracle, int const b, vector<int> &A) {
 
 	if (A.empty()) { cout << ">>ERROR: Indep::FindExchange, A is empty" << endl; return -1; }
