@@ -6,136 +6,75 @@ using namespace std;
 
 static Oracle* O1;
 static Oracle* O2;
-static vector<bool> X1;
-static vector<bool> X2;
 static size_t hack;
 
 
-/*
-	fill (X1.begin(),X1.end(),false);
-	fill (X2.begin(),X2.end(),false);
-	for (size_t i = 0; i < not_independent.size(); i++)
+bool GetDistances() {
+
+	const int NO_ONE = -4;
+
+	int 		current;
+	int 		neighb;
+	queue<int> 	q;
+	vector<int> parent(N, NO_ONE);
+	
+	ClearCandidates();
+
+	for (size_t i = 0; i < not_independent.size(); i++) 
 	{
 		int e = not_independent[i];
-		if (O1->Free(e)) X1[e] = true;
-		if (O2->Free(e)) X2[e] = true;
-		if (X1[e] && X2[e])
-		{
-			for (size_t j = 0; j < i; ++i)
-			{
-				e = not_independent[j];
-				parent[e]    = NOT_VISITED;
-				distances[e] = numeric_limits<int>::max();
-			}
-			in_independent_set[not_independent[i]] = true;
-			UpdateIndependentSet();
-			O1->Update_State(independent_set);
-			O2->Update_State(independent_set);
-			DISTANCE_TARGET=2;
-			i=0;
-			fill (X1.begin(),X1.end(),false);
-			fill (X2.begin(),X2.end(),false);
-		}
-		else
+		if (distances[e]<=1)
 		{
 			if (O1->Free(e))
 			{
-				X1[e] = true;
 				q.push(e);
 				parent[e] = SOURCE;
 				distances[e] = 1;
-			}
-			if (distances[e]>DISTANCE_TARGET) { //this is the DT of the previous stage
-				if (O2->Free(e)) {
-					X2[e] = true;
-				}
+				candidates[1].push_back(e);
 			}
 		}
 	}
-
-	DISTANCE_TARGET = numeric_limits<int>::max();
-	for (int i = 0; i < N; ++i)
-	{
-		parent[i]    = NOT_VISITED;
-		distances[i] = numeric_limits<int>::max();
-	}
-*/
-
-/**/
-
-bool GetDistances() {
-
-	const int NOT_VISITED = -4;
-
-	queue<int> q;
-	int current;
-	int neighb;
-	int parent[N];
-	DISTANCE_TARGET = numeric_limits<int>::max();
 	
-	for (int i = 0; i < N; ++i)
-	{
-		parent[i]    = NOT_VISITED;
-		distances[i] = numeric_limits<int>::max();
-	}
-
-	fill (X1.begin(),X1.end(),false);
-	fill (X2.begin(),X2.end(),false);
-	for (size_t i = 0; i < not_independent.size(); i++)
-	{
-		int e = not_independent[i];
-		if (O1->Free(e))
-		{
-			X1[e] = true;
-			q.push(e);
-			parent[e] = SOURCE;
-			distances[e]=1;
-		}
-		if (O2->Free(e)) {
-			X2[e] = true;
-		}
-	}
-
 	while (!q.empty())
 	{	
 		current = q.front(); q.pop();
-		//cout <<"current: " << current << " with distance " << distances[current] << endl;
 
     	if (IN_INDEPENDENT(current))
     	{
     		for (size_t i = 0; i < not_independent.size(); ++i)
     		{
     			neighb = not_independent[i];
-    			if (parent[neighb] != NOT_VISITED) continue;
+    			if (parent[neighb] != NO_ONE) continue;
 				if (!O1->Exchangeable(current, neighb)) continue;
 				q.push(neighb);
 				parent[neighb] = current;
 				distances[neighb] = distances[current] + 1;
+				candidates[distances[neighb]].push_back(neighb);
     		}
     	}
     	else
     	{
-    		if (X2[current])
-    		{
-				DISTANCE_TARGET = distances[current]+1;
-				break;
+    		if (distances[current]>=DISTANCE_TARGET+1) {
+        		if (O2->Free(current)) {
+					DISTANCE_TARGET = distances[current] + 1;
+					candidates[DISTANCE_TARGET].push_back(TARGET);
+					assert(DISTANCE_TARGET%2==0);
+					return true;
+				}
     		}
     		for (size_t i = 0; i < independent_set.size(); ++i)
     		{
     			neighb = independent_set[i];
-    			if (parent[neighb] != NOT_VISITED) continue;
+    			if (parent[neighb] != NO_ONE) continue;
 				if (!O2->Exchangeable(neighb, current)) continue;
 				q.push(neighb);
 				parent[neighb] = current;
 				distances[neighb] = distances[current] + 1;
+				candidates[distances[neighb]].push_back(neighb);
 			}
 		}
 	}
-
-	if (DISTANCE_TARGET == numeric_limits<int>::max()) return false;
-	assert(DISTANCE_TARGET != numeric_limits<int>::max()); //finite distance
-	assert(DISTANCE_TARGET%2==0);						   //DISTANCE_TARGET is always even
-	return true;
+	return false;
 }
 
 
@@ -170,21 +109,16 @@ int FindArc(int a, const vector<int> &next) {
 
 void Augment() {
 
-	ClearCandidates();
-	for (int i = 0; i < N; ++i)
-		if (distances[i] != numeric_limits<int>::max())
-			candidates[distances[i]].push_back(i);
+	int	l 					= 	0;
+	int	current 			= 	SOURCE;
+	int	augmentations_ct 	=	 0;
 
-	candidates[0].push_back(SOURCE);
-	candidates[DISTANCE_TARGET].push_back(TARGET);
-	assert(candidates[0].size()==1);
-
-	int l = 0;
-	int current = SOURCE;
-	int augmenting_paths_count = 0;
 	vector<int> path;
 	vector<int> indexes;
 	vector<int> prev_element;
+
+	candidates[0].push_back(SOURCE);
+	assert(candidates[0].size()==1);
 
 	while (l>=0)
 	{	
@@ -205,7 +139,7 @@ void Augment() {
 			}
 		}
 		else if (l<DISTANCE_TARGET)
-		{      		
+		{
 			if (candidates[l+1].empty())
 				return;
 			int next = FindArc(current, candidates[l+1]);
@@ -237,7 +171,7 @@ void Augment() {
 		}
 		else if (l==DISTANCE_TARGET)
 		{
-			augmenting_paths_count++;
+			augmentations_ct++;
 			for (size_t j=0; j<path.size(); j++)
 			{
 				in_independent_set[path[j]] = IN_INDEPENDENT(path[j]) ? false:true;
@@ -262,7 +196,7 @@ void Augment() {
 			cerr << ">>ERROR: Cunningham::Augment, l>DISTANCE_TARGET" << endl;
 		}
 	}
-	AUGMENTATIONS.push_back(augmenting_paths_count);
+	AUGMENTATIONS.push_back(augmentations_ct);
 	return;
 }
 
@@ -275,10 +209,10 @@ size_t Cun86(int N_, Oracle* O1_, Oracle* O2_) {  // O (nr^{1.5}.T)
 
 	Init(N);
 	for (int i = 0; i < N; ++i) {
+		distances[i] = 1;
 		not_independent.push_back(i);
 	}
-	X1 = vector<bool>(N, false);
-	X2 = vector<bool>(N, false);
+	DISTANCE_TARGET=0;
 	AUGMENTATIONS.clear();
 	
 	while (GetDistances()) {
