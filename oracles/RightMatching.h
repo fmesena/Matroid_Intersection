@@ -12,10 +12,10 @@ public:
     vector<int> right;
     vector<Edge> edges;
     RightMatching(int, vector<Edge>);
-    bool Exchangeable(int, int);
     bool Free(int);
-    int  Rank(vector<int>);
+    bool Exchangeable(int, int);
     bool Exchangeable_Set(vector<int>, int);
+    int  Rank(vector<int>);
     void Update_State(vector<int>);
     void Temp_Update_State(int, bool);
     void show();

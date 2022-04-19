@@ -11,10 +11,10 @@ public:
     int r;
     vector<int> S;
     Uniform(int, int);
-    bool Exchangeable(int, int);
     bool Free(int);
-    int Rank(vector<int>);
+    bool Exchangeable(int, int);
     bool Exchangeable_Set(vector<int>, int);
+    int  Rank(vector<int>);
     void Update_State(vector<int>);
     void show();
 };

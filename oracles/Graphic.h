@@ -23,11 +23,11 @@ public:
     vector<Edge> edges;
     Graphic(int,vector<Edge>);
     ~Graphic();
-    bool Exchangeable(int a, int b);
-    bool Free(int b);
-    int  Rank(vector<int> B);
-    bool Exchangeable_Set(vector<int> A, int b);
-    void Update_State(vector<int> S);
+    bool Free(int);
+    bool Exchangeable(int, int);
+    bool Exchangeable_Set(vector<int>, int);
+    int  Rank(vector<int>);
+    void Update_State(std::vector<int>);
     void Temp_Update_State(int, bool);
     void show();
 };
