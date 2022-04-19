@@ -11,7 +11,7 @@ using std::pair, std::vector, std::cout, std::endl, std::string, std::max, std::
 
 pair<vector<vector<int>>, vector<Edge>> GenerateRandomBipartiteGraph(int V, int p) {
 	assert(V%2==0);
-	vector<vector<int>> graph;
+	vector<vector<int>> graph(V);
 	vector<Edge> edges;
 	int arc;
 	const int range_from  = 1;
@@ -20,8 +20,6 @@ pair<vector<vector<int>>, vector<Edge>> GenerateRandomBipartiteGraph(int V, int 
 	std::mt19937                        generator(rand_dev());
 	std::uniform_int_distribution<int>  distr(range_from, range_to);
 
-	for (int i = 0; i < V; ++i)
-		graph.push_back(vector<int>());
 	for (int i = 0; i < V/2; ++i) {
 		for (int j = V/2; j < V; ++j) {
 			arc = distr(generator) <= p? true:false;
@@ -32,9 +30,8 @@ pair<vector<vector<int>>, vector<Edge>> GenerateRandomBipartiteGraph(int V, int 
 		}
 	}
 	size_t E = edges.size();
-	if (p==100) {
-		assert(E==V*V/4);
-	}
+	if (p==100) assert(E==V*V/4);
+	if (p==0)   assert(E==0);
 	/*cout << "Edge list\n";
 	for (Edge e : edges)
 		cout << e.u << " " << e.v << endl;*/
@@ -50,6 +47,19 @@ pair<vector<vector<int>>, vector<Edge>> GenerateRandomBipartiteGraph(int V, int 
 	return {graph,edges};
 }
 
+// generates a "pigeonhole principle" graph, i.e. a K_{V,V+1} graph.
+pair<vector<vector<int>>, vector<Edge>> GeneratePHPGraph(int V) {
+	vector<vector<int>> graph(2*V+1);
+	vector<Edge> edges;
+	for (int i = 0; i < V; ++i) {
+		for (int j = V; j < 2*V+1; ++j) {
+			edges.push_back({i,j});
+			graph[i].push_back(j);
+			graph[j].push_back(i);
+		}
+	}
+	return {graph,edges};
+}
 
 pair<vector<vector<int>>, vector<Edge>> GenerateBlocksBipartiteGraph(int V, int n1) {
 	assert(V%2==0);
@@ -82,11 +92,10 @@ pair<vector<vector<int>>, vector<Edge>> GenerateBlocksBipartiteGraph(int V, int 
 	return {graph,edges};
 }
 
-
 //returns a vector of Edges with vertices in the range 1..V
 pair<int,vector<Edge>> GenerateMultiGraph(int E) {
 	vector<Edge> edges;
-	int V = 0.5*(1 + sqrt(1+16*E));
+	int V = 0.5*(1 + sqrt(1+16*E)); //this is the minimum number of vertices needed to have a complete simple graph on 2*E edges
 	int m = 0;
 	int u,v;
 
