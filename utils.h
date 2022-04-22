@@ -26,6 +26,7 @@ extern int *distances;
 extern std::vector<std::vector<int>> candidates;
 extern int CURRENT_RANK;
 extern int MAX_DIST;
+extern int ITER_CT;
 
 template<typename T>
 void DEBUG_VECTOR(const std::vector<T> &v) {

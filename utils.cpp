@@ -11,6 +11,7 @@ void Init(int N_) {
 	index_.resize(N_,-1); //default value initialization
 	distances = new int[N_]();
 	candidates = vector<vector<int>>(MAX_DIST);
+	ITER_CT = 0;
 	CURRENT_RANK=0;
 }
 
