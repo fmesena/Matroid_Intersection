@@ -140,29 +140,6 @@ int
 sizePath(LCT t /**< [in] */,
          int u /**< [in] */
          );
-
-/**
-   @return the hash value for this sub-tree */
-/*uint64_t
-getHash(LCT t,
-        int u
-        );
-
-/**
-   @return Cannonical hash value for cycle
-uint64_t
-getCycleHash(LCT t ,
-             int u ,
-             int v
-             );
-
-/**
-   @return Cannonical hash value for cycle */
-/**uint64_t
-getCycleHashByE(LCT t /**< [in]  */
-              /* , edge e /**< [in] */
-              /**);*/
-
 /** @return The position of v in its tree. */
 int
 position(LCT t /** [in] */,
