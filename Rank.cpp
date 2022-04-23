@@ -2,6 +2,7 @@
 #include <vector>
 #include <queue>
 #include <stack>
+#include <math.h>
 #include "Rank.h"
 
 using std::vector;
@@ -45,7 +46,7 @@ int FindFree(vector<int> const &B) {
 	
 	if (B.empty()) return -1;
 
-	if (O1->Rank(B) == 0) return -1; //O->Rank(B) returns rank(B\cup S)
+	if (O1->Rank(B) == 0) return -1;
 
 	int L=0;
 	int R=B.size()-1;
@@ -180,7 +181,7 @@ void BlockFlow() {
 	vector<int>  path;
 	vector<int>  indexes;
 	vector<int>  prev_element;
-	
+
 	while (l>=0)
 	{	
 		if (l==DISTANCE_TARGET-1)
@@ -224,7 +225,7 @@ void BlockFlow() {
 			else
 			{
 				path.push_back(next);
-				//indexes.push_back(exchangeble);
+				//indexes.push_back(exchangeble); would be fine
 				indexes.push_back(l%2==0 ? free_:exchangeable); //even layer correspond to SOURCE and elements in S, odd correspond to elements in \overline{S}
 				prev_element.push_back(current);
 				current = next;
@@ -276,22 +277,30 @@ size_t ExactRank(int N_, Oracle* O1_, Oracle* O2_) {
 	AUGMENTATIONS.clear();
 
 	size_t s;
+
+	//greedily finds a common independent set with O(n) independence queries
+	for (int i=0; i<N; i++) {
+		if (O1->Free(i) && O2->Free(i)) {
+			in_independent_set[i]=true;
+			UpdateIndependentSet();
+			O1->Update_State(independent_set);
+			O2->Update_State(independent_set);
+		}
+	}
+
 	do
 	{
 		s = SZ;
+		ITER_CT++;
 		BlockFlow();
 	} while (s != SZ);
-	
-	delete[] distances;
-	/*for (int i = 0; i < ?; i++) {
-        delete[] candidates[i];
-    }
-    delete[] candidates;*/
+
+	delete[] distances;	
 
 	return SZ;
 }
 
-size_t ApproxRank(int N_, Oracle* O1_, Oracle* O2_, double eps=0.1) {
+size_t ApproxRank(int N_, Oracle* O1_, Oracle* O2_, double eps) {
 
 	N  = N_;
 	O1 = O1_;
@@ -302,18 +311,17 @@ size_t ApproxRank(int N_, Oracle* O1_, Oracle* O2_, double eps=0.1) {
 
 	Init(N);
 	AUGMENTATIONS.clear();
-	
-	while (i++ != (int)(1/eps) or s!=SZ)
-	{
+
+	while ( i++ != (int)(1/eps))
+	{	
+		//cout << i << " " << " " << eps << " " << 1/eps << " " << s << " " << SZ << endl;
 		s=SZ;
+		ITER_CT++;
 		BlockFlow();
+		if (s==SZ) { cout << ">>Optimum" << SZ << endl; break; }
 	}
 
-	delete[] distances;
-	/*for (int i = 0; i < ?; i++) {
-        delete[] candidates[i];
-    }
-    delete[] candidates;*/	
+	delete[] distances;	
 
 	return SZ;
 }

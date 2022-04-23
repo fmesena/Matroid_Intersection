@@ -216,6 +216,7 @@ size_t Cun86(int N_, Oracle* O1_, Oracle* O2_) {  // O (nr^{1.5}.T)
 	AUGMENTATIONS.clear();
 	
 	while (GetDistances()) {
+		ITER_CT++;
 		Augment();
 	}
 	delete[] distances;
@@ -224,6 +225,32 @@ size_t Cun86(int N_, Oracle* O1_, Oracle* O2_) {  // O (nr^{1.5}.T)
         delete[] candidates[i];
     }
     delete[] candidates;*/
+
+	return SZ;
+}
+
+size_t ApproxCun86(int N_, Oracle* O1_, Oracle* O2_, double eps=0.1) {
+
+	N  = N_;
+	O1 = O1_;
+	O2 = O2_;
+
+	Init(N);
+	for (int i = 0; i < N; ++i) {
+		distances[i] = 1;
+		not_independent.push_back(i);
+	}
+	DISTANCE_TARGET=0;
+	AUGMENTATIONS.clear();
+
+	int i = 0;
+
+	while (i++ != (int)(1/eps)) {
+		if (!GetDistances()) break;
+		Augment();
+	}
+	delete[] distances;
+
 
 	return SZ;
 }
