@@ -56,17 +56,12 @@ vector<Edge> BuildSolution(vector<Edge> el) {
 
 int main() {
 
-	srand(73);
-	auto rng = 	default_random_engine {};
-
 	size_t 		I;
-
 	Graphic 	*gr1;
 	Graphic 	*gr2;
 	
 	auto [V1, el1] = GenerateDuplicationDivergence(V);
 	auto [V2, el2] = GenerateMultiGraph((int)el1.size());
-
 
 	gr1 = new Graphic(V1, el1);
 	gr2 = new Graphic(V2, el2);
@@ -78,9 +73,10 @@ int main() {
 	PrintForest(el1);
 	PrintForest(el2);
 	
-	delete gr1,gr2;
+	delete gr1;
+	delete gr2;
 
-	cout << ">>SUCCESS\n";
+	cout << ">>SUCCESS " << I << endl;
 
 	return 0;
 }
