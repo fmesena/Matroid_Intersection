@@ -5,17 +5,17 @@ LeftMatching::LeftMatching(int N_, vector<Edge> edges_):Oracle() {
     edges = edges_;
     left = vector<int>(N_,0);
 }
-bool LeftMatching::Free(int b) {  //O(1)
+bool LeftMatching::Free(int b) {
     ORACLE_CALLS++;
     FREE_CALLS++;
     return left[edges[b].u]==0;
 }
-bool LeftMatching::Exchangeable(int a, int b) {  //O(1)
+bool LeftMatching::Exchangeable(int a, int b) {
     ORACLE_CALLS++;
     EXCH_CALLS++;
     return left[edges[b].u]==0 || edges[a].u == edges[b].u;
 }
-bool LeftMatching::Exchangeable_Set(vector<int> A, int b) {  // O(|A|)=O(r)
+bool LeftMatching::Exchangeable_Set(vector<int> A, int b) {
     ORACLE_CALLS++;
     EXCH_CALLS++;
     for (int a:A) {
@@ -25,7 +25,10 @@ bool LeftMatching::Exchangeable_Set(vector<int> A, int b) {  // O(|A|)=O(r)
     }
     return false;
 }
-int LeftMatching::Rank(vector<int> B) {  //O(n)
+// S = 00010010
+// B = 11010100
+// r(B U S) = bitwise op. (S_i V B_i), (not S_i V B_i), (S_i V not B_i)
+int LeftMatching::Rank(vector<int> B) {
     ORACLE_CALLS++;
     EXCH_CALLS++;
     vector<int> occupied=left;
@@ -36,7 +39,7 @@ int LeftMatching::Rank(vector<int> B) {  //O(n)
         occupied[edges[B[i]].u] = 1;
         r++;
     }
-    return r; //returns rank(B\cup S)
+    return r;
 }
 void LeftMatching::Update_State(vector<int> S) {
     fill (left.begin(),left.end(),0);

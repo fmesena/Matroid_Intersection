@@ -36,7 +36,7 @@ int RightMatching::Rank(vector<int> B) {
         occupied[edges[B[i]].v] = 1;
         r++;
     }
-    return r; //returns rank(B\cup S)
+    return r;
 }
 void RightMatching::Update_State(vector<int> S) {
     fill (right.begin(),right.end(),0);

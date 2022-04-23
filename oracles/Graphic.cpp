@@ -40,12 +40,7 @@ int Graphic::Rank(vector<int> B) { // 3.n.log r
     ORACLE_CALLS++;
     EXCH_CALLS++;
     int r=0;
-    /*for (size_t i = 0; i < B.size(); ++i)
-    {
-        cout << B[i] << ": " << edges[B[i]].u << "-" << edges[B[i]].v << " | ";
-    }
-    cout << endl;*/
-    LCT aux = lct;
+    //LCT aux = lct;
     vector<int> links;
     for (size_t i=0; i<B.size(); i++)
     {
@@ -56,11 +51,11 @@ int Graphic::Rank(vector<int> B) { // 3.n.log r
             links.push_back(i);
         }
     }
-    for (size_t i=0; i<links.size(); i++) { //if (edgeQ(lct, edges[B[i]].u, edges[B[i]].v) )
+    for (size_t i=0; i<links.size(); i++) {
         cut(lct, edges[B[links[i]]].u, edges[B[links[i]]].v);
     }
-    assert(fastEqQ(aux,lct));
-    return r; //returns rank(B\cup S)
+    //assert(fastEqQ(aux,lct));
+    return r;
 }
 void Graphic::Update_State(vector<int> S) {
     cleanLCT(lct);
