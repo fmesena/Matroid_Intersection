@@ -2,14 +2,14 @@
 #include <queue>
 #include "SAP.h"
 
-using namespace std;
+using std::vector;
 
 static Oracle* O1;
 static Oracle* O2;
 static vector<bool> X1;
 static vector<bool> X2;
 
-bool BFS_Augment() {   // O (n + n.T + nr.T + 2r)
+bool BFS_Augment() {   // O (n + n.T + nr.T + 2r) = O (nr T)
 
 	const int NO_ONE = -4;
 	const int NO_AUGMENTATION = -5;
