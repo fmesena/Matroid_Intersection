@@ -12,6 +12,8 @@ Currently you can find implementations of:
 * Cunningham, William H. "Improved bounds for matroid partition and intersection algorithms." SIAM Journal on Computing 15.4 (1986): 948-957.	
 * Chakrabarty, Deeparnab, et al. "Faster matroid intersection." 2019 IEEE 60th Annual Symposium on Foundations of Computer Science (FOCS). IEEE, 2019.
 
+**Remark:** The first and the second papers essentially give the same algorithm.
+
 ## How to use
 
 The repository contains a Makefile. To compile use the `make` command. To run use the `make run` command or type `./exec` in the command line.
