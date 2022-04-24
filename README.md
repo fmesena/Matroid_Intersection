@@ -2,9 +2,15 @@
 
 **Version 1.0 - 23/04/2022**
 
-## Goal of this project
+## Information about this project
 
-Which algorithms are currently implemented and which are you currently working on...
+This repository contains implementations of some algorithms to solve the matroid intersection problem based on finding augmenting paths on the exchange graph.
+Currently you can find implementations of:
+
+* Lawler, Eugene L. "Matroid intersection algorithms." Mathematical programming 9.1 (1975): 31-56.
+* Aigner, Martin, and Thomas A. Dowling. "Matching theory for combinatorial geometries." Transactions of the American Mathematical Society 158.1 (1971): 231-245.
+* Cunningham, William H. "Improved bounds for matroid partition and intersection algorithms." SIAM Journal on Computing 15.4 (1986): 948-957.	
+* Chakrabarty, Deeparnab, et al. "Faster matroid intersection." 2019 IEEE 60th Annual Symposium on Foundations of Computer Science (FOCS). IEEE, 2019.
 
 ## How to use
 
@@ -13,11 +19,6 @@ The `main.cpp` file currently has an example on how to make use of some code.
 
 To use this code for your own projects, you should go to the `oracles` directory and follow the example of the oracle for the uniform matroid.
 
-## Repository information
-
-LCTs come from...?
-Directory `oracles` contains...
-The rest was implemented by me...
 
 ## Authors
 This project was developed by Francisco Sena from Instituto Superior Técnico - University of Lisbon, Portugal.
