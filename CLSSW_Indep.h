@@ -1,5 +1,5 @@
-#ifndef INDEP_H_
-#define INDEP_H_
+#ifndef CLSSW_INDEP_H_
+#define CLSSW_INDEP_H_
 
 #include "oracles/Base.h"
 #include "utils.h"

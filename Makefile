@@ -3,10 +3,10 @@ CFLAGS  = -g -Wall -pedantic -std=c++17 -O3
 
 all: exec
 
-exec: main.o SAP.o Cun86.o Indep.o Rank.o gen.o utils.o EdmondsKarp.o HopcroftKarp.o ds/LinkCutTree.o oracles/RightMatching.o oracles/LeftMatching.o oracles/Uniform.o oracles/Graphic.o
-	$(CC) $(CFLAGS) -o exec main.o SAP.o Cun86.o Indep.o Rank.o gen.o utils.o EdmondsKarp.o HopcroftKarp.o LinkCutTree.o RightMatching.o LeftMatching.o Uniform.o Graphic.o
+exec: main.o SAP.o Cun86.o CLSSW_Indep.o CLSSW_Approx.o CLSSW_Rank.o gen.o utils.o EdmondsKarp.o HopcroftKarp.o ds/LinkCutTree.o oracles/RightMatching.o oracles/LeftMatching.o oracles/Uniform.o oracles/Graphic.o
+	$(CC) $(CFLAGS) -o exec main.o SAP.o Cun86.o CLSSW_Indep.o CLSSW_Approx.o CLSSW_Rank.o gen.o utils.o EdmondsKarp.o HopcroftKarp.o LinkCutTree.o RightMatching.o LeftMatching.o Uniform.o Graphic.o
 
-main.o: main.cpp SAP.h Cun86.h Indep.h Rank.h gen.h EdmondsKarp.h HopcroftKarp.h
+main.o: main.cpp SAP.h Cun86.h CLSSW_Indep.h CLSSW_Approx.h CLSSW_Rank.h gen.h EdmondsKarp.h HopcroftKarp.h
 	$(CC) $(CFLAGS) -c main.cpp
 
 SAP.o:  SAP.cpp SAP.h utils.h oracles/Base.h
@@ -15,11 +15,14 @@ SAP.o:  SAP.cpp SAP.h utils.h oracles/Base.h
 Cun86.o:  Cun86.cpp Cun86.h utils.h oracles/Base.h
 	$(CC) $(CFLAGS) -c Cun86.cpp
 
-Indep.o:  Indep.cpp Indep.h utils.h oracles/Base.h
-	$(CC) $(CFLAGS) -c Indep.cpp
+CLSSW_Indep.o:  CLSSW_Indep.cpp CLSSW_Indep.h utils.h oracles/Base.h
+	$(CC) $(CFLAGS) -c CLSSW_Indep.cpp
 
-Rank.o:  Rank.cpp Rank.h utils.h oracles/Base.h
-	$(CC) $(CFLAGS) -c Rank.cpp
+CLSSW_Approx.o:  CLSSW_Approx.cpp CLSSW_Approx.h utils.h oracles/Base.h
+	$(CC) $(CFLAGS) -c CLSSW_Approx.cpp
+
+CLSSW_Rank.o:  CLSSW_Rank.cpp CLSSW_Rank.h utils.h oracles/Base.h
+	$(CC) $(CFLAGS) -c CLSSW_Rank.cpp
 
 gen.o:  gen.cpp gen.h ds/Edge.h
 	$(CC) $(CFLAGS) -c gen.cpp

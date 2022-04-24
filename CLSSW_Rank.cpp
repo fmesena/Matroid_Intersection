@@ -3,7 +3,7 @@
 #include <queue>
 #include <stack>
 #include <math.h>
-#include "Rank.h"
+#include "CLSSW_Rank.h"
 
 using std::vector;
 using std::cout;

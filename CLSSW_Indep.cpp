@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <vector>
 #include <queue>
-#include "Indep.h"
+#include "CLSSW_Indep.h"
 
 using namespace std;
 

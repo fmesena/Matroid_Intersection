@@ -1,5 +1,5 @@
-#ifndef RANK_H_
-#define RANK_H_
+#ifndef CLSSW_RANK_H_
+#define CLSSW_RANK_H_
 
 #include "oracles/Base.h"
 #include "utils.h"
