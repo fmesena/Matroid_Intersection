@@ -3,7 +3,7 @@
 using namespace std;
 
 void Init(int N_) {
-	MAX_DIST = N_+10;
+	MAX_DIST = N_+10; //the maximum possible distance in any point is just the number of elements plus one (because of the target). because of the "l+3" operation in CLSSW_Indep, max_dist=N+4. therefore, we opted to play it safe and make it N+10
 	independent_set.clear();
 	not_independent.clear();
 	in_independent_set.resize(N_, false);
@@ -79,19 +79,4 @@ void ClearCandidates() {
 	assert((int)candidates.size()==MAX_DIST);
 	for (size_t i = 0; i < candidates.size(); ++i)
 		candidates[i].clear();
-}
-
-// returns V \subseteq S where all elements from A \subseteq S are removed from S
-// does not change the values of "index_" since the altered S is supposed only for a "quick call" to the oracle
-vector<int> RemoveSubset(vector<int> S, vector<int> A) {
-	// index[i] = -1 if i-th element is not in S, index[i]=j 0<j<N-1 if i-th element is in S
-	int j=0;
-	for (size_t i = 0; i < A.size(); i++)
-		if (index_[A[i]] != -1) {
-			S[index_[A[i]]] = -1; j++; }
-	vector<int> S_;
-	for (size_t i = 0; i < S.size(); i++)
-		if (S[i] != -1)
-			S_.push_back(i);
-	return S_;
 }

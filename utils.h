@@ -47,7 +47,7 @@ std::vector<T> Slice(std::vector<T> const &v, int m, int n) {
 
 void Init(int);
 void clear_swap(std::vector<int> &v);
-void addEdge(std::vector<int> graph[], int u, int v);
+void addEdge(std::vector<int> graph[], int, int);
 void printGraph(std::vector<int> graph[]);
 void PrintIndependentSet();
 bool equal_content_same_order(std::vector<int> &a, std::vector<int> &b);
@@ -55,6 +55,5 @@ void PrintCandidates();
 void ClearCandidates();
 void UpdateIndependentSetNew(int);
 void UpdateIndependentSet();
-std::vector<int> RemoveSubset(std::vector<int> S, std::vector<int> A);
 
 #endif

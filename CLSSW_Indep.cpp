@@ -77,7 +77,7 @@ void GetDistancesIndep() {
 				}
 			}
 			candidates[l+1] = updated_l_plus_one; 			 // L_l+1 <- L_l+1 - Q
-			for (int q : Q)   candidates[l+3].push_back(q);	 // L_l+3 <- L_l+3 + Q, not done in O(1) :(
+			for (int q : Q)   candidates[l+3].push_back(q);	 // L_l+3 <- L_l+3 + Q, not done in "O(1)" :(
 		}
 		else //even(l)
 		{
