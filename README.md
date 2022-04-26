@@ -5,7 +5,7 @@
 ## Information about this project
 
 This repository contains implementations of some algorithms to solve the matroid intersection problem based on finding augmenting paths on the exchange graph.
-Currently you can find implementations of:
+Currently, you can find implementations of:
 
 * Lawler, Eugene L. "Matroid intersection algorithms." Mathematical programming 9.1 (1975): 31-56.
 * Aigner, Martin, and Thomas A. Dowling. "Matching theory for combinatorial geometries." Transactions of the American Mathematical Society 158.1 (1971): 231-245.
@@ -17,9 +17,9 @@ Currently you can find implementations of:
 ## How to use
 
 The repository contains a Makefile. To compile use the `make` command. To run use the `make run` command or type `./exec` in the command line.
-The `main.cpp` file currently has an example on how to make use of some code.
+The `main.cpp` file currently has an example on how to make use of some parts of the code.
 
-To use this code for your own projects, you should go to the `oracles` directory and follow the example of the oracle for the uniform matroid.
+To use this code for your own projects, you should go to the `oracles` directory and follow the example of the oracle implementation for the uniform matroid.
 
 
 ## Authors
