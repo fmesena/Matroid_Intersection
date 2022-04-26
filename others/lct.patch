@@ -1,0 +1,115 @@
+diff --git a/ds/LinkCutTree.c b/ds/LinkCutTree.c
+index 3468a43..43d0d3d 100644
+--- a/ds/LinkCutTree.c
++++ b/ds/LinkCutTree.c
+@@ -18,9 +18,9 @@
+     }
+ }*/
+ 
+-typedef struct LCT* LCTAux; /** Used to represent splay trees. */
++typedef struct _LCT* LCTAux; /** Used to represent splay trees. */
+ 
+-struct LCT { /** This structure is used to represent a node in the LCT. */
++struct _LCT { /** This structure is used to represent a node in the LCT. */
+   //uint64_t h; /** h value for node number */
+   //uint64_t Hf; /** hash value for the sequence on the sub-tree (forward). */
+   //uint64_t Hb; /** hash value for the sequence on the sub-tree (forward). */
+@@ -386,7 +386,7 @@ splay(LCT t,
+ 
+       pt = (intptr_t) t[v].hook;
+       pt -= (intptr_t) t[p].hook;
+-      pt %= sizeof(struct LCT);
++      pt %= sizeof(struct _LCT);
+ 
+       if (0 == pt) /* Zig Zig case */
+         rotate(t, &t[p]);
+@@ -415,7 +415,7 @@ ptrToIndex(LCT t,
+   if (NULL != p) {
+     pr = (intptr_t) p;
+     pr -= (intptr_t) t;
+-    pr /= sizeof(struct LCT);
++    pr /= sizeof(struct _LCT);
+     r = (int) pr;
+   }
+ 
+@@ -488,7 +488,7 @@ allocLCT(int V /**< [in] Number of vertexes of the underlying graph */
+   LCT t;
+   int i;
+ 
+-  t = (LCT) malloc((V+1)*sizeof(struct LCT));
++  t = (LCT) malloc((V+1)*sizeof(struct _LCT));
+   *(int*)t = V; /* Store number of vertexes */
+ 
+   /*i = V;
+@@ -1346,4 +1346,4 @@ int main() {
+   showLCT(t,"teste");
+   showRepTree(t,"rep.dot"); //use with GraphViz online
+   return 0;
+-}*/
+\ No newline at end of file
++}*/
+diff --git a/ds/LinkCutTree.h b/ds/LinkCutTree.h
+index 4ab7783..7bb9ba5 100644
+--- a/ds/LinkCutTree.h
++++ b/ds/LinkCutTree.h
+@@ -13,7 +13,7 @@ extern "C" {
+ 
+ //#include "graph.h"
+ 
+-typedef struct LCT* LCT; /** Link-Cut tree abstract data type. */
++typedef struct _LCT* LCT; /** Link-Cut tree abstract data type. */
+ /* typedef ... LCTAux;  */  /* Bad idea exposess splay tree internals. AVOID. */
+ 
+ /** @return Empty LCT, over vertexes labelled 1 to V */
+diff --git a/oracles/Graphic.cpp b/oracles/Graphic.cpp
+index ef4cf94..1267011 100644
+--- a/oracles/Graphic.cpp
++++ b/oracles/Graphic.cpp
+@@ -1,7 +1,6 @@
+ #include "Graphic.h"
+ 
+-Graphic::Graphic(int _N/*, LCT _lct*/) {
+-    Base();
++Graphic::Graphic(int _N/*, LCT _lct*/):Oracle() {
+     N = _N;
+     //lct = _lct;
+ }
+@@ -40,4 +39,4 @@ void Graphic::Update_State(vector<int> _S) {  //TODO
+ }
+ void Graphic::show() {
+     std::cout << "Graphic matroid oracle (LCT)" << endl;
+-}
+\ No newline at end of file
++}
+diff --git a/oracles/Graphic.h b/oracles/Graphic.h
+index fb7d782..1b0d771 100644
+--- a/oracles/Graphic.h
++++ b/oracles/Graphic.h
+@@ -1,9 +1,14 @@
+ #ifndef Graphic_H_
+ #define Graphic_H_
+ 
++#include <vector>
+ #include "Base.h"
+-#include "../ds/LinkCutTree.h"
+-#include "../ds/Edge.h"
++
++extern "C" {
++  #include "../ds/LinkCutTree.h"
++  #include "../ds/Edge.h"
++}
++
+ 
+ using namespace std;
+ 
+@@ -16,6 +21,8 @@ public:
+     int Rank(vector<int> B);
+     bool Exchangeable_Set(vector<int> A, int b);
+     void Update_State(vector<int> S);
++    void show();
++    Graphic(int);
+ };
+ 
+-#endif
+\ No newline at end of file
++#endif
