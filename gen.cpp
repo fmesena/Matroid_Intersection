@@ -36,7 +36,7 @@ pair<vector<vector<int>>, vector<Edge>> GenerateRandomBipartiteGraph(int V, int 
 	return {graph,edges};
 }
 
-// generates a "pigeonhole principle" graph, i.e. a K_{V,V+1} graph.
+// generates a pigeonhole graph, i.e. a K_{V,V+1} graph.
 pair<vector<vector<int>>, vector<Edge>> GeneratePHPGraph(int V) {
 	vector<vector<int>> graph(2*V+1);
 	vector<Edge> edges;
@@ -179,5 +179,5 @@ void assertGraphic(vector<Edge> forest, string name) {
 	delete[] visited;
 }
 
-void assertArb(vector<Edge> arb, vector<vector<int>> adj, string name) {
+void assertArborescence(vector<Edge> arb, vector<vector<int>> adj, string name) {
 }

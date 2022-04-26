@@ -1,4 +1,4 @@
-/*#include <fstream>
+#include <fstream>
 #include <assert.h>
 #include <algorithm>
 #include <random>
@@ -8,8 +8,9 @@
 #include "oracleheaders.h"
 #include "SAP.h"
 #include "Cun86.h"
-#include "Indep.h"
-#include "Rank.h"
+#include "CLSSW_Indep.h"
+#include "CLSSW_Approx.h"
+#include "CLSSW_Rank.h"
 #include "gen.h"
 #include "EdmondsKarp.h"
 #include "HopcroftKarp.h"
@@ -86,8 +87,8 @@ int main() {
 	int EK;
 
 	int iter;
-	const int RUNS  = 20;
-	const int WRITE = 1;
+	const int RUNS  = 1;
+	const int WRITE = 0;
 
 	ofstream sap_file;
 	ofstream cun_file;
@@ -263,24 +264,25 @@ int main() {
 		cout << endl;
 		//E += 10;
 		V += 25;
-	}
+	}*/
 	
 	
 	int groups = 32;
 
 	int p = 70;
 	iter  = 1;
-	V 	  = 9600;
-	LeftMatching  *lm;
+	V 	  = 10;
+	LeftMatching *lm;
 	RightMatching *rm;
 
 	double eps = 0.1;
-	pair<vector<vector<int>>,vector<Edge>> x = GenerateBlocksBipartiteGraph(V,groups); //GeneratePHPGraph(V); //auto [g, edgelist] = GenerateRandomBipartiteGraph(V,p);
-	vector<vector<int>> g=x.first;
-	edgelist=x.second;
 
-	while (eps <= 1)
+	while (V <= 5000)
 	{
+
+		pair<vector<vector<int>>,vector<Edge>> x = GenerateRandomBipartiteGraph(V,p); //GeneratePHPGraph(V); //auto [g, edgelist] = GenerateRandomBipartiteGraph(V,p);
+		vector<vector<int>> g=x.first;
+		edgelist=x.second;
 
 		cout << "###Iteration number: " << iter++ << ", Edges=" << edgelist.size() << " with V=" << V << " and groups=" << groups << endl;
 
@@ -293,14 +295,12 @@ int main() {
 		int itersavg=0;
 		std::chrono::duration<long int, std::ratio<1, 1000000> >::rep totaltimeavg = 0; //microseconds
 
-		cout << EdmondsKarp(2*V,g) << endl;
-
-		cerr << "   Running ApproxRank\n";
+		/*cerr << "   Running ApproxRank\n";
 		for (ct=0; ct<RUNS; ct++)
 		{
 			shuffle(begin(edgelist), end(edgelist), rng);
-			lm = new LeftMatching(2*V,edgelist);
-			rm = new RightMatching(2*V,edgelist);
+			lm = new Partition(V,edgelist);
+			rm = new Partition(V,edgelist);
 			auto start = high_resolution_clock::now();
 			R = ApproxRank(edgelist.size(),lm,rm,eps);
 			auto stop = high_resolution_clock::now();
@@ -317,34 +317,41 @@ int main() {
 			rank_file << edgelist.size() << " " << R << " " << sumcallsavg/RUNS << " " << maxcallsavg/RUNS << " " << totaltimeavg/RUNS << " " << exchangesavg/RUNS << " "
 					  << V << " " << groups << " " << eps << " " << ITER_CT/RUNS << endl;
 		cout << endl;
-		eps += 0.1;
+		eps += 0.1;*/
 
+		/*
 		cerr << "   Running SAP\n";
 		for (ct=0; ct<RUNS; ct++)
 		{
 			shuffle(begin(edgelist), end(edgelist), rng);
-			lm = new LeftMatching(2*V,edgelist);
-			rm = new RightMatching(2*V,edgelist);
+			vector<int> lll;
+			for (size_t q=0; q<edgelist.size(); q++) lll.push_back(edgelist[q].u);
+			lll.clear();
+			for (size_t q=0; q<edgelist.size(); q++) lll.push_back(edgelist[q].v);
+			lm = new Partition(V/2,lll);
+			rm = new Partition(V/2,lll);
 			auto start = high_resolution_clock::now();
 			S = SAP(edgelist.size(),lm,rm);
 			auto stop = high_resolution_clock::now();
 			auto duration = duration_cast<microseconds>(stop - start);
+			cout << S << endl;
 			BuildSolution();
-			//assertMatching(solution,V,"SAP");
-			//assert((int)S==EK);
-			//assert(HK==EK);
+			printsol();
+			assertMatching(solution,V,"SAP");
+			assert((int)S==EK);
+			assert(HK==EK);
 			sumcallsavg  += lm->getOracleCalls()+rm->getOracleCalls();
 			maxcallsavg  += max(lm->getOracleCalls(),rm->getOracleCalls());
 			totaltimeavg += duration.count();
 			exchangesavg += lm->getExchangeCalls()+rm->getExchangeCalls();
-			//assert(lm->getExchangeCalls()+lm->getFreeCalls()==lm->getOracleCalls());
-			//assert(rm->getExchangeCalls()+rm->getFreeCalls()==rm->getOracleCalls());
+			assert(lm->getExchangeCalls()+lm->getFreeCalls()==lm->getOracleCalls());
+			assert(rm->getExchangeCalls()+rm->getFreeCalls()==rm->getOracleCalls());
 			delete lm;
 			delete rm;
 		}
 		if (WRITE)
 			sap_file << edgelist.size() << " " << S << " " << sumcallsavg/RUNS << " " << maxcallsavg/RUNS << " " << totaltimeavg/RUNS << " " << exchangesavg/RUNS << " "
-					 << V << " " << groups << endl;
+					 << V << " " << groups << endl;*/
 
 		sumcallsavg  = 0;
 		maxcallsavg  = 0;
@@ -354,10 +361,10 @@ int main() {
 		for (ct=0; ct<RUNS; ct++)
 		{
 			auto start = high_resolution_clock::now();
-			EK = EdmondsKarp(2*V,g);
+			EK = EdmondsKarp(V,g);
 			auto stop = high_resolution_clock::now();
 			auto duration = duration_cast<microseconds>(stop - start);
-			assert(EK==S);
+			assert(EK==(int)S);
 			totaltimeavg += duration.count();
  		}
 		if (WRITE)
@@ -371,7 +378,7 @@ int main() {
 		for (ct=0; ct<RUNS; ct++)
 		{
 			auto start = high_resolution_clock::now();
-			HK = HopcroftKarp(2*V,g);
+			HK = HopcroftKarp(V,g);
 			auto stop = high_resolution_clock::now();
 			auto duration = duration_cast<microseconds>(stop - start);
 			assert(EK==HK);
@@ -388,21 +395,21 @@ int main() {
 		for (ct=0; ct<RUNS; ct++)
 		{
 			shuffle(begin(edgelist), end(edgelist), rng);
-			lm = new LeftMatching(2*V,edgelist);
-			rm = new RightMatching(2*V,edgelist);
+			lm = new LeftMatching(V,edgelist);
+			rm = new RightMatching(V,edgelist);
 			auto start = high_resolution_clock::now();
 			C = Cun86(edgelist.size(),lm,rm);
 			auto stop = high_resolution_clock::now();
 			auto duration = duration_cast<microseconds>(stop - start);
-			//BuildSolution();
-			//assertMatching(solution,V,"Cun");
+			BuildSolution();
+			assertMatching(solution,V,"Cun");
 			assert(C==S);
 			sumcallsavg  += lm->getOracleCalls()+rm->getOracleCalls();
 			maxcallsavg  += max(lm->getOracleCalls(),rm->getOracleCalls());
 			totaltimeavg += duration.count();
 			exchangesavg += lm->getExchangeCalls()+rm->getExchangeCalls();
-			//assert(lm->getExchangeCalls()+lm->getFreeCalls()==lm->getOracleCalls());
-			//assert(rm->getExchangeCalls()+rm->getFreeCalls()==rm->getOracleCalls());
+			assert(lm->getExchangeCalls()+lm->getFreeCalls()==lm->getOracleCalls());
+			assert(rm->getExchangeCalls()+rm->getFreeCalls()==rm->getOracleCalls());
 			delete lm;
 			delete rm;
 		}
@@ -418,21 +425,21 @@ int main() {
 		for (ct=0; ct<RUNS; ct++)
 		{
 			shuffle(begin(edgelist), end(edgelist), rng);
-			lm = new LeftMatching(2*V,edgelist);
-			rm = new RightMatching(2*V,edgelist);
+			lm = new LeftMatching(V,edgelist);
+			rm = new RightMatching(V,edgelist);
 			auto start = high_resolution_clock::now();
 			I = AugmentingPaths(edgelist.size(),lm,rm);
 			auto stop = high_resolution_clock::now();
 			auto duration = duration_cast<microseconds>(stop - start);
-			//BuildSolution();
-			//assertMatching(solution,V,"Indep");
+			BuildSolution();
+			assertMatching(solution,V,"Indep");
 			assert(I==S);
 			sumcallsavg  += lm->getOracleCalls()+rm->getOracleCalls();
 			maxcallsavg  += max(lm->getOracleCalls(),rm->getOracleCalls());
 			totaltimeavg += duration.count();
 			exchangesavg += lm->getExchangeCalls()+rm->getExchangeCalls();
-			//assert(lm->getExchangeCalls()+lm->getFreeCalls()==lm->getOracleCalls());
-			//assert(rm->getExchangeCalls()+rm->getFreeCalls()==rm->getOracleCalls());
+			assert(lm->getExchangeCalls()+lm->getFreeCalls()==lm->getOracleCalls());
+			assert(rm->getExchangeCalls()+rm->getFreeCalls()==rm->getOracleCalls());
 			delete lm;
 			delete rm;
 		}
@@ -448,22 +455,22 @@ int main() {
 		for (ct=0; ct<RUNS; ct++)
 		{
 			shuffle(begin(edgelist), end(edgelist), rng);
-			lm = new LeftMatching(2*V,edgelist);
-			rm = new RightMatching(2*V,edgelist);
+			lm = new LeftMatching(V,edgelist);
+			rm = new RightMatching(V,edgelist);
 			auto start = high_resolution_clock::now();
 			R = ExactRank(edgelist.size(),lm,rm);
 			auto stop = high_resolution_clock::now();
 			auto duration = duration_cast<microseconds>(stop - start);
 			//printsol();
-			//BuildSolution();
-			//assertMatching(solution,V,"Rank");
+			BuildSolution();
+			assertMatching(solution,V,"Rank");
 			assert(R==S);
 			sumcallsavg  += lm->getOracleCalls()+rm->getOracleCalls();
 			maxcallsavg  += max(lm->getOracleCalls(),rm->getOracleCalls());
 			totaltimeavg += duration.count();
 			exchangesavg += lm->getExchangeCalls()+rm->getExchangeCalls();
-			//assert(lm->getExchangeCalls()+lm->getFreeCalls()==lm->getOracleCalls());
-			//assert(rm->getExchangeCalls()+rm->getFreeCalls()==rm->getOracleCalls());
+			assert(lm->getExchangeCalls()+lm->getFreeCalls()==lm->getOracleCalls());
+			assert(rm->getExchangeCalls()+rm->getFreeCalls()==rm->getOracleCalls());
 			delete lm;
 			delete rm;
  		}
@@ -472,7 +479,7 @@ int main() {
 					  << V << " " << groups << endl;
 		
 		cout << endl;
-		V+=256;
+		V+=20;
 		//p+=5;
 	}
 	
@@ -490,4 +497,13 @@ int main() {
 	return 0;
 }
 
+/*
+valgrind --leak-check=full \
+         --show-leak-kinds=all \
+         --track-origins=yes \
+         --verbose \
+         --log-file=valgrind-out.txt \
+         ./a.out
+
+valgrind --leak-check=full --show-leak-kinds=all ./a.out
 */

@@ -1,4 +1,4 @@
-# Matroid-Intersection
+# Matroid Intersection
 
 **Version 1.0 - 23/04/2022**
 

@@ -17,7 +17,6 @@
 
 using namespace std;
 
-
 int N;
 vector<int>  independent_set;
 vector<int>  not_independent;

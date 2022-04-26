@@ -52,7 +52,7 @@ void RightMatching::Temp_Update_State(int a, bool to_be_added) {
     }
 }
 void RightMatching::show() {
-    cout << "Right Matching: " << N << " edges" << endl;
+    cout << "Right Matching: " << N << " vertices" << endl;
     for (Edge e : edges) cout << e.u << " " << e.v << endl;
     cout << endl << endl;
 }
