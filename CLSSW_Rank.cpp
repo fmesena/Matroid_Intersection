@@ -312,7 +312,7 @@ size_t ApproxRank(int N_, Oracle* O1_, Oracle* O2_, double eps) {
 	Init(N);
 	AUGMENTATIONS.clear();
 
-	while ( i++ != (int)(1/eps))
+	while ( i++ < (int)(1/eps))
 	{	
 		//cout << i << " " << " " << eps << " " << 1/eps << " " << s << " " << SZ << endl;
 		s=SZ;
