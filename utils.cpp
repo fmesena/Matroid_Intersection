@@ -7,9 +7,8 @@ void Init(int N_) {
 	independent_set.clear();
 	not_independent.clear();
 	in_independent_set.resize(N_, false);
-	in_independent_set.clear();
-	index_.resize(N_,-1); //default value initialization
-	distances = new int[N_]();
+	index_.resize(N_,-1); //value initialization
+	distances = new int[N_](); //default value initialization
 	candidates = vector<vector<int>>(MAX_DIST);
 	ITER_CT = 0;
 	CURRENT_RANK=0;
