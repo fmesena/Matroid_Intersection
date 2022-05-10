@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS  = -g -Wall -pedantic -std=c++17 -O3
+CFLAGS  = -g -pg -Wall -pedantic -std=c++17 -O3
 
 all: exec
 
@@ -37,7 +37,7 @@ HopcroftKarp.o:  HopcroftKarp.cpp HopcroftKarp.h
 	$(CC) $(CFLAGS) -c HopcroftKarp.cpp
 
 ds/LinkCutTree.o:  ds/LinkCutTree.c ds/LinkCutTree.h
-	gcc -g -c 				 ds/LinkCutTree.c
+	gcc -g -c -pg 				 ds/LinkCutTree.c
 
 oracles/RightMatching.o:  oracles/RightMatching.cpp oracles/RightMatching.h oracles/Base.h ds/Edge.h
 	$(CC) $(CFLAGS) -c oracles/RightMatching.cpp
