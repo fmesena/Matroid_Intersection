@@ -1,0 +1,276 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+ no time accumulated
+
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  Ts/call  Ts/call  name    
+  0.00      0.00     0.00 148250967     0.00     0.00  LeftMatching::Free(int)
+  0.00      0.00     0.00   749128     0.00     0.00  LeftMatching::Exchangeable_Set(std::vector<int, std::allocator<int> >, int)
+  0.00      0.00     0.00   393931     0.00     0.00  unsigned long std::uniform_int_distribution<unsigned long>::operator()<std::linear_congruential_engine<unsigned long, 16807ul, 0ul, 2147483647ul> >(std::linear_congruential_engine<unsigned long, 16807ul, 0ul, 2147483647ul>&, std::uniform_int_distribution<unsigned long>::param_type const&)
+  0.00      0.00     0.00   286752     0.00     0.00  RightMatching::Free(int)
+  0.00      0.00     0.00    30410     0.00     0.00  void std::vector<int, std::allocator<int> >::_M_realloc_insert<int const&>(__gnu_cxx::__normal_iterator<int*, std::vector<int, std::allocator<int> > >, int const&)
+  0.00      0.00     0.00    13171     0.00     0.00  RightMatching::Exchangeable_Set(std::vector<int, std::allocator<int> >, int)
+  0.00      0.00     0.00     2793     0.00     0.00  FindExchange(Oracle*, int, std::vector<int, std::allocator<int> >&)
+  0.00      0.00     0.00     2259     0.00     0.00  std::vector<int, std::allocator<int> >::operator=(std::vector<int, std::allocator<int> > const&)
+  0.00      0.00     0.00      751     0.00     0.00  GetDistancesIndep()
+  0.00      0.00     0.00      750     0.00     0.00  OnePath()
+  0.00      0.00     0.00      750     0.00     0.00  LeftMatching::Update_State(std::vector<int, std::allocator<int> >)
+  0.00      0.00     0.00      750     0.00     0.00  RightMatching::Update_State(std::vector<int, std::allocator<int> >)
+  0.00      0.00     0.00      487     0.00     0.00  RightMatching::Exchangeable(int, int)
+  0.00      0.00     0.00      459     0.00     0.00  LeftMatching::Exchangeable(int, int)
+  0.00      0.00     0.00       22     0.00     0.00  void std::vector<Edge, std::allocator<Edge> >::_M_realloc_insert<Edge const&>(__gnu_cxx::__normal_iterator<Edge*, std::vector<Edge, std::allocator<Edge> > >, Edge const&)
+  0.00      0.00     0.00        2     0.00     0.00  std::vector<Edge, std::allocator<Edge> >::operator=(std::vector<Edge, std::allocator<Edge> > const&)
+  0.00      0.00     0.00        1     0.00     0.00  _GLOBAL__sub_I_N
+  0.00      0.00     0.00        1     0.00     0.00  _GLOBAL__sub_I__Z11BFS_Augmentv
+  0.00      0.00     0.00        1     0.00     0.00  _GLOBAL__sub_I__Z12FindExchangeP6OracleiRSt6vectorIiSaIiEE
+  0.00      0.00     0.00        1     0.00     0.00  _GLOBAL__sub_I__Z12FindExchangeiRKSt6vectorIiSaIiEE
+  0.00      0.00     0.00        1     0.00     0.00  _GLOBAL__sub_I__Z12GetDistancesv
+  0.00      0.00     0.00        1     0.00     0.00  _GLOBAL__sub_I__Z6Refinev
+  0.00      0.00     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN12LeftMatchingC2EiSt6vectorI4EdgeSaIS1_EE
+  0.00      0.00     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN13RightMatchingC2EiSt6vectorI4EdgeSaIS1_EE
+  0.00      0.00     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN7GraphicC2EiSt6vectorI4EdgeSaIS1_EE
+  0.00      0.00     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN7UniformC2Eii
+  0.00      0.00     0.00        1     0.00     0.00  std::vector<bool, std::allocator<bool> >::_M_fill_insert(std::_Bit_iterator, unsigned long, bool)
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+		     Call graph (explanation follows)
+
+
+granularity: each sample hit covers 2 byte(s) no time propagated
+
+index % time    self  children    called     name
+                0.00    0.00 148250967/148250967     GetDistancesIndep() [59]
+[51]     0.0    0.00    0.00 148250967         LeftMatching::Free(int) [51]
+-----------------------------------------------
+                0.00    0.00  749128/749128      GetDistancesIndep() [59]
+[52]     0.0    0.00    0.00  749128         LeftMatching::Exchangeable_Set(std::vector<int, std::allocator<int> >, int) [52]
+-----------------------------------------------
+                0.00    0.00  393931/393931      void std::shuffle<__gnu_cxx::__normal_iterator<Edge*, std::vector<Edge, std::allocator<Edge> > >, std::linear_congruential_engine<unsigned long, 16807ul, 0ul, 2147483647ul>&>(__gnu_cxx::__normal_iterator<Edge*, std::vector<Edge, std::allocator<Edge> > >, __gnu_cxx::__normal_iterator<Edge*, std::vector<Edge, std::allocator<Edge> > >, std::linear_congruential_engine<unsigned long, 16807ul, 0ul, 2147483647ul>&) [168]
+[53]     0.0    0.00    0.00  393931         unsigned long std::uniform_int_distribution<unsigned long>::operator()<std::linear_congruential_engine<unsigned long, 16807ul, 0ul, 2147483647ul> >(std::linear_congruential_engine<unsigned long, 16807ul, 0ul, 2147483647ul>&, std::uniform_int_distribution<unsigned long>::param_type const&) [53]
+-----------------------------------------------
+                0.00    0.00  142585/286752      OnePath() [60]
+                0.00    0.00  144167/286752      GetDistancesIndep() [59]
+[54]     0.0    0.00    0.00  286752         RightMatching::Free(int) [54]
+-----------------------------------------------
+                0.00    0.00      11/30410       OnePath() [60]
+                0.00    0.00      20/30410       AugmentingPaths(int, Oracle*, Oracle*) [95]
+                0.00    0.00      31/30410       UpdateIndependentSet() [103]
+                0.00    0.00   14073/30410       GetDistancesIndep() [59]
+                0.00    0.00   16275/30410       GenerateRandomBipartiteGraph(int, int) [107]
+[55]     0.0    0.00    0.00   30410         void std::vector<int, std::allocator<int> >::_M_realloc_insert<int const&>(__gnu_cxx::__normal_iterator<int*, std::vector<int, std::allocator<int> > >, int const&) [55]
+-----------------------------------------------
+                0.00    0.00   13171/13171       FindExchange(Oracle*, int, std::vector<int, std::allocator<int> >&) [57]
+[56]     0.0    0.00    0.00   13171         RightMatching::Exchangeable_Set(std::vector<int, std::allocator<int> >, int) [56]
+-----------------------------------------------
+                0.00    0.00    2793/2793        GetDistancesIndep() [59]
+[57]     0.0    0.00    0.00    2793         FindExchange(Oracle*, int, std::vector<int, std::allocator<int> >&) [57]
+                0.00    0.00   13171/13171       RightMatching::Exchangeable_Set(std::vector<int, std::allocator<int> >, int) [56]
+-----------------------------------------------
+                0.00    0.00     755/2259        GetDistancesIndep() [59]
+                0.00    0.00    1504/2259        OnePath() [60]
+[58]     0.0    0.00    0.00    2259         std::vector<int, std::allocator<int> >::operator=(std::vector<int, std::allocator<int> > const&) [58]
+-----------------------------------------------
+                0.00    0.00     751/751         AugmentingPaths(int, Oracle*, Oracle*) [95]
+[59]     0.0    0.00    0.00     751         GetDistancesIndep() [59]
+                0.00    0.00 148250967/148250967     LeftMatching::Free(int) [51]
+                0.00    0.00  749128/749128      LeftMatching::Exchangeable_Set(std::vector<int, std::allocator<int> >, int) [52]
+                0.00    0.00  144167/286752      RightMatching::Free(int) [54]
+                0.00    0.00   14073/30410       void std::vector<int, std::allocator<int> >::_M_realloc_insert<int const&>(__gnu_cxx::__normal_iterator<int*, std::vector<int, std::allocator<int> > >, int const&) [55]
+                0.00    0.00    2793/2793        FindExchange(Oracle*, int, std::vector<int, std::allocator<int> >&) [57]
+                0.00    0.00     755/2259        std::vector<int, std::allocator<int> >::operator=(std::vector<int, std::allocator<int> > const&) [58]
+-----------------------------------------------
+                0.00    0.00     750/750         AugmentingPaths(int, Oracle*, Oracle*) [95]
+[60]     0.0    0.00    0.00     750         OnePath() [60]
+                0.00    0.00  142585/286752      RightMatching::Free(int) [54]
+                0.00    0.00    1504/2259        std::vector<int, std::allocator<int> >::operator=(std::vector<int, std::allocator<int> > const&) [58]
+                0.00    0.00     750/750         LeftMatching::Update_State(std::vector<int, std::allocator<int> >) [61]
+                0.00    0.00     750/750         RightMatching::Update_State(std::vector<int, std::allocator<int> >) [62]
+                0.00    0.00     487/487         RightMatching::Exchangeable(int, int) [63]
+                0.00    0.00     459/459         LeftMatching::Exchangeable(int, int) [64]
+                0.00    0.00      11/30410       void std::vector<int, std::allocator<int> >::_M_realloc_insert<int const&>(__gnu_cxx::__normal_iterator<int*, std::vector<int, std::allocator<int> > >, int const&) [55]
+-----------------------------------------------
+                0.00    0.00     750/750         OnePath() [60]
+[61]     0.0    0.00    0.00     750         LeftMatching::Update_State(std::vector<int, std::allocator<int> >) [61]
+-----------------------------------------------
+                0.00    0.00     750/750         OnePath() [60]
+[62]     0.0    0.00    0.00     750         RightMatching::Update_State(std::vector<int, std::allocator<int> >) [62]
+-----------------------------------------------
+                0.00    0.00     487/487         OnePath() [60]
+[63]     0.0    0.00    0.00     487         RightMatching::Exchangeable(int, int) [63]
+-----------------------------------------------
+                0.00    0.00     459/459         OnePath() [60]
+[64]     0.0    0.00    0.00     459         LeftMatching::Exchangeable(int, int) [64]
+-----------------------------------------------
+                0.00    0.00      22/22          BuildSolution(std::vector<Edge, std::allocator<Edge> >) [92]
+[65]     0.0    0.00    0.00      22         void std::vector<Edge, std::allocator<Edge> >::_M_realloc_insert<Edge const&>(__gnu_cxx::__normal_iterator<Edge*, std::vector<Edge, std::allocator<Edge> > >, Edge const&) [65]
+-----------------------------------------------
+                0.00    0.00       1/2           RightMatching::RightMatching(int, std::vector<Edge, std::allocator<Edge> >) [131]
+                0.00    0.00       1/2           LeftMatching::LeftMatching(int, std::vector<Edge, std::allocator<Edge> >) [127]
+[66]     0.0    0.00    0.00       2         std::vector<Edge, std::allocator<Edge> >::operator=(std::vector<Edge, std::allocator<Edge> > const&) [66]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [172]
+[67]     0.0    0.00    0.00       1         _GLOBAL__sub_I_N [67]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [172]
+[68]     0.0    0.00    0.00       1         _GLOBAL__sub_I__Z11BFS_Augmentv [68]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [172]
+[69]     0.0    0.00    0.00       1         _GLOBAL__sub_I__Z12FindExchangeP6OracleiRSt6vectorIiSaIiEE [69]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [172]
+[70]     0.0    0.00    0.00       1         _GLOBAL__sub_I__Z12FindExchangeiRKSt6vectorIiSaIiEE [70]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [172]
+[71]     0.0    0.00    0.00       1         _GLOBAL__sub_I__Z12GetDistancesv [71]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [172]
+[72]     0.0    0.00    0.00       1         _GLOBAL__sub_I__Z6Refinev [72]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [172]
+[73]     0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN12LeftMatchingC2EiSt6vectorI4EdgeSaIS1_EE [73]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [172]
+[74]     0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN13RightMatchingC2EiSt6vectorI4EdgeSaIS1_EE [74]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [172]
+[75]     0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN7GraphicC2EiSt6vectorI4EdgeSaIS1_EE [75]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [172]
+[76]     0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN7UniformC2Eii [76]
+-----------------------------------------------
+                0.00    0.00       1/1           Init(int) [110]
+[77]     0.0    0.00    0.00       1         std::vector<bool, std::allocator<bool> >::_M_fill_insert(std::_Bit_iterator, unsigned long, bool) [77]
+-----------------------------------------------
+
+ This table describes the call tree of the program, and was sorted by
+ the total amount of time spent in each function and its children.
+
+ Each entry in this table consists of several lines.  The line with the
+ index number at the left hand margin lists the current function.
+ The lines above it list the functions that called this function,
+ and the lines below it list the functions this one called.
+ This line lists:
+     index	A unique number given to each element of the table.
+		Index numbers are sorted numerically.
+		The index number is printed next to every function name so
+		it is easier to look up where the function is in the table.
+
+     % time	This is the percentage of the `total' time that was spent
+		in this function and its children.  Note that due to
+		different viewpoints, functions excluded by options, etc,
+		these numbers will NOT add up to 100%.
+
+     self	This is the total amount of time spent in this function.
+
+     children	This is the total amount of time propagated into this
+		function by its children.
+
+     called	This is the number of times the function was called.
+		If the function called itself recursively, the number
+		only includes non-recursive calls, and is followed by
+		a `+' and the number of recursive calls.
+
+     name	The name of the current function.  The index number is
+		printed after it.  If the function is a member of a
+		cycle, the cycle number is printed between the
+		function's name and the index number.
+
+
+ For the function's parents, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the function into this parent.
+
+     children	This is the amount of time that was propagated from
+		the function's children into this parent.
+
+     called	This is the number of times this parent called the
+		function `/' the total number of times the function
+		was called.  Recursive calls to the function are not
+		included in the number after the `/'.
+
+     name	This is the name of the parent.  The parent's index
+		number is printed after it.  If the parent is a
+		member of a cycle, the cycle number is printed between
+		the name and the index number.
+
+ If the parents of the function cannot be determined, the word
+ `<spontaneous>' is printed in the `name' field, and all the other
+ fields are blank.
+
+ For the function's children, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the child into the function.
+
+     children	This is the amount of time that was propagated from the
+		child's children to the function.
+
+     called	This is the number of times the function called
+		this child `/' the total number of times the child
+		was called.  Recursive calls by the child are not
+		listed in the number after the `/'.
+
+     name	This is the name of the child.  The child's index
+		number is printed after it.  If the child is a
+		member of a cycle, the cycle number is printed
+		between the name and the index number.
+
+ If there are any cycles (circles) in the call graph, there is an
+ entry for the cycle-as-a-whole.  This entry shows who called the
+ cycle (as parents) and the members of the cycle (as children.)
+ The `+' recursive calls entry shows the number of function calls that
+ were internal to the cycle, and the calls entry for each member shows,
+ for that member, how many times it was called from other members of
+ the cycle.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+Index by function name
+
+  [67] _GLOBAL__sub_I_N (main.cpp) [76] _GLOBAL__sub_I__ZN7UniformC2Eii (Uniform.cpp) [62] RightMatching::Update_State(std::vector<int, std::allocator<int> >)
+  [68] _GLOBAL__sub_I__Z11BFS_Augmentv (SAP.cpp) [57] FindExchange(Oracle*, int, std::vector<int, std::allocator<int> >&) [56] RightMatching::Exchangeable_Set(std::vector<int, std::allocator<int> >, int)
+  [69] _GLOBAL__sub_I__Z12FindExchangeP6OracleiRSt6vectorIiSaIiEE (CLSSW_Indep.cpp) [59] GetDistancesIndep() [54] RightMatching::Free(int)
+  [70] _GLOBAL__sub_I__Z12FindExchangeiRKSt6vectorIiSaIiEE (CLSSW_Rank.cpp) [60] OnePath() [53] unsigned long std::uniform_int_distribution<unsigned long>::operator()<std::linear_congruential_engine<unsigned long, 16807ul, 0ul, 2147483647ul> >(std::linear_congruential_engine<unsigned long, 16807ul, 0ul, 2147483647ul>&, std::uniform_int_distribution<unsigned long>::param_type const&)
+  [71] _GLOBAL__sub_I__Z12GetDistancesv (Cun86.cpp) [64] LeftMatching::Exchangeable(int, int) [65] void std::vector<Edge, std::allocator<Edge> >::_M_realloc_insert<Edge const&>(__gnu_cxx::__normal_iterator<Edge*, std::vector<Edge, std::allocator<Edge> > >, Edge const&)
+  [72] _GLOBAL__sub_I__Z6Refinev (CLSSW_Approx.cpp) [61] LeftMatching::Update_State(std::vector<int, std::allocator<int> >) [66] std::vector<Edge, std::allocator<Edge> >::operator=(std::vector<Edge, std::allocator<Edge> > const&)
+  [73] _GLOBAL__sub_I__ZN12LeftMatchingC2EiSt6vectorI4EdgeSaIS1_EE (LeftMatching.cpp) [52] LeftMatching::Exchangeable_Set(std::vector<int, std::allocator<int> >, int) [77] std::vector<bool, std::allocator<bool> >::_M_fill_insert(std::_Bit_iterator, unsigned long, bool)
+  [74] _GLOBAL__sub_I__ZN13RightMatchingC2EiSt6vectorI4EdgeSaIS1_EE (RightMatching.cpp) [51] LeftMatching::Free(int) [55] void std::vector<int, std::allocator<int> >::_M_realloc_insert<int const&>(__gnu_cxx::__normal_iterator<int*, std::vector<int, std::allocator<int> > >, int const&)
+  [75] _GLOBAL__sub_I__ZN7GraphicC2EiSt6vectorI4EdgeSaIS1_EE (Graphic.cpp) [63] RightMatching::Exchangeable(int, int) [58] std::vector<int, std::allocator<int> >::operator=(std::vector<int, std::allocator<int> > const&)
