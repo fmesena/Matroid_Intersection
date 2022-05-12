@@ -6,12 +6,12 @@ void Init(int N_) {
 	MAX_DIST = N_+10; //the maximum possible distance in any point is just the number of elements plus one (because of the target). because of the "l+3" operation in CLSSW_Indep, max_dist=N+4. therefore, we opted to play it safe and make it N+10
 	independent_set.clear();
 	not_independent.clear();
+	in_independent_set.clear();
 	in_independent_set.resize(N_, false);
 	index_.resize(N_,-1); //value initialization
 	distances = new int[N_](); //default value initialization
 	candidates = vector<vector<int>>(MAX_DIST);
 	ITER_CT = 0;
-	CURRENT_RANK=0;
 }
 
 void clear_swap(vector<int> &v) { vector<int>().swap(v); }
@@ -59,7 +59,6 @@ void UpdateIndependentSet() {
 		}
 		else not_independent.push_back(i);
 	}
-	CURRENT_RANK++;
 }
 
 void PrintCandidates() {
