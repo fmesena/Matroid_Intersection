@@ -56,7 +56,8 @@ pair<vector<vector<int>>, vector<Edge>> GenerateBlocksBipartiteGraph(int V, int 
 	assert(V%n1==0);
 	assert(V/n1>=3);
 
-	vector<vector<int>> graph(2*V);
+	vector<vector<int>> graph(V);
+	V=V/2;
 	
 	vector<Edge> edges;
 	const int 	 n2 	 = V/n1;
