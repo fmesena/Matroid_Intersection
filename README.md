@@ -23,5 +23,5 @@ To use this code for your own projects, you should go to the `oracles` directory
 
 
 ## Authors
-This project was developed by Francisco Sena from Instituto Superior Técnico - University of Lisbon, Portugal.
+This project was developed by Francisco Sena from Instituto Superior Técnico - University of Lisbon, Portugal, under the scope of his master thesis.
 For *any* questions: f.miguel.sena@tecnico.ulisboa.pt
