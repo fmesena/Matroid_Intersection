@@ -5,6 +5,8 @@
 #include "utils.h"
 
 void	Refine();
+void	Refine1(int);
+void	Refine2(int);
 size_t  AugmentingPathsApprox(int, Oracle*, Oracle*, double);
 
 #endif
