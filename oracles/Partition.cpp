@@ -11,17 +11,9 @@ Partition::Partition(int N_, vector<vector<int>> category_, vector<int> capacity
 
     cout << "\nprinting...\n";
     int idx = 0;
-    for (int i = 0; i < M; ++i) {
-        for (size_t j = 0; j < category_raw[i].size(); ++j) {
+    for (int i = 0; i < M; ++i)
+        for (size_t j = 0; j < category_raw[i].size(); ++j)
             category[idx++] = i; //make sure that N = \sum |C_i|
-            //cout << i << " " << j << " " << category[idx-1] << " ";
-        }
-        //cout << endl;
-    }
-    for (int i = 0; i < N; ++i)
-    {
-        cout << category[i] << " ";
-    }
 }
 bool Partition::Free(int b) {
     int category_of_bth = category[b];
