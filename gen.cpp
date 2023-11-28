@@ -7,7 +7,7 @@ using std::pair, std::vector, std::cout, std::endl, std::cerr, std::string, std:
 #define rand_n(n) ((int) (((double) (n)) * (rand() / (RAND_MAX + 1.0))))
 
 
-/*** Generators *************************/
+/************************* Generators *************************/
 
 pair<vector<vector<int>>, vector<Edge>> GenerateRandomBipartiteGraph(int V, int p) {
 	assert(V%2==0);
@@ -133,7 +133,7 @@ pair<int,vector<Edge>> GenerateDuplicationDivergence(int V) {
 }
 
 
-/*** Checkers *************************/
+/************************* Checkers *************************/
 
 void assertMatching(vector<Edge> matching, int V, string name) {
 	cerr << ">>assertMatching: Asserting solution given by " << name << endl;

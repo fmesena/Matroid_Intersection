@@ -18,13 +18,13 @@ void clear_swap(vector<int> &v) { vector<int>().swap(v); }
 
 void addEdge(vector<int> graph[], int u, int v) { graph[u].push_back(v); }
 
-void printGraph(vector<int> graph[]) {
-    for (int v = 0; v < N; ++v)
-    {
-        cout << "\n Adjacency list of vertex "
-             << v << "\n head ";
+void printGraph(vector<vector<int>> graph) {
+	cout << "\nAdjacency list representation\n";
+    for (size_t v = 0; v < graph.size(); ++v)
+    {	
+    	cout << v << " :";
         for (auto x : graph[v])
-           cout << "-> " << x;
+           cout << " " << x;
         cout << endl;
     }
 }

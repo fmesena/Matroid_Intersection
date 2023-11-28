@@ -3,8 +3,8 @@ CFLAGS  = -g -pg -Wall -pedantic -std=c++17 -O3
 
 all: exec
 
-exec: main.o SAP.o Cun86.o CLSSW_Indep.o CLSSW_Approx.o CLSSW_Rank.o gen.o utils.o EdmondsKarp.o HopcroftKarp.o ds/LinkCutTree.o oracles/RightMatching.o oracles/LeftMatching.o oracles/Uniform.o oracles/Graphic.o
-	$(CC) $(CFLAGS) -o exec main.o SAP.o Cun86.o CLSSW_Indep.o CLSSW_Approx.o CLSSW_Rank.o gen.o utils.o EdmondsKarp.o HopcroftKarp.o LinkCutTree.o RightMatching.o LeftMatching.o Uniform.o Graphic.o
+exec: main.o SAP.o Cun86.o CLSSW_Indep.o CLSSW_Approx.o CLSSW_Rank.o gen.o utils.o EdmondsKarp.o HopcroftKarp.o ds/LinkCutTree.o oracles/RightMatching.o oracles/LeftMatching.o oracles/Uniform.o oracles/Graphic.o oracles/Partition.o
+	$(CC) $(CFLAGS) -o exec main.o SAP.o Cun86.o CLSSW_Indep.o CLSSW_Approx.o CLSSW_Rank.o gen.o utils.o EdmondsKarp.o HopcroftKarp.o LinkCutTree.o RightMatching.o LeftMatching.o Uniform.o Graphic.o Partition.o
 
 main.o: main.cpp SAP.h Cun86.h CLSSW_Indep.h CLSSW_Approx.h CLSSW_Rank.h gen.h EdmondsKarp.h HopcroftKarp.h
 	$(CC) $(CFLAGS) -c main.cpp
@@ -37,7 +37,7 @@ HopcroftKarp.o:  HopcroftKarp.cpp HopcroftKarp.h
 	$(CC) $(CFLAGS) -c HopcroftKarp.cpp
 
 ds/LinkCutTree.o:  ds/LinkCutTree.c ds/LinkCutTree.h
-	gcc -g -c -pg 				 ds/LinkCutTree.c
+	gcc -g -c  -pg 				     ds/LinkCutTree.c
 
 oracles/RightMatching.o:  oracles/RightMatching.cpp oracles/RightMatching.h oracles/Base.h ds/Edge.h
 	$(CC) $(CFLAGS) -c oracles/RightMatching.cpp
@@ -50,6 +50,9 @@ oracles/Graphic.o:  oracles/Graphic.cpp oracles/Graphic.h oracles/Base.h ds/Edge
 
 oracles/Uniform.o:  oracles/Uniform.cpp oracles/Uniform.h oracles/Base.h
 	$(CC) $(CFLAGS) -c oracles/Uniform.cpp
+
+oracles/Partition.o:  oracles/Partition.cpp oracles/Partition.h oracles/Base.h
+	$(CC) $(CFLAGS) -c oracles/Partition.cpp
 
 run:
 	./exec

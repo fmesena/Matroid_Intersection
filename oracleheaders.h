@@ -1,6 +1,7 @@
 #include "oracles/Base.h"
 #include "oracles/Uniform.h"
 #include "oracles/Graphic.h"
+#include "oracles/Partition.h"
 #include "oracles/LeftMatching.h"
 #include "oracles/RightMatching.h"
 //#include "YourOracleImplementation.h"

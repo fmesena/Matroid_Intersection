@@ -16,17 +16,17 @@
 #define 	TARGET 				-3
 
 extern int N;
-extern std::vector<int>  AUGMENTATIONS;
-extern std::vector<int>  independent_set;
-extern std::vector<int>  not_independent;
-extern std::vector<bool> in_independent_set;
-extern std::vector<int>  index_;  // index[i]=-1 if i-th element is not in S, index[i]=j 0<j<N-1 if i-th element is in S
-extern int DISTANCE_TARGET;
-extern int *distances;
-extern std::vector<std::vector<int>> candidates;
-extern int CURRENT_RANK;
-extern int MAX_DIST;
-extern int ITER_CT;
+extern std::vector<int>  				AUGMENTATIONS;
+extern std::vector<int>  				independent_set;
+extern std::vector<int>  				not_independent;
+extern std::vector<bool> 				in_independent_set;
+extern std::vector<int>  				index_;  // index[i]=-1 if i-th element is not in S, index[i]=j 0<j<N-1 if i-th element is in S
+extern std::vector<std::vector<int>> 	candidates;
+
+extern int 								DISTANCE_TARGET;
+extern int 								*distances;
+extern int 								MAX_DIST;
+extern int 								ITER_CT;
 
 template<typename T>
 void DEBUG_VECTOR(const std::vector<T> &v) {
@@ -48,7 +48,7 @@ std::vector<T> Slice(std::vector<T> const &v, int m, int n) {
 void Init(int);
 void clear_swap(std::vector<int> &v);
 void addEdge(std::vector<int> graph[], int, int);
-void printGraph(std::vector<int> graph[]);
+void printGraph(std::vector<std::vector<int>> graph);
 void PrintIndependentSet();
 bool equal_content_same_order(std::vector<int> &a, std::vector<int> &b);
 void PrintCandidates();
