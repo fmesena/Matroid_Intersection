@@ -98,12 +98,17 @@ int main() {
 
 
 /*
+int m; //the number of categories
+int n; //the number of agents
+vector<pair<int,int>> ground_set;
 vector<vector<pair<int,int>>> category = vector<vector<pair<int,int>>>(m);
 for (size_t g = 0; g < m; g++)
 {
 	for (size_t i = 0; i < n; i++)
 	{
-		category[g].push_back(make_pair(i,g))
+		auto p = make_pair(i,g);
+		ground_set.push_back(p);
+		category[g].push_back(p);
 	}
 }
 vector<int> capacity = vector<int>(m,1);
