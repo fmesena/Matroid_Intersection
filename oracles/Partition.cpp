@@ -12,7 +12,6 @@ Partition<T>::Partition(int N_, vector<T> gs, vector<vector<T>> category_, vecto
     category = vector<int>(N);
     cur_cap  = vector<int>(M,0);
 
-    cout << "\nprinting...\n";
     for (int i = 0; i < M; ++i)
     {
         for (size_t j = 0; j < category_raw[i].size(); ++j)
