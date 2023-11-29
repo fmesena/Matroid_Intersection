@@ -6,7 +6,6 @@ using std::pair, std::vector, std::cout, std::endl, std::cerr, std::string, std:
 #define rand_p() (((double) rand()) / RAND_MAX)
 #define rand_n(n) ((int) (((double) (n)) * (rand() / (RAND_MAX + 1.0))))
 
-
 /************************* Generators *************************/
 
 pair<vector<vector<int>>, vector<Edge>> GenerateRandomBipartiteGraph(int V, int p) {

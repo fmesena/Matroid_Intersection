@@ -11,7 +11,7 @@ main.o: main.cpp SAP.h Cun86.h CLSSW_Indep.h CLSSW_Approx.h CLSSW_Rank.h gen.h E
 
 SAP.o:  SAP.cpp SAP.h utils.h oracles/Base.h
 	$(CC) $(CFLAGS) -c SAP.cpp
-	
+
 Cun86.o:  Cun86.cpp Cun86.h utils.h oracles/Base.h
 	$(CC) $(CFLAGS) -c Cun86.cpp
 
