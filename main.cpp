@@ -65,7 +65,7 @@ int main() {
 	LeftMatching 	*lm;
 	RightMatching 	*rm;
 
-	auto [G, el] = GenerateRandomBipartiteGraph(V,30);
+	auto [G, el] = GenerateRandomBipartiteGraph(V,40);
 
 	printGraph(G);
 

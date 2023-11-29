@@ -4,18 +4,19 @@
 #include "../oracles/Base.h"
 #include "../ds/Edge.h"
 
+template<class T>
 class Partition final : public Oracle {
 public:
     int N;                                      // the number of elements in the ground set
     int M;                                      // the number of categories  
 
-    std::vector<std::vector<int>> category_raw; //a matrix with m rows where category[i] is a vector with the elements in the i-th category. further, this matrix must induce a partition of the elements row-wise
+    std::vector<std::vector<T>> category_raw; //a matrix with m rows where category[i] is a vector with the elements in the i-th category. further, this matrix must induce a partition of the elements row-wise
     std::vector<int> capacity;                  //a vector where capacity[i] for 0 <= i < m denotes the capacity of the i-th category
     
     std::vector<int> category;                  //this is a map from indexes 0 < i < N+1 to categories 0 < j < m, where category[i]:=j means that item of type T (for now T can only be of type int) having index i in category_raw is in category j     
     std::vector<int> cur_cap;                   //cur_cap[i] denotes the current number of elements from category i in the independent set. invariant is that cur_cap[i] <= capacity[i] for all i
 
-    Partition(int, std::vector<std::vector<int>>, std::vector<int>);
+    Partition(int, std::vector<std::vector<T>>, std::vector<int>);
     bool Free(int);
     bool Exchangeable(int, int);
     bool Exchangeable_Set(std::vector<int>, int);

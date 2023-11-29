@@ -1,6 +1,7 @@
 #include "Partition.h"
 
-Partition::Partition(int N_, vector<vector<int>> category_, vector<int> capacity_):Oracle() {
+template<class T>
+Partition<T>::Partition(int N_, vector<vector<T>> category_, vector<int> capacity_):Oracle() {
     N = N_;
     category_raw = category_;
     capacity     = capacity_;
@@ -15,14 +16,17 @@ Partition::Partition(int N_, vector<vector<int>> category_, vector<int> capacity
         for (size_t j = 0; j < category_raw[i].size(); ++j)
             category[idx++] = i; //make sure that N = \sum |C_i|
 }
-bool Partition::Free(int b) {
+template<class T>
+bool Partition<T>::Free(int b) {
     int category_of_bth = category[b];
     return cur_cap[category_of_bth] < capacity[category_of_bth];
 }
-bool Partition::Exchangeable(int a, int b) {
+template<class T>
+bool Partition<T>::Exchangeable(int a, int b) {
     return category[a] == category[b];
 }
-bool Partition::Exchangeable_Set(vector<int> A, int b) {
+template<class T>
+bool Partition<T>::Exchangeable_Set(vector<int> A, int b) {
     for (int a:A) {
         if (category[a] == category[b]) {
             return true;
@@ -30,7 +34,8 @@ bool Partition::Exchangeable_Set(vector<int> A, int b) {
     }
     return false;
 }
-int Partition::Rank(vector<int> B) {//returns rank(B U S) - |S|. B is assumed to be contained in V\S. this returns the number of elements in B that can be freely added to S
+template<class T>
+int Partition<T>::Rank(vector<int> B) {//returns rank(B U S) - |S|. B is assumed to be contained in V\S. this returns the number of elements in B that can be freely added to S
     vector<int> taken=cur_cap;
     int r=0;
     for (size_t i=0; i < B.size(); i++)
@@ -42,12 +47,14 @@ int Partition::Rank(vector<int> B) {//returns rank(B U S) - |S|. B is assumed to
     }
     return r;
 }
-void Partition::Update_State(vector<int> S) {
+template<class T>
+void Partition<T>::Update_State(vector<int> S) {
     fill (cur_cap.begin(),cur_cap.end(),0);
     for (size_t i = 0; i < S.size(); ++i)
         cur_cap [category[S[i]]]++;
 }
-void Partition::Temp_Update_State(int a, bool to_be_added) {
+template<class T>
+void Partition<T>::Temp_Update_State(int a, bool to_be_added) {
     if (to_be_added) {
         cur_cap [category[a]]++;
     }
@@ -55,7 +62,8 @@ void Partition::Temp_Update_State(int a, bool to_be_added) {
         cur_cap [category[a]]--;
     }
 }
-void Partition::show() {
+template<class T>
+void Partition<T>::show() {
     cout << "Partition matroid with " << N << " elements" << endl;
     cout << "Capacity - Elements in the respective category";
     for (int i = 0; i < M; ++i)
