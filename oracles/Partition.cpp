@@ -17,7 +17,7 @@ Partition<T>::Partition(int N_, vector<T> gs, vector<vector<T>> category_, vecto
         for (size_t j = 0; j < category_raw[i].size(); ++j)
         {
             int idx = -1;
-            while (category_raw[i][j] != ground_set[++idx]);
+            while (category_raw[i][j] != ground_set[++idx]); //build mapping
             category[idx] = i;
         }
     }

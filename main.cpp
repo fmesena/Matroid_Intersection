@@ -49,7 +49,7 @@ void PrintMatching(vector<Edge> sol) {
 	cout << endl;
 }
 
-vector<Edge> BuildSolution(vector<Edge> el) {
+vector<Edge> BuildMatching(vector<Edge> el) {
 	vector<Edge> res = vector<Edge>(independent_set.size());
 	for (size_t i = 0; i < independent_set.size(); ++i) {
 		//cout << independent_set[i] << endl;
@@ -58,6 +58,63 @@ vector<Edge> BuildSolution(vector<Edge> el) {
 	return res;
 }
 
+vector<pair<int,int>> BuildAllocation(vector<pair<int,int>> Z) {
+	vector<pair<int,int>> res = vector<pair<int,int>>(independent_set.size());
+	for (size_t i = 0; i < independent_set.size(); ++i) {
+		res[i] = Z[independent_set[i]];
+	}
+	return res;
+}
+
+void PrintAllocation(vector<pair<int,int>> sol) {
+	cout << "###Solution size: "<< independent_set.size() << "\n";
+	for (auto p : sol) cout << "(" << p.first+1 << ", " << p.second+1 << ")" << endl;
+	cout << endl;
+}
+
+
+int main() {
+
+	int n = 5; //the number of agents
+	int m = 4; //the number of items (i.e., categories)
+
+	vector<pair<int,int>> ground_set;
+
+	vector<int> capacity 		= vector<int>(m,1);   //ensures that every item is given to at most one agent
+	vector<int> agents_capacity = vector<int>(n,m/2); //each agent can be given at most m/2 items
+
+	vector<vector<pair<int,int>>> category_a = vector<vector<pair<int,int>>>(m);
+	vector<vector<pair<int,int>>> category_b = vector<vector<pair<int,int>>>(n);
+
+	for (int g = 0; g < m; g++)
+	{
+		for (int i = 0; i < n; i++)
+		{
+			auto p = make_pair(i,g);
+			ground_set.push_back(p);
+			category_a[g].push_back(p);
+			category_b[i].push_back(p);
+		}
+	}
+
+	Partition<pair<int,int>> *partition_a = new Partition<pair<int,int>> ( (int) ground_set.size(), ground_set, category_a, capacity);
+	Partition<pair<int,int>> *partition_b = new Partition<pair<int,int>> ( (int) ground_set.size(), ground_set, category_b, agents_capacity);
+
+	size_t S  = SAP(ground_set.size(),partition_a,partition_b);
+	
+	auto allocation = BuildAllocation(ground_set);
+	PrintAllocation(allocation);
+
+	delete partition_a;
+	delete partition_b;
+
+	cout << ">>SUCCESS " << S << endl;
+
+	return 0;
+}
+
+
+/*
 
 int main() {
 
@@ -84,7 +141,7 @@ int main() {
 
 	S  = SAP(el.size(),lm,rm);
 	
-	auto matching = BuildSolution(el);
+	auto matching = BuildMatching(el);
 	PrintMatching(matching);
 	assertMatching(matching,V,"SAP");
 
@@ -97,19 +154,4 @@ int main() {
 }
 
 
-/*
-int m; //the number of categories
-int n; //the number of agents
-vector<pair<int,int>> ground_set;
-vector<vector<pair<int,int>>> category = vector<vector<pair<int,int>>>(m);
-for (size_t g = 0; g < m; g++)
-{
-	for (size_t i = 0; i < n; i++)
-	{
-		auto p = make_pair(i,g);
-		ground_set.push_back(p);
-		category[g].push_back(p);
-	}
-}
-vector<int> capacity = vector<int>(m,1);
 */
