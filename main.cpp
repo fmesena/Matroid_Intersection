@@ -5,6 +5,7 @@
 #include <time.h>
 #include <chrono>
 #include <unordered_map>
+#include <set>
 #include "SAP.h"
 #include "Cun86.h"
 #include "CLSSW_Indep.h"
@@ -75,16 +76,22 @@ void PrintAllocation(vector<pair<int,int>> sol) {
 
 int main() {
 
-	int n = 5; //the number of agents
-	int m = 4; //the number of items (i.e., categories)
+	int n = 4; //the number of agents
+	int m = 5; //the number of items (i.e., categories)
 
 	vector<pair<int,int>> ground_set;
 
-	vector<int> capacity 		= vector<int>(m,1);   //ensures that every item is given to at most one agent
-	vector<int> agents_capacity = vector<int>(n,m/2); //each agent can be given at most m/2 items
+	vector<int> items_capacity  = vector<int>(m,1); //ensures that every item is given to at most one agent
+	vector<int> agents_capacity = vector<int>(n,2); //each agent can be given at most 2 items (in general, the capacities need not be all the same, and can be read e.g. from a textfile)
 
 	vector<vector<pair<int,int>>> category_a = vector<vector<pair<int,int>>>(m);
 	vector<vector<pair<int,int>>> category_b = vector<vector<pair<int,int>>>(n);
+
+	vector<set<int>> availability = vector<set<int>>(n); // availability[i] is a set with the items that agent i can be allocated to. this information could be read e.g. from a textfile
+	for (int i = 0; i < n; i++)
+		for (int g = 0; g < m; g++)
+			if ( i-g >= 0 ) //item g can be allocated to agent i if this condition holds
+				availability[i].insert(g);
 
 	for (int g = 0; g < m; g++)
 	{
@@ -93,11 +100,13 @@ int main() {
 			auto p = make_pair(i,g);
 			ground_set.push_back(p);
 			category_a[g].push_back(p);
-			category_b[i].push_back(p);
+
+			if (availability[i].count(g) > 0) // check if item g can be allocated to agent i. if so, add the element (i,g) to the i-th category of matroid_b
+				category_b[i].push_back(p);
 		}
 	}
 
-	Partition<pair<int,int>> *partition_a = new Partition<pair<int,int>> ( (int) ground_set.size(), ground_set, category_a, capacity);
+	Partition<pair<int,int>> *partition_a = new Partition<pair<int,int>> ( (int) ground_set.size(), ground_set, category_a, items_capacity);
 	Partition<pair<int,int>> *partition_b = new Partition<pair<int,int>> ( (int) ground_set.size(), ground_set, category_b, agents_capacity);
 
 	size_t S  = SAP(ground_set.size(),partition_a,partition_b);
